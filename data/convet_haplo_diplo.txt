@@ -1,0 +1,26 @@
+geno<- geno %>%
+  mutate_at(vars(12:ncol(geno), funs(
+    case_when(
+      . == "A" ~ "AA",
+      . == "R" ~ "AG",
+      . == "W" ~ "AT",
+      . == "M" ~ "AC",
+      . == "C" ~ "CC",
+      . == "S" ~ "CG",
+      . == "Y" ~ "CT",
+      . == "G" ~ "GG",
+      . == "K" ~ "GT",
+      . == "T" ~ "TT",
+    )
+  )))
+
+GBS.data[GBS.data1=="A"] <- "AA"
+GBS.data[GBS.data1=="R"] <- "AG"
+GBS.data[GBS.data1=="W"] <- "AT"
+GBS.data[GBS.data1=="M"] <- "AC"
+GBS.data[GBS.data1=="C"] <- "CC"
+GBS.data[GBS.data1=="S"] <- "CG"
+GBS.data[GBS.data1=="Y"] <- "CT"
+GBS.data[GBS.data1=="G"] <- "GG"
+GBS.data[GBS.data1=="K"] <- "GT"
+GBS.data[GBS.data1=="T"] <- "TT"

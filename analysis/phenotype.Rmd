@@ -1,0 +1,521 @@
+---
+title: "Phenotype Analysis of Brazilian Drought Trials"
+author: 
+  - Costa, W. G.^[Weverton Gomes da Costa, Pós-Doutorando, Embrapa Mandioca e Fruticultura, wevertonufv@gmail.com]
+date: "`r Sys.Date()`"
+site: workflowr::wflow_site
+url: https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+github-repo: wevertongomescosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava
+---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE)
+memory.limit(70000)
+```
+
+## Data and libraries
+
+Load Libraries
+
+```{r  message=FALSE}
+library(kableExtra)
+library(tidyverse)
+require(ComplexHeatmap)
+library(data.table)
+library(readxl)
+library(metan)
+library(DataExplorer)
+library(doParallel)
+theme_set(theme_bw())
+```
+
+### Data import and manipulation
+
+Vamos importar o conjunto de dados fenotípicos, excluindo as variaveis sem informações e as variaveis Local (redundante com Ano) e Tratamento (só uma observação).
+
+```{r}
+pheno <- read_excel("data/Phenotyping.xlsx",
+                    na = "NA") %>%
+  select_if( ~ !all(is.na(.))) %>%  # Deleting traits without information 
+  select(-c("Local", "Tratamento"))
+```
+
+Vamos realizar alguma manipulações para ajustar nosso banco de dados e para facilitar a visualização da análise exploratória.
+
+Primeiro, vamos converter as variaveis que são caracter em fatores. Depois vamos converter as variaveis que são referentes as notas para inteiro e logo em seguida em fatores. Após isso, vamos criar a variável ANo.Bloco para o aninhamento no modelo para obtenção dos BLUPs.
+
+```{r}
+pheno <- pheno %>%
+  mutate_if(is.character, as.factor) %>%
+  mutate_at(c("RF", "Ácaro", "Vigor", "Branching_Level"), as.integer) %>%
+  mutate_if(is.integer, as.factor) %>%
+  mutate_at(
+    c(
+      "Ano",
+      "Bloco",
+      "Porte",
+      "Incidence_Mites",
+      "Stand_Final",
+      "Staygreen",
+      "Flowering"
+    ),
+    as.factor
+  ) %>% # Convert Ano and Bloco, and traits in factors
+  mutate(Ano.Bloco = factor(interaction(Ano, Bloco)))   # Convert Ano.Bloco interaction in factors
+```
+
+## Exploratory Data Analysis
+
+Análise introdutória de todo conjunto de dados
+
+```{r}
+introduce(pheno) %>% 
+  kbl(escape = F, align = 'c') %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
+```
+
+Não temos nenhuma coluna que tenha todas observações ausentes, mas temos muitos valores ausentes em todo conjunto de dados. Algumas manipulações deverão ser realizadas para melhorar a qualidade dos dados.
+
+### Analise de Ano
+
+Vamos produzir um heatmap para verificar a quantidade de clone em cada ano. Vou criar outro conjunto de dados com a contagem de Ano e Clone. Depois vou criar os objetos correspondentes à matriz de clones e de anos. Por fim, criei a matriz que representa a presença e ausencia do clone no ano.
+
+```{r}
+pheno2 <- pheno %>%
+  count(Ano, Clone)
+
+genmat <- model.matrix(~ -1 + Clone, data = pheno2)
+envmat <- model.matrix(~ -1 + Ano, data = pheno2)
+genenvmat <- t(envmat) %*% genmat
+genenvmat_ch <- ifelse(genenvmat == 1, "Present", "Abscent")
+
+Heatmap(
+  genenvmat_ch,
+  col = c("white", "tomato"),
+  show_column_names = F,
+  heatmap_legend_param = list(title = ""),
+  column_title = "Genotypes",
+  row_title = "Environments"
+)
+```
+
+Pelo heatmap, fica claro que o ano 2016 possui muitas poucas observações. Então, devemos eliminá-lo.
+
+```{r}
+pheno <- pheno %>% 
+  filter(Ano != 2016) %>% 
+  droplevels()
+```
+
+Apenas para conferência, vamos visualizar novamente o heatmap de clones por ano.
+
+```{r}
+pheno2<- pheno %>% 
+  count(Ano, Clone)
+  
+genmat = model.matrix( ~ -1 + Clone, data = pheno2)
+envmat = model.matrix( ~ -1 + Ano, data = pheno2)
+genenvmat = t(envmat) %*% genmat
+genenvmat_ch = ifelse(genenvmat == 1, "Present", "Abscent")
+
+Heatmap(
+  genenvmat_ch,
+  col = c("white", "tomato"),
+  show_column_names = F,
+  heatmap_legend_param = list(title = ""),
+  column_title = "Genotypes",
+  row_title = "Environments"
+)
+```
+
+Aqui, é possível obervar que nosso conjunto de dados possui clones que foram avaliados em apenas um ano. Vamos visualizar isso, para verificarmos quantos clones foram avaliados de acordo com o número de anos.
+
+```{r}
+pheno2 %>%
+  count(Clone) %>%
+  count(n) %>%
+  kbl(
+    escape = F,
+    align = 'c',
+    col.names = c("N of Environments", "Number of genotypes")
+  ) %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
+```
+
+Apenas 5 clones foram avaliados em todos os anos, isso possivelmente diminuirá nossa acurácia do modelos.
+
+Além disso, observe que os anos diferem quanto ao número de clones avaliados:
+
+```{r}
+pheno2 %>%
+  group_by(Ano) %>%
+  summarise(length(Clone)) %>%
+  kbl(
+    escape = F,
+    align = 'c',
+    col.names = c("Environments", "Number of genotypes")) %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
+```
+
+Outro fator que diminui a acurácia, e por isso adotar modelos mistos na análise é o mais indicado para a obtenção dos BLUPS. 
+
+Podemos verificar quantos clones temos em comum entre os anos:
+
+```{r}
+genenvmat %*% t(genenvmat) %>% 
+  kbl(escape = F, align = 'c') %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
+```
+
+O ano 2020 apresenta menor número de clones em comum, no entanto, vamos mantê-lo para realizar as análises.
+
+### Análise das variáveis
+
+Agora, iremos analisar a frequência para cada característica discreta.
+
+```{r, message=FALSE}
+plot_bar(pheno)
+```
+
+A Incidencia de ácaros e Florescimento possuem poucas informações para alguns níveis e muitos NA's, também vamos excluir essas variáveis. 
+
+```{r, message=FALSE}
+pheno <- pheno  %>% 
+  select(-c(Incidence_Mites, Flowering))
+
+plot_bar(pheno)
+```
+
+Vamos observar apenas os valores ausentes agora, para verificar as proporções.
+
+```{r}
+plot_missing(pheno)
+```
+
+Temos uma proporção alta de valor ausente para Vigor, Leaf_Lenght, Canopy_Width e Canopy_Lenght, também vou excluir-lás.
+
+```{r}
+pheno <- pheno %>% 
+  select(-c(Vigor, Leaf_Lenght, Canopy_Width, Canopy_Lenght))
+```
+
+Vamos verificar a distribuição das características por ano agora.
+
+```{r, message=FALSE}
+plot_bar(pheno, by = "Ano")
+```
+
+Para Porte, Branching_Level e Staygreen temos muitos valores ausentes para o ano de 2017, possivelmente não houve avaliação nesse ano para essas características. Para obter os BLUPs, teremos que remover esse Ano do banco de dados.
+
+Agora vamos observar os histogramas das varaiveis quantitativas:
+
+```{r}
+plot_histogram(pheno)
+```
+
+Vimos aqui que as variáveis quantitativas apresentam correlações entre si, principalmente entre PROD.AMD com PTR e AMD com MS
+
+Vamos avaliar as estatisticas descritivas da combinação entre clone e ano para as variaveis.
+
+```{r}
+ge_details(pheno, Ano, Clone, resp = everything()) %>% kbl(escape = F, align = 'c') %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
+```
+
+O genótipo BGM-0044 apresentou valores nulos para a maioria das características, como foi avaliado apenas no ano de 2018, é melhor excluí-lo.
+
+```{r}
+pheno<- pheno %>% 
+  filter(Clone != "BGM-0044")%>% 
+  droplevels()
+```
+
+Aparentemente não temos mais um genótipo que possa prejudicar nossa análise. Agora devemos avaliar as estatisticas descritivas apenas de clone para as variaveis.
+
+```{r}
+desc_stat(pheno, by = Ano) %>%
+  kbl(escape = F, align = 'c') %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
+```
+
+Novamente, algumas variáveis não foram computadas para o ano de 2017 então temos que eliminar esse ano na hora de realizar a análise para essas variaveis. 
+
+O que chama atenção nessa tabela são os cv altos para algumas característica, especialmente: HI, Nº de Hastes, NR.P, PPA, PROD.AMD e PTR.
+
+Isso pode se dá devido a presença de outliers, vamos fazer uma inspeção em todo conjunto de dados para avaliar se há outliers:
+
+```{r}
+inspect(pheno %>%
+          select(-c(Clone)), verbose = FALSE) %>% kbl(escape = F, align = 'c') %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
+```
+
+Confirmando o que foi descrito antes, a maioria das variáveis com alto cv apresenta muitos outliers e por isso iremos excluir elas no loop para obtenção dos blups. 
+
+#### Geral Inspection 
+
+Agora vamos realizar apenas uma inspeção geral dos dados para finalizar as manipulações. 
+
+```{r}
+corr_plot(pheno, col.by = Ano)
+```
+
+Amido com MS e PROD.AMD com PTR apresentam alta correlação. 
+
+Além disso a maioria das variáveis aparentemente apresentação distribuição normal dos dados fenotípicos. Dessa forma, vamos prosseguir para a obtenção dos blups.
+
+## Genotype-environment analysis by mixed-effect models
+
+Primeiro, vou criar uma função para obter os blups e alguns parâmetros do nosso modelo.
+
+```{r}
+BLUPS_par <- function(model, trait) {
+  BLUP <- ranef(model, condVar = TRUE)$Clone
+  PEV <-
+    c(attr(BLUP, "postVar")) # PEV is a vector of error variances associated with each individual BLUP... # it tells you about how confident you should be in the estimate of an individual CLONE's BLUP value.
+  Clone.var <-
+    c(VarCorr(model)$Clone) # Extract the variance component for CLONE
+  ResidVar <-
+    (attr(VarCorr(model), "sc")) ^ 2 # Extract the residual variance component
+  Ano <-
+    c(VarCorr(model)$Ano) # Extract the variance component for Ano.Bloco
+  Ano.Bloco <-
+    c(VarCorr(model)$Ano.Bloco) # Extract the variance component for Ano.Bloco
+  # You will need a line like the one above for every random effect (not for fixed effects)
+  out <-
+    BLUP / (1 - (PEV / Clone.var)) # This is the actual de-regress part (the BLUP for CLONE is divided by (1 - PEV/CLONE.var))
+  r2 <-
+    1 - (PEV / Clone.var) # Reliability: a confidence value for a BLUP (0 to 1 scale)
+  H2 = Clone.var / (Clone.var + Ano.Bloco + ResidVar) # An estimate of the broad-sense heritability, must change this formula when you change the model analysis
+  wt = (1 - H2) / ((0.1 + (1 - r2) / r2) * H2) # Weights for each de-regressed BLUP
+  # There is a paper the determined this crazy formula, Garrick et al. 2009. I wouldn't pay much attn. to it.
+  # These weights will be used in the second-step (e.g. cross-validation) to account for what we've done in this step
+  # The weights will be fit as error variances associated with each residual value
+  VarComps <- as.data.frame(VarCorr(model))
+  
+  return(
+    list(
+      Trait = trait,
+      drgBLUP = out,
+      BLUP = BLUP,
+      weights = wt,
+      varcomps = VarComps,
+      H2 = H2,
+      Reliability = r2,
+      model = model
+    )
+  )
+}
+
+save(BLUPS_par, file = "output/BLUPS_par.Rdata")
+```
+
+
+### The BLUP model
+
+Aqui temos que lembrar que possuímos outliers para algumas características e também que devemos excluir o ano 2017 para algumas. 
+
+Vou criar um loop onde informo quais características onde  esse ano deverá ser excluído e também utilizar a função de remover outliers.
+
+As características que devemos excluir o ano 2017 são Porte, Branching_Level, Staygreen, AMD, MS, Nº Hastes e PROD.AMD. 
+
+```{r}
+excluir_2017 <- c("Porte", "Branching_Level", "Staygreen", "AMD", "MS", "Nº Hastes" , "PROD.AMD")
+```
+
+Usaremos esse vetor dentro do loop para exclusão do ano 2017 para essas variáveis.
+
+Vamos converter todas as variáveis para numéricas agora.
+
+```{r}
+traits <- colnames(pheno)[4:21]
+pheno<- pheno %>% 
+  mutate_at(traits, as.numeric)
+```
+
+Agora vamos realizar a análise de modelos mistos para obter os blups.
+
+```{r}
+load("output/BLUPS_par.Rdata")
+
+registerDoParallel(cores = 6) # Specify the number of cores (my lab computer has 8; I will use 6 of them)
+
+resultMM <- foreach(a = traits, i = icount(), .inorder = TRUE) %dopar% {
+  require(lme4)
+  require(dplyr)
+  library(purrr)
+  
+  # Loop para exclusão do ano 2017 de acordo com o vetor com os nomes da variáveis descritos anteriormente.
+  if (a %in% excluir_2017) {
+    data <- pheno %>%
+      filter(Ano != 2017) %>%
+      droplevels()
+  } else{
+    data <- pheno
+  }
+  
+  # Exclusão dos primeiros outliers encontrados
+  outliers <- boxplot(data[i+3], plot = FALSE)$out
+  
+  if(!is_empty(outliers)){
+  data <- filter(data,data[i+3] != outliers)
+  }
+  
+  model <- lmer(data = data,
+                formula = get(traits[i]) ~ (1 |Clone) + Ano + (1|Ano.Bloco)) # Clone and Ano.Bloco are random and Ano is fixed
+  
+  
+  result <- BLUPS_par(model, traits[i])
+}
+
+save(resultMM, file = "output/resultMM.Rdata")
+```
+
+### BLUPS for `Clone`
+
+Como usei "foreach" para executar cada análise do estágio 1 em paralelo, cada característica está em um elemento separado de uma lista
+Precisamos processar o objeto resultMM em um data.frame ou matriz para análise posterior.
+
+```{r}
+load("output/resultMM.Rdata")
+
+BLUPS <-
+  data.frame(Clone = unique(pheno$Clone), stringsAsFactors = F)
+
+H2 <- data.frame(H2 = "H2",
+                 stringsAsFactors = F)
+
+varcomp <-
+  data.frame(
+    grp = c("Clone", "Ano", "Ano.Bloco", "Residual"),
+    stringsAsFactors = F
+  )
+# Aqui vamos obter os BLUPS para cada clone
+
+for (i in 1:length(resultMM)) {
+  data <-
+    data.frame(Clone = rownames(resultMM[[i]]$BLUP),
+               stringsAsFactors = F)
+  
+  data[, resultMM[[i]]$Trait] <- resultMM[[i]]$BLUP
+  
+  BLUPS <- merge(BLUPS, data, by = "Clone", all.x = T)
+  
+  H2[, resultMM[[i]]$Trait] <- resultMM[[i]]$H2
+  
+  colnames(resultMM[[i]]$varcomps) <-
+    c(
+      "grp",
+      "var1",
+      "var2",
+      paste("vcov", resultMM[[i]]$Trait, sep = "."),
+      paste("sdcor", resultMM[[i]]$Trait, sep = ".")
+    )
+  
+  varcomp <- varcomp %>%
+    right_join(resultMM[[i]]$varcomps)
+}
+
+rownames(BLUPS) <- BLUPS$Clone
+```
+
+Salvando os resultados dos BLUPs e dos parâmetros
+
+```{r}
+saveRDS(BLUPS, file = "output/BLUPS.RDS")
+
+write.csv(BLUPS,
+          "output/BLUPS.csv",
+          row.names = F,
+          quote = F)
+
+write.csv(H2,
+          "output/herdabilidade.csv",
+          row.names = F,
+          quote = F)
+```
+
+### Ploting BLUPS for all traits
+
+Primeiros, vou somar a média das variáveis com os BLUPS para melhor interpretação.
+
+```{r}
+BLUPS<-readRDS("output/BLUPS.RDS")
+media_pheno <- as.data.frame(pheno %>%
+                               summarise_if(is.numeric, mean, na.rm = TRUE))
+
+write.table(media_pheno, "output/media_pheno.csv")
+
+phen<-
+  data.frame(Clone = unique(pheno$Clone), stringsAsFactors = F)
+
+for (i in traits) {
+  phen[i] <- BLUPS[i] + media_pheno[, i]
+}
+```
+
+Vamos plotar os boxplot das variaveis.
+
+```{r}
+phen %>%
+  pivot_longer(2:19, names_to = "Variable", values_to = "Values") %>%
+  ggplot() +
+  geom_boxplot(aes(y = Values, fill = Variable), show.legend = FALSE) +
+  facet_wrap(. ~ Variable, ncol = 6, scales = "free") +
+  expand_limits(y = 0) +
+  theme_bw()
+```
+
+Aqui vamos avaliar apenas a distribuição dos BLUPs sem a média.
+
+```{r}
+BLUPS %>%
+  pivot_longer(2:19, names_to = "Variable", values_to = "Values") %>%
+  ggplot() +
+  geom_density(aes(x = Values), show.legend = FALSE) +
+  facet_wrap(. ~ Variable, ncol = 6, scales = "free") +
+  expand_limits(y = 0) +
+  theme_bw()
+```
+
+Aparentemente a maioria dos BLUPs para as variáveis seguem distribuição normal e pode ser aplicada a GWS pelos métodos convencionais.

@@ -1,17 +1,21 @@
-name: "Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava"
+name: "Genomic Selection for Drought Tolerance"
 output_dir: ../docs
 navbar:
-  title: "Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava"
+  title: "Genomic Selection for Drought Tolerance"
   left:
   - text: Home
     href: index.html
+  - text: Phenotype
+    href: phenotype.html
+  - text: GWS
+    href: GWS.html
   - text: About
     href: about.html
   - text: License
     href: license.html
 output:
   workflowr::wflow_html:
-    toc: yes
-    toc_float: yes
-    theme: cosmo
-    highlight: textmate
+    toc: true
+    toc_float: true
+    theme: flatly
+    highlight: haddock

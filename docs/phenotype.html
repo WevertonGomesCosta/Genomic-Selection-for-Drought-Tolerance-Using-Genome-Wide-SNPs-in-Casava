@@ -1,0 +1,4502 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Costa, W. G." />
+
+<meta name="date" content="2022-11-10" />
+
+<title>Phenotype Analysis of Brazilian Drought Trials</title>
+
+<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; } /* Alert */
+code span.an { color: #008000; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #0000ff; } /* ControlFlow */
+code span.ch { color: #008080; } /* Char */
+code span.cn { } /* Constant */
+code span.co { color: #008000; } /* Comment */
+code span.cv { color: #008000; } /* CommentVar */
+code span.do { color: #008000; } /* Documentation */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.im { } /* Import */
+code span.in { color: #008000; } /* Information */
+code span.kw { color: #0000ff; } /* Keyword */
+code span.op { } /* Operator */
+code span.ot { color: #ff4000; } /* Other */
+code span.pp { color: #ff4000; } /* Preprocessor */
+code span.sc { color: #008080; } /* SpecialChar */
+code span.ss { color: #008080; } /* SpecialString */
+code span.st { color: #008080; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #008080; } /* VerbatimString */
+code span.wa { color: #008000; font-weight: bold; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Genomic Selection for Drought Tolerance</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="phenotype.html">Phenotype</a>
+</li>
+<li>
+  <a href="GWS.html">GWS</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Phenotype Analysis of Brazilian Drought
+Trials</h1>
+<h4 class="author">Costa, W. G.<a href="#fn1" class="footnote-ref"
+id="fnref1"><sup>1</sup></a></h4>
+<h4 class="date">2022-11-10</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2022-11-10
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong>
+<code>Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.0). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown file has staged changes. To know which version of the
+R Markdown file created these results, you’ll want to first commit it to
+the Git repo. If you’re still working on the analysis, you can ignore
+this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20221020code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20221020)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20221020code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20221020)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatreeb78c842a0b90fe20a5a7c904c9efb5deb23fdcb5targetblankb78c842a">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/b78c842a0b90fe20a5a7c904c9efb5deb23fdcb5" target="_blank">b78c842</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatreeb78c842a0b90fe20a5a7c904c9efb5deb23fdcb5targetblankb78c842a"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/b78c842a0b90fe20a5a7c904c9efb5deb23fdcb5" target="_blank">b78c842</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  data/AllGBSandDArTClones_ReadyForGP_Dos.rds
+    Untracked:  data/DCas22_GBSandDArT_ReadyForGP_Dos.rds
+    Untracked:  data/allchrAR08.txt
+    Untracked:  data/convet_haplo_diplo.txt
+    Untracked:  output/BLUPS.RDS
+    Untracked:  output/BLUPS.csv
+    Untracked:  output/BLUPS_par.Rdata
+    Untracked:  output/herdabilidade.csv
+    Untracked:  output/media_pheno.csv
+    Untracked:  output/resultMM.Rdata
+
+Unstaged changes:
+    Deleted:    BLUPS.RDS
+    Deleted:    BLUPS.csv
+    Deleted:    BLUPs.Rdata
+    Deleted:    RR-BLUP-method.pdf
+    Modified:   analysis/GWS.Rmd
+    Modified:   analysis/phenotype.Rmd
+    Deleted:    cor-methods-RR_BLUP.pdf
+    Deleted:    deregress.Rdata
+    Deleted:    geno.txt
+    Deleted:    geno2.txt
+    Deleted:    herdabilidade.csv
+
+Staged changes:
+    New:        BLUPS.RDS
+    New:        BLUPS.csv
+    New:        BLUPs.Rdata
+    New:        RR-BLUP-method.pdf
+    New:        analysis/GWS.Rmd
+    Modified:   analysis/_site.yml
+    Modified:   analysis/about.Rmd
+    Modified:   analysis/index.Rmd
+    Modified:   analysis/license.Rmd
+    New:        analysis/phenotype.Rmd
+    New:        cor-methods-RR_BLUP.pdf
+    New:        data/Fenótipos Desregressados GBS Todos.RDS
+    New:        data/Genomic Selection for Drought Tolerance Using Genome-Wide SNPs in Maize.pdf
+    New:        data/Phenotyping v2.xlsx
+    New:        data/Phenotyping.xlsx
+    New:        data/SNPs.rds
+    New:        data/deregress.Rdata
+    New:        data/geno.rds
+    New:        data/geno.txt
+    New:        deregress.Rdata
+    New:        geno.txt
+    New:        geno2.txt
+    New:        herdabilidade.csv
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+There are no past versions. Publish this analysis with
+<code>wflow_publish()</code> to start tracking its development.
+</p>
+<hr>
+</div>
+</div>
+</div>
+<div id="data-and-libraries" class="section level2">
+<h2>Data and libraries</h2>
+<p>Load Libraries</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(ComplexHeatmap)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(metan)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DataExplorer)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(doParallel)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>())</span></code></pre></div>
+<div id="data-import-and-manipulation" class="section level3">
+<h3>Data import and manipulation</h3>
+<p>Vamos importar o conjunto de dados fenotípicos, excluindo as
+variaveis sem informações e as variaveis Local (redundante com Ano) e
+Tratamento (só uma observação).</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pheno <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">&quot;data/Phenotyping.xlsx&quot;</span>,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">na =</span> <span class="st">&quot;NA&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_if</span>( <span class="sc">~</span> <span class="sc">!</span><span class="fu">all</span>(<span class="fu">is.na</span>(.))) <span class="sc">%&gt;%</span>  <span class="co"># Deleting traits without information </span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">&quot;Local&quot;</span>, <span class="st">&quot;Tratamento&quot;</span>))</span></code></pre></div>
+<p>Vamos realizar alguma manipulações para ajustar nosso banco de dados
+e para facilitar a visualização da análise exploratória.</p>
+<p>Primeiro, vamos converter as variaveis que são caracter em fatores.
+Depois vamos converter as variaveis que são referentes as notas para
+inteiro e logo em seguida em fatores. Após isso, vamos criar a variável
+ANo.Bloco para o aninhamento no modelo para obtenção dos BLUPs.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pheno <span class="ot">&lt;-</span> pheno <span class="sc">%&gt;%</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_if</span>(is.character, as.factor) <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">c</span>(<span class="st">&quot;RF&quot;</span>, <span class="st">&quot;Ácaro&quot;</span>, <span class="st">&quot;Vigor&quot;</span>, <span class="st">&quot;Branching_Level&quot;</span>), as.integer) <span class="sc">%&gt;%</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_if</span>(is.integer, as.factor) <span class="sc">%&gt;%</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Ano&quot;</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bloco&quot;</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Porte&quot;</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Incidence_Mites&quot;</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Stand_Final&quot;</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Staygreen&quot;</span>,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Flowering&quot;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    as.factor</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> <span class="co"># Convert Ano and Bloco, and traits in factors</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Ano.Bloco =</span> <span class="fu">factor</span>(<span class="fu">interaction</span>(Ano, Bloco)))   <span class="co"># Convert Ano.Bloco interaction in factors</span></span></code></pre></div>
+</div>
+</div>
+<div id="exploratory-data-analysis" class="section level2">
+<h2>Exploratory Data Analysis</h2>
+<p>Análise introdutória de todo conjunto de dados</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">introduce</span>(pheno) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">escape =</span> F, <span class="at">align =</span> <span class="st">&#39;c&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_classic</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;hover&quot;</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">full_width =</span> F,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="st">&quot;center&quot;</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">fixed_thead =</span> T</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<table class=" lightable-classic lightable-hover" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+rows
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+columns
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+discrete_columns
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+continuous_columns
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+all_missing_columns
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+total_missing_values
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+complete_rows
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+total_observations
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+memory_usage
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+2336
+</td>
+<td style="text-align:center;">
+28
+</td>
+<td style="text-align:center;">
+13
+</td>
+<td style="text-align:center;">
+15
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+16771
+</td>
+<td style="text-align:center;">
+440
+</td>
+<td style="text-align:center;">
+65408
+</td>
+<td style="text-align:center;">
+449920
+</td>
+</tr>
+</tbody>
+</table>
+<p>Não temos nenhuma coluna que tenha todas observações ausentes, mas
+temos muitos valores ausentes em todo conjunto de dados. Algumas
+manipulações deverão ser realizadas para melhorar a qualidade dos
+dados.</p>
+<div id="analise-de-ano" class="section level3">
+<h3>Analise de Ano</h3>
+<p>Vamos produzir um heatmap para verificar a quantidade de clone em
+cada ano. Vou criar outro conjunto de dados com a contagem de Ano e
+Clone. Depois vou criar os objetos correspondentes à matriz de clones e
+de anos. Por fim, criei a matriz que representa a presença e ausencia do
+clone no ano.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pheno2 <span class="ot">&lt;-</span> pheno <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Ano, Clone)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>genmat <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(<span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">+</span> Clone, <span class="at">data =</span> pheno2)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>envmat <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(<span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">+</span> Ano, <span class="at">data =</span> pheno2)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>genenvmat <span class="ot">&lt;-</span> <span class="fu">t</span>(envmat) <span class="sc">%*%</span> genmat</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>genenvmat_ch <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(genenvmat <span class="sc">==</span> <span class="dv">1</span>, <span class="st">&quot;Present&quot;</span>, <span class="st">&quot;Abscent&quot;</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">Heatmap</span>(</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  genenvmat_ch,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&quot;white&quot;</span>, <span class="st">&quot;tomato&quot;</span>),</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_column_names =</span> F,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">heatmap_legend_param =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">&quot;&quot;</span>),</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_title =</span> <span class="st">&quot;Genotypes&quot;</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">row_title =</span> <span class="st">&quot;Environments&quot;</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p><img src="figure/phenotype.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Pelo heatmap, fica claro que o ano 2016 possui muitas poucas
+observações. Então, devemos eliminá-lo.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pheno <span class="ot">&lt;-</span> pheno <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Ano <span class="sc">!=</span> <span class="dv">2016</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">droplevels</span>()</span></code></pre></div>
+<p>Apenas para conferência, vamos visualizar novamente o heatmap de
+clones por ano.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>pheno2<span class="ot">&lt;-</span> pheno <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Ano, Clone)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>genmat <span class="ot">=</span> <span class="fu">model.matrix</span>( <span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">+</span> Clone, <span class="at">data =</span> pheno2)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>envmat <span class="ot">=</span> <span class="fu">model.matrix</span>( <span class="sc">~</span> <span class="sc">-</span><span class="dv">1</span> <span class="sc">+</span> Ano, <span class="at">data =</span> pheno2)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>genenvmat <span class="ot">=</span> <span class="fu">t</span>(envmat) <span class="sc">%*%</span> genmat</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>genenvmat_ch <span class="ot">=</span> <span class="fu">ifelse</span>(genenvmat <span class="sc">==</span> <span class="dv">1</span>, <span class="st">&quot;Present&quot;</span>, <span class="st">&quot;Abscent&quot;</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">Heatmap</span>(</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  genenvmat_ch,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">col =</span> <span class="fu">c</span>(<span class="st">&quot;white&quot;</span>, <span class="st">&quot;tomato&quot;</span>),</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_column_names =</span> F,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">heatmap_legend_param =</span> <span class="fu">list</span>(<span class="at">title =</span> <span class="st">&quot;&quot;</span>),</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">column_title =</span> <span class="st">&quot;Genotypes&quot;</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">row_title =</span> <span class="st">&quot;Environments&quot;</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p><img src="figure/phenotype.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Aqui, é possível obervar que nosso conjunto de dados possui clones
+que foram avaliados em apenas um ano. Vamos visualizar isso, para
+verificarmos quantos clones foram avaliados de acordo com o número de
+anos.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>pheno2 <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Clone) <span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(n) <span class="sc">%&gt;%</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">escape =</span> F,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">align =</span> <span class="st">&#39;c&#39;</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;N of Environments&quot;</span>, <span class="st">&quot;Number of genotypes&quot;</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_classic</span>(</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;hover&quot;</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">full_width =</span> F,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="st">&quot;center&quot;</span>,</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">fixed_thead =</span> T</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<pre><code>Storing counts in `nn`, as `n` already present in input
+i Use `name = &quot;new_name&quot;` to pick a new name.</code></pre>
+<table class=" lightable-classic lightable-hover" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+N of Environments
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Number of genotypes
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+350
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+72
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+20
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+5
+</td>
+</tr>
+</tbody>
+</table>
+<p>Apenas 5 clones foram avaliados em todos os anos, isso possivelmente
+diminuirá nossa acurácia do modelos.</p>
+<p>Além disso, observe que os anos diferem quanto ao número de clones
+avaliados:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pheno2 <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Ano) <span class="sc">%&gt;%</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">length</span>(Clone)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">escape =</span> F,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">align =</span> <span class="st">&#39;c&#39;</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Environments&quot;</span>, <span class="st">&quot;Number of genotypes&quot;</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_classic</span>(</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;hover&quot;</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">full_width =</span> F,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="st">&quot;center&quot;</span>,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">fixed_thead =</span> T</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<table class=" lightable-classic lightable-hover" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Environments
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Number of genotypes
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+2017
+</td>
+<td style="text-align:center;">
+165
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2018
+</td>
+<td style="text-align:center;">
+138
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2019
+</td>
+<td style="text-align:center;">
+133
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2020
+</td>
+<td style="text-align:center;">
+138
+</td>
+</tr>
+</tbody>
+</table>
+<p>Outro fator que diminui a acurácia, e por isso adotar modelos mistos
+na análise é o mais indicado para a obtenção dos BLUPS.</p>
+<p>Podemos verificar quantos clones temos em comum entre os anos:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>genenvmat <span class="sc">%*%</span> <span class="fu">t</span>(genenvmat) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">escape =</span> F, <span class="at">align =</span> <span class="st">&#39;c&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_classic</span>(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;hover&quot;</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">full_width =</span> F,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="st">&quot;center&quot;</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">fixed_thead =</span> T</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<table class=" lightable-classic lightable-hover" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Ano2017
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Ano2018
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Ano2019
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Ano2020
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Ano2017
+</td>
+<td style="text-align:center;">
+165
+</td>
+<td style="text-align:center;">
+42
+</td>
+<td style="text-align:center;">
+22
+</td>
+<td style="text-align:center;">
+14
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ano2018
+</td>
+<td style="text-align:center;">
+42
+</td>
+<td style="text-align:center;">
+138
+</td>
+<td style="text-align:center;">
+39
+</td>
+<td style="text-align:center;">
+16
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ano2019
+</td>
+<td style="text-align:center;">
+22
+</td>
+<td style="text-align:center;">
+39
+</td>
+<td style="text-align:center;">
+133
+</td>
+<td style="text-align:center;">
+29
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ano2020
+</td>
+<td style="text-align:center;">
+14
+</td>
+<td style="text-align:center;">
+16
+</td>
+<td style="text-align:center;">
+29
+</td>
+<td style="text-align:center;">
+138
+</td>
+</tr>
+</tbody>
+</table>
+<p>O ano 2020 apresenta menor número de clones em comum, no entanto,
+vamos mantê-lo para realizar as análises.</p>
+</div>
+<div id="análise-das-variáveis" class="section level3">
+<h3>Análise das variáveis</h3>
+<p>Agora, iremos analisar a frequência para cada característica
+discreta.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_bar</span>(pheno)</span></code></pre></div>
+<p><img src="figure/phenotype.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/phenotype.Rmd/unnamed-chunk-11-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>A Incidencia de ácaros e Florescimento possuem poucas informações
+para alguns níveis e muitos NA’s, também vamos excluir essas
+variáveis.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>pheno <span class="ot">&lt;-</span> pheno  <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(Incidence_Mites, Flowering))</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_bar</span>(pheno)</span></code></pre></div>
+<p><img src="figure/phenotype.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/phenotype.Rmd/unnamed-chunk-12-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Vamos observar apenas os valores ausentes agora, para verificar as
+proporções.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_missing</span>(pheno)</span></code></pre></div>
+<p><img src="figure/phenotype.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Temos uma proporção alta de valor ausente para Vigor, Leaf_Lenght,
+Canopy_Width e Canopy_Lenght, também vou excluir-lás.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>pheno <span class="ot">&lt;-</span> pheno <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(Vigor, Leaf_Lenght, Canopy_Width, Canopy_Lenght))</span></code></pre></div>
+<p>Vamos verificar a distribuição das características por ano agora.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_bar</span>(pheno, <span class="at">by =</span> <span class="st">&quot;Ano&quot;</span>)</span></code></pre></div>
+<p><img src="figure/phenotype.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Para Porte, Branching_Level e Staygreen temos muitos valores ausentes
+para o ano de 2017, possivelmente não houve avaliação nesse ano para
+essas características. Para obter os BLUPs, teremos que remover esse Ano
+do banco de dados.</p>
+<p>Agora vamos observar os histogramas das varaiveis quantitativas:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_histogram</span>(pheno)</span></code></pre></div>
+<p><img src="figure/phenotype.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Vimos aqui que as variáveis quantitativas apresentam correlações
+entre si, principalmente entre PROD.AMD com PTR e AMD com MS</p>
+<p>Vamos avaliar as estatisticas descritivas da combinação entre clone e
+ano para as variaveis.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ge_details</span>(pheno, Ano, Clone, <span class="at">resp =</span> <span class="fu">everything</span>()) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>(<span class="at">escape =</span> F, <span class="at">align =</span> <span class="st">&#39;c&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_classic</span>(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;hover&quot;</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">full_width =</span> F,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="st">&quot;center&quot;</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">fixed_thead =</span> T</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<table class=" lightable-classic lightable-hover" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Parameters
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+NR.P
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+PTR
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+PPA
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+MS
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+PROD.AMD
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+AP
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+HI
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+AMD
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+CR
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+DR
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+DCaule
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Nº Hastes
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+Mean
+</td>
+<td style="text-align:center;">
+4.28
+</td>
+<td style="text-align:center;">
+4.88
+</td>
+<td style="text-align:center;">
+14.2
+</td>
+<td style="text-align:center;">
+28.97
+</td>
+<td style="text-align:center;">
+1.51
+</td>
+<td style="text-align:center;">
+1.19
+</td>
+<td style="text-align:center;">
+24.23
+</td>
+<td style="text-align:center;">
+24.42
+</td>
+<td style="text-align:center;">
+23.17
+</td>
+<td style="text-align:center;">
+28.82
+</td>
+<td style="text-align:center;">
+2.11
+</td>
+<td style="text-align:center;">
+2.13
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+SE
+</td>
+<td style="text-align:center;">
+0.06
+</td>
+<td style="text-align:center;">
+0.09
+</td>
+<td style="text-align:center;">
+0.22
+</td>
+<td style="text-align:center;">
+0.17
+</td>
+<td style="text-align:center;">
+0.04
+</td>
+<td style="text-align:center;">
+0.01
+</td>
+<td style="text-align:center;">
+0.27
+</td>
+<td style="text-align:center;">
+0.17
+</td>
+<td style="text-align:center;">
+0.13
+</td>
+<td style="text-align:center;">
+0.18
+</td>
+<td style="text-align:center;">
+0.01
+</td>
+<td style="text-align:center;">
+0.03
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+SD
+</td>
+<td style="text-align:center;">
+2.52
+</td>
+<td style="text-align:center;">
+4.06
+</td>
+<td style="text-align:center;">
+10.17
+</td>
+<td style="text-align:center;">
+6.29
+</td>
+<td style="text-align:center;">
+1.27
+</td>
+<td style="text-align:center;">
+0.33
+</td>
+<td style="text-align:center;">
+12.13
+</td>
+<td style="text-align:center;">
+6.11
+</td>
+<td style="text-align:center;">
+5.89
+</td>
+<td style="text-align:center;">
+7.99
+</td>
+<td style="text-align:center;">
+0.38
+</td>
+<td style="text-align:center;">
+0.95
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+CV
+</td>
+<td style="text-align:center;">
+58.9
+</td>
+<td style="text-align:center;">
+83.19
+</td>
+<td style="text-align:center;">
+71.66
+</td>
+<td style="text-align:center;">
+21.73
+</td>
+<td style="text-align:center;">
+84.4
+</td>
+<td style="text-align:center;">
+27.81
+</td>
+<td style="text-align:center;">
+50.08
+</td>
+<td style="text-align:center;">
+25.05
+</td>
+<td style="text-align:center;">
+25.42
+</td>
+<td style="text-align:center;">
+27.75
+</td>
+<td style="text-align:center;">
+17.9
+</td>
+<td style="text-align:center;">
+44.53
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Min
+</td>
+<td style="text-align:center;">
+0 (BGM-0019 in 2019)
+</td>
+<td style="text-align:center;">
+0 (BGM-0019 in 2019)
+</td>
+<td style="text-align:center;">
+0 (BGM-0044 in 2018)
+</td>
+<td style="text-align:center;">
+0 (BGM-0044 in 2018)
+</td>
+<td style="text-align:center;">
+0 (BGM-0044 in 2018)
+</td>
+<td style="text-align:center;">
+0 (BGM-0044 in 2018)
+</td>
+<td style="text-align:center;">
+0 (BGM-0019 in 2019)
+</td>
+<td style="text-align:center;">
+7.33 (BGM-0626 in 2020)
+</td>
+<td style="text-align:center;">
+0 (BGM-0044 in 2018)
+</td>
+<td style="text-align:center;">
+0 (BGM-0044 in 2018)
+</td>
+<td style="text-align:center;">
+1.01 (BGM-0592 in 2018)
+</td>
+<td style="text-align:center;">
+1 (BGM-0036 in 2018)
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Max
+</td>
+<td style="text-align:center;">
+15.67 (2012-107-002 in 2019)
+</td>
+<td style="text-align:center;">
+22.2 (BGM-1267 in 2018)
+</td>
+<td style="text-align:center;">
+61.17 (BGM-2124 in 2020)
+</td>
+<td style="text-align:center;">
+48.34 (BGM-1015 in 2020)
+</td>
+<td style="text-align:center;">
+8.87 (BGM-0396 in 2018)
+</td>
+<td style="text-align:center;">
+3.03 (BR-11-24-156 in 2020)
+</td>
+<td style="text-align:center;">
+71.97 (BGM-1315 in 2018)
+</td>
+<td style="text-align:center;">
+43.69 (BGM-1015 in 2020)
+</td>
+<td style="text-align:center;">
+47.33 (BGM-0396 in 2018)
+</td>
+<td style="text-align:center;">
+63.3 (BRS Mulatinha in 2018)
+</td>
+<td style="text-align:center;">
+4.37 (BRS Tapioqueira in 2020)
+</td>
+<td style="text-align:center;">
+6.67 (BGM-0714 in 2019)
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+MinENV
+</td>
+<td style="text-align:center;">
+2018 (1.6)
+</td>
+<td style="text-align:center;">
+2017 (2.75)
+</td>
+<td style="text-align:center;">
+2017 (8.47)
+</td>
+<td style="text-align:center;">
+2020 (26.21)
+</td>
+<td style="text-align:center;">
+2019 (1.32)
+</td>
+<td style="text-align:center;">
+2017 (1)
+</td>
+<td style="text-align:center;">
+2020 (18.61)
+</td>
+<td style="text-align:center;">
+2020 (21.56)
+</td>
+<td style="text-align:center;">
+2017 (19.72)
+</td>
+<td style="text-align:center;">
+2017 (24.49)
+</td>
+<td style="text-align:center;">
+2018 (2.02)
+</td>
+<td style="text-align:center;">
+2018 (1.44)
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+MaxENV
+</td>
+<td style="text-align:center;">
+2019 (5.74)
+</td>
+<td style="text-align:center;">
+2020 (6.52)
+</td>
+<td style="text-align:center;">
+2020 (25.87)
+</td>
+<td style="text-align:center;">
+2018 (34.91)
+</td>
+<td style="text-align:center;">
+2018 (1.81)
+</td>
+<td style="text-align:center;">
+2019 (1.48)
+</td>
+<td style="text-align:center;">
+2018 (31.84)
+</td>
+<td style="text-align:center;">
+2018 (30.78)
+</td>
+<td style="text-align:center;">
+2019 (27.14)
+</td>
+<td style="text-align:center;">
+2018 (34.28)
+</td>
+<td style="text-align:center;">
+2017 (2.16)
+</td>
+<td style="text-align:center;">
+2019 (2.71)
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+MinGEN
+</td>
+<td style="text-align:center;">
+BGM-0044 (0)
+</td>
+<td style="text-align:center;">
+BGM-0044 (0)
+</td>
+<td style="text-align:center;">
+BGM-0044 (0)
+</td>
+<td style="text-align:center;">
+BGM-0044 (0)
+</td>
+<td style="text-align:center;">
+BGM-0044 (0)
+</td>
+<td style="text-align:center;">
+BGM-0044 (0)
+</td>
+<td style="text-align:center;">
+BGM-0044 (0)
+</td>
+<td style="text-align:center;">
+BGM-0626 (10.33)
+</td>
+<td style="text-align:center;">
+BGM-0044 (0)
+</td>
+<td style="text-align:center;">
+BGM-0044 (0)
+</td>
+<td style="text-align:center;">
+BGM-0048 (1.25)
+</td>
+<td style="text-align:center;">
+BGM-0066 (1)
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+MaxGEN
+</td>
+<td style="text-align:center;">
+2012-107-002 (11.33)
+</td>
+<td style="text-align:center;">
+IAC-14 (14.07)
+</td>
+<td style="text-align:center;">
+BGM-2124 (54.33)
+</td>
+<td style="text-align:center;">
+BGM-1015 (45.02)
+</td>
+<td style="text-align:center;">
+BGM-1023 (4.76)
+</td>
+<td style="text-align:center;">
+BGM-1200 (1.91)
+</td>
+<td style="text-align:center;">
+Mata_Fome_Branca (52.78)
+</td>
+<td style="text-align:center;">
+BGM-1015 (40.37)
+</td>
+<td style="text-align:center;">
+BGM-1956 (35.5)
+</td>
+<td style="text-align:center;">
+BGM-1956 (48.91)
+</td>
+<td style="text-align:center;">
+BGM-1523 (2.93)
+</td>
+<td style="text-align:center;">
+BGM-0451 (4.44)
+</td>
+</tr>
+</tbody>
+</table>
+<p>O genótipo BGM-0044 apresentou valores nulos para a maioria das
+características, como foi avaliado apenas no ano de 2018, é melhor
+excluí-lo.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>pheno<span class="ot">&lt;-</span> pheno <span class="sc">%&gt;%</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Clone <span class="sc">!=</span> <span class="st">&quot;BGM-0044&quot;</span>)<span class="sc">%&gt;%</span> </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">droplevels</span>()</span></code></pre></div>
+<p>Aparentemente não temos mais um genótipo que possa prejudicar nossa
+análise. Agora devemos avaliar as estatisticas descritivas apenas de
+clone para as variaveis.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">desc_stat</span>(pheno, <span class="at">by =</span> Ano) <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">escape =</span> F, <span class="at">align =</span> <span class="st">&#39;c&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_classic</span>(</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;hover&quot;</span>,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">full_width =</span> F,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="st">&quot;center&quot;</span>,</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">fixed_thead =</span> T</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<table class=" lightable-classic lightable-hover" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Ano
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+variable
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+cv
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+max
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+mean
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+median
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+min
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+sd.amo
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+se
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+ci.t
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+n.valid
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+2017
+</td>
+<td style="text-align:center;">
+AMD
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+-Inf
+</td>
+<td style="text-align:center;">
+NaN
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+Inf
+</td>
+<td style="text-align:center;">
+0.0000
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NaN
+</td>
+<td style="text-align:center;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2017
+</td>
+<td style="text-align:center;">
+AP
+</td>
+<td style="text-align:center;">
+21.0398
+</td>
+<td style="text-align:center;">
+1.6767
+</td>
+<td style="text-align:center;">
+1.0023
+</td>
+<td style="text-align:center;">
+1.0000
+</td>
+<td style="text-align:center;">
+0.4500
+</td>
+<td style="text-align:center;">
+0.2109
+</td>
+<td style="text-align:center;">
+0.0084
+</td>
+<td style="text-align:center;">
+0.0165
+</td>
+<td style="text-align:center;">
+632
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2017
+</td>
+<td style="text-align:center;">
+CR
+</td>
+<td style="text-align:center;">
+21.5823
+</td>
+<td style="text-align:center;">
+31.6667
+</td>
+<td style="text-align:center;">
+19.7236
+</td>
+<td style="text-align:center;">
+19.6667
+</td>
+<td style="text-align:center;">
+7.0000
+</td>
+<td style="text-align:center;">
+4.2568
+</td>
+<td style="text-align:center;">
+0.1719
+</td>
+<td style="text-align:center;">
+0.3376
+</td>
+<td style="text-align:center;">
+613
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2017
+</td>
+<td style="text-align:center;">
+DCaule
+</td>
+<td style="text-align:center;">
+16.7774
+</td>
+<td style="text-align:center;">
+3.3333
+</td>
+<td style="text-align:center;">
+2.1581
+</td>
+<td style="text-align:center;">
+2.1667
+</td>
+<td style="text-align:center;">
+1.2000
+</td>
+<td style="text-align:center;">
+0.3621
+</td>
+<td style="text-align:center;">
+0.0144
+</td>
+<td style="text-align:center;">
+0.0284
+</td>
+<td style="text-align:center;">
+629
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2017
+</td>
+<td style="text-align:center;">
+DR
+</td>
+<td style="text-align:center;">
+21.0039
+</td>
+<td style="text-align:center;">
+39.6900
+</td>
+<td style="text-align:center;">
+24.4889
+</td>
+<td style="text-align:center;">
+24.4733
+</td>
+<td style="text-align:center;">
+8.9867
+</td>
+<td style="text-align:center;">
+5.1436
+</td>
+<td style="text-align:center;">
+0.2077
+</td>
+<td style="text-align:center;">
+0.4080
+</td>
+<td style="text-align:center;">
+613
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2017
+</td>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+48.2942
+</td>
+<td style="text-align:center;">
+66.6827
+</td>
+<td style="text-align:center;">
+23.5691
+</td>
+<td style="text-align:center;">
+22.7255
+</td>
+<td style="text-align:center;">
+1.5744
+</td>
+<td style="text-align:center;">
+11.3825
+</td>
+<td style="text-align:center;">
+0.4612
+</td>
+<td style="text-align:center;">
+0.9058
+</td>
+<td style="text-align:center;">
+609
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2017
+</td>
+<td style="text-align:center;">
+MS
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+-Inf
+</td>
+<td style="text-align:center;">
+NaN
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+Inf
+</td>
+<td style="text-align:center;">
+0.0000
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NaN
+</td>
+<td style="text-align:center;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2017
+</td>
+<td style="text-align:center;">
+Nº Hastes
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+-Inf
+</td>
+<td style="text-align:center;">
+NaN
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+Inf
+</td>
+<td style="text-align:center;">
+0.0000
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NaN
+</td>
+<td style="text-align:center;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2017
+</td>
+<td style="text-align:center;">
+NR.P
+</td>
+<td style="text-align:center;">
+48.8708
+</td>
+<td style="text-align:center;">
+12.0000
+</td>
+<td style="text-align:center;">
+4.3530
+</td>
+<td style="text-align:center;">
+4.3330
+</td>
+<td style="text-align:center;">
+0.1250
+</td>
+<td style="text-align:center;">
+2.1273
+</td>
+<td style="text-align:center;">
+0.0860
+</td>
+<td style="text-align:center;">
+0.1689
+</td>
+<td style="text-align:center;">
+612
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2017
+</td>
+<td style="text-align:center;">
+PPA
+</td>
+<td style="text-align:center;">
+45.4973
+</td>
+<td style="text-align:center;">
+22.2220
+</td>
+<td style="text-align:center;">
+8.4677
+</td>
+<td style="text-align:center;">
+8.0750
+</td>
+<td style="text-align:center;">
+0.6940
+</td>
+<td style="text-align:center;">
+3.8526
+</td>
+<td style="text-align:center;">
+0.1542
+</td>
+<td style="text-align:center;">
+0.3029
+</td>
+<td style="text-align:center;">
+624
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2017
+</td>
+<td style="text-align:center;">
+PROD.AMD
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+-Inf
+</td>
+<td style="text-align:center;">
+NaN
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+Inf
+</td>
+<td style="text-align:center;">
+0.0000
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NaN
+</td>
+<td style="text-align:center;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2017
+</td>
+<td style="text-align:center;">
+PTR
+</td>
+<td style="text-align:center;">
+66.8379
+</td>
+<td style="text-align:center;">
+9.6700
+</td>
+<td style="text-align:center;">
+2.7517
+</td>
+<td style="text-align:center;">
+2.4310
+</td>
+<td style="text-align:center;">
+0.1160
+</td>
+<td style="text-align:center;">
+1.8392
+</td>
+<td style="text-align:center;">
+0.0743
+</td>
+<td style="text-align:center;">
+0.1459
+</td>
+<td style="text-align:center;">
+613
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2018
+</td>
+<td style="text-align:center;">
+AMD
+</td>
+<td style="text-align:center;">
+15.6937
+</td>
+<td style="text-align:center;">
+41.4284
+</td>
+<td style="text-align:center;">
+30.7820
+</td>
+<td style="text-align:center;">
+31.3500
+</td>
+<td style="text-align:center;">
+13.5318
+</td>
+<td style="text-align:center;">
+4.8309
+</td>
+<td style="text-align:center;">
+0.2794
+</td>
+<td style="text-align:center;">
+0.5498
+</td>
+<td style="text-align:center;">
+299
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2018
+</td>
+<td style="text-align:center;">
+AP
+</td>
+<td style="text-align:center;">
+28.0409
+</td>
+<td style="text-align:center;">
+1.9967
+</td>
+<td style="text-align:center;">
+1.0953
+</td>
+<td style="text-align:center;">
+1.0600
+</td>
+<td style="text-align:center;">
+0.4867
+</td>
+<td style="text-align:center;">
+0.3071
+</td>
+<td style="text-align:center;">
+0.0159
+</td>
+<td style="text-align:center;">
+0.0313
+</td>
+<td style="text-align:center;">
+373
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2018
+</td>
+<td style="text-align:center;">
+CR
+</td>
+<td style="text-align:center;">
+27.1625
+</td>
+<td style="text-align:center;">
+47.3333
+</td>
+<td style="text-align:center;">
+23.6102
+</td>
+<td style="text-align:center;">
+23.0000
+</td>
+<td style="text-align:center;">
+9.5000
+</td>
+<td style="text-align:center;">
+6.4131
+</td>
+<td style="text-align:center;">
+0.3715
+</td>
+<td style="text-align:center;">
+0.7311
+</td>
+<td style="text-align:center;">
+298
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2018
+</td>
+<td style="text-align:center;">
+DCaule
+</td>
+<td style="text-align:center;">
+22.3814
+</td>
+<td style="text-align:center;">
+3.7317
+</td>
+<td style="text-align:center;">
+2.0189
+</td>
+<td style="text-align:center;">
+1.9800
+</td>
+<td style="text-align:center;">
+1.0133
+</td>
+<td style="text-align:center;">
+0.4519
+</td>
+<td style="text-align:center;">
+0.0235
+</td>
+<td style="text-align:center;">
+0.0463
+</td>
+<td style="text-align:center;">
+369
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2018
+</td>
+<td style="text-align:center;">
+DR
+</td>
+<td style="text-align:center;">
+23.3943
+</td>
+<td style="text-align:center;">
+63.3033
+</td>
+<td style="text-align:center;">
+34.7356
+</td>
+<td style="text-align:center;">
+34.4400
+</td>
+<td style="text-align:center;">
+14.1300
+</td>
+<td style="text-align:center;">
+8.1262
+</td>
+<td style="text-align:center;">
+0.4707
+</td>
+<td style="text-align:center;">
+0.9264
+</td>
+<td style="text-align:center;">
+298
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2018
+</td>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+42.0024
+</td>
+<td style="text-align:center;">
+71.9673
+</td>
+<td style="text-align:center;">
+32.2503
+</td>
+<td style="text-align:center;">
+32.6091
+</td>
+<td style="text-align:center;">
+0.0000
+</td>
+<td style="text-align:center;">
+13.5459
+</td>
+<td style="text-align:center;">
+0.7719
+</td>
+<td style="text-align:center;">
+1.5188
+</td>
+<td style="text-align:center;">
+308
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2018
+</td>
+<td style="text-align:center;">
+MS
+</td>
+<td style="text-align:center;">
+13.6086
+</td>
+<td style="text-align:center;">
+46.0784
+</td>
+<td style="text-align:center;">
+35.3819
+</td>
+<td style="text-align:center;">
+36.0000
+</td>
+<td style="text-align:center;">
+18.1818
+</td>
+<td style="text-align:center;">
+4.8150
+</td>
+<td style="text-align:center;">
+0.2785
+</td>
+<td style="text-align:center;">
+0.5480
+</td>
+<td style="text-align:center;">
+299
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2018
+</td>
+<td style="text-align:center;">
+Nº Hastes
+</td>
+<td style="text-align:center;">
+33.4885
+</td>
+<td style="text-align:center;">
+3.3333
+</td>
+<td style="text-align:center;">
+1.4379
+</td>
+<td style="text-align:center;">
+1.3333
+</td>
+<td style="text-align:center;">
+1.0000
+</td>
+<td style="text-align:center;">
+0.4815
+</td>
+<td style="text-align:center;">
+0.0249
+</td>
+<td style="text-align:center;">
+0.0490
+</td>
+<td style="text-align:center;">
+373
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2018
+</td>
+<td style="text-align:center;">
+NR.P
+</td>
+<td style="text-align:center;">
+63.2913
+</td>
+<td style="text-align:center;">
+6.2500
+</td>
+<td style="text-align:center;">
+1.6249
+</td>
+<td style="text-align:center;">
+1.4085
+</td>
+<td style="text-align:center;">
+0.1900
+</td>
+<td style="text-align:center;">
+1.0284
+</td>
+<td style="text-align:center;">
+0.0588
+</td>
+<td style="text-align:center;">
+0.1157
+</td>
+<td style="text-align:center;">
+306
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2018
+</td>
+<td style="text-align:center;">
+PPA
+</td>
+<td style="text-align:center;">
+69.0625
+</td>
+<td style="text-align:center;">
+31.6000
+</td>
+<td style="text-align:center;">
+8.7610
+</td>
+<td style="text-align:center;">
+7.2000
+</td>
+<td style="text-align:center;">
+1.0000
+</td>
+<td style="text-align:center;">
+6.0506
+</td>
+<td style="text-align:center;">
+0.3022
+</td>
+<td style="text-align:center;">
+0.5940
+</td>
+<td style="text-align:center;">
+401
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2018
+</td>
+<td style="text-align:center;">
+PROD.AMD
+</td>
+<td style="text-align:center;">
+91.8742
+</td>
+<td style="text-align:center;">
+8.8669
+</td>
+<td style="text-align:center;">
+1.8356
+</td>
+<td style="text-align:center;">
+1.3539
+</td>
+<td style="text-align:center;">
+0.0839
+</td>
+<td style="text-align:center;">
+1.6864
+</td>
+<td style="text-align:center;">
+0.0984
+</td>
+<td style="text-align:center;">
+0.1936
+</td>
+<td style="text-align:center;">
+294
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2018
+</td>
+<td style="text-align:center;">
+PTR
+</td>
+<td style="text-align:center;">
+86.6619
+</td>
+<td style="text-align:center;">
+22.2000
+</td>
+<td style="text-align:center;">
+5.6274
+</td>
+<td style="text-align:center;">
+4.2500
+</td>
+<td style="text-align:center;">
+0.0000
+</td>
+<td style="text-align:center;">
+4.8768
+</td>
+<td style="text-align:center;">
+0.2770
+</td>
+<td style="text-align:center;">
+0.5450
+</td>
+<td style="text-align:center;">
+310
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2019
+</td>
+<td style="text-align:center;">
+AMD
+</td>
+<td style="text-align:center;">
+16.5407
+</td>
+<td style="text-align:center;">
+35.9441
+</td>
+<td style="text-align:center;">
+23.6326
+</td>
+<td style="text-align:center;">
+23.6328
+</td>
+<td style="text-align:center;">
+10.7346
+</td>
+<td style="text-align:center;">
+3.9090
+</td>
+<td style="text-align:center;">
+0.1745
+</td>
+<td style="text-align:center;">
+0.3428
+</td>
+<td style="text-align:center;">
+502
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2019
+</td>
+<td style="text-align:center;">
+AP
+</td>
+<td style="text-align:center;">
+19.1125
+</td>
+<td style="text-align:center;">
+2.4233
+</td>
+<td style="text-align:center;">
+1.4843
+</td>
+<td style="text-align:center;">
+1.4633
+</td>
+<td style="text-align:center;">
+0.7400
+</td>
+<td style="text-align:center;">
+0.2837
+</td>
+<td style="text-align:center;">
+0.0123
+</td>
+<td style="text-align:center;">
+0.0243
+</td>
+<td style="text-align:center;">
+528
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2019
+</td>
+<td style="text-align:center;">
+CR
+</td>
+<td style="text-align:center;">
+21.1089
+</td>
+<td style="text-align:center;">
+45.6667
+</td>
+<td style="text-align:center;">
+27.1361
+</td>
+<td style="text-align:center;">
+27.0000
+</td>
+<td style="text-align:center;">
+11.0000
+</td>
+<td style="text-align:center;">
+5.7281
+</td>
+<td style="text-align:center;">
+0.2529
+</td>
+<td style="text-align:center;">
+0.4969
+</td>
+<td style="text-align:center;">
+513
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2019
+</td>
+<td style="text-align:center;">
+DCaule
+</td>
+<td style="text-align:center;">
+15.7037
+</td>
+<td style="text-align:center;">
+3.3203
+</td>
+<td style="text-align:center;">
+2.1061
+</td>
+<td style="text-align:center;">
+2.0963
+</td>
+<td style="text-align:center;">
+1.1197
+</td>
+<td style="text-align:center;">
+0.3307
+</td>
+<td style="text-align:center;">
+0.0144
+</td>
+<td style="text-align:center;">
+0.0283
+</td>
+<td style="text-align:center;">
+528
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2019
+</td>
+<td style="text-align:center;">
+DR
+</td>
+<td style="text-align:center;">
+24.3155
+</td>
+<td style="text-align:center;">
+58.9267
+</td>
+<td style="text-align:center;">
+33.4940
+</td>
+<td style="text-align:center;">
+33.6500
+</td>
+<td style="text-align:center;">
+6.1200
+</td>
+<td style="text-align:center;">
+8.1442
+</td>
+<td style="text-align:center;">
+0.3596
+</td>
+<td style="text-align:center;">
+0.7064
+</td>
+<td style="text-align:center;">
+513
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2019
+</td>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+47.3227
+</td>
+<td style="text-align:center;">
+60.1626
+</td>
+<td style="text-align:center;">
+26.1706
+</td>
+<td style="text-align:center;">
+26.6117
+</td>
+<td style="text-align:center;">
+0.0000
+</td>
+<td style="text-align:center;">
+12.3846
+</td>
+<td style="text-align:center;">
+0.5390
+</td>
+<td style="text-align:center;">
+1.0588
+</td>
+<td style="text-align:center;">
+528
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2019
+</td>
+<td style="text-align:center;">
+MS
+</td>
+<td style="text-align:center;">
+13.8212
+</td>
+<td style="text-align:center;">
+40.5941
+</td>
+<td style="text-align:center;">
+28.2826
+</td>
+<td style="text-align:center;">
+28.2828
+</td>
+<td style="text-align:center;">
+15.3846
+</td>
+<td style="text-align:center;">
+3.9090
+</td>
+<td style="text-align:center;">
+0.1745
+</td>
+<td style="text-align:center;">
+0.3428
+</td>
+<td style="text-align:center;">
+502
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2019
+</td>
+<td style="text-align:center;">
+Nº Hastes
+</td>
+<td style="text-align:center;">
+37.3740
+</td>
+<td style="text-align:center;">
+6.6667
+</td>
+<td style="text-align:center;">
+2.7113
+</td>
+<td style="text-align:center;">
+2.6667
+</td>
+<td style="text-align:center;">
+1.0000
+</td>
+<td style="text-align:center;">
+1.0133
+</td>
+<td style="text-align:center;">
+0.0441
+</td>
+<td style="text-align:center;">
+0.0867
+</td>
+<td style="text-align:center;">
+527
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2019
+</td>
+<td style="text-align:center;">
+NR.P
+</td>
+<td style="text-align:center;">
+47.7261
+</td>
+<td style="text-align:center;">
+15.6670
+</td>
+<td style="text-align:center;">
+5.7402
+</td>
+<td style="text-align:center;">
+5.6670
+</td>
+<td style="text-align:center;">
+0.0000
+</td>
+<td style="text-align:center;">
+2.7396
+</td>
+<td style="text-align:center;">
+0.1192
+</td>
+<td style="text-align:center;">
+0.2342
+</td>
+<td style="text-align:center;">
+528
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2019
+</td>
+<td style="text-align:center;">
+PPA
+</td>
+<td style="text-align:center;">
+47.4901
+</td>
+<td style="text-align:center;">
+47.5710
+</td>
+<td style="text-align:center;">
+13.4607
+</td>
+<td style="text-align:center;">
+12.7735
+</td>
+<td style="text-align:center;">
+1.2860
+</td>
+<td style="text-align:center;">
+6.3925
+</td>
+<td style="text-align:center;">
+0.2782
+</td>
+<td style="text-align:center;">
+0.5465
+</td>
+<td style="text-align:center;">
+528
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2019
+</td>
+<td style="text-align:center;">
+PROD.AMD
+</td>
+<td style="text-align:center;">
+72.5347
+</td>
+<td style="text-align:center;">
+5.4021
+</td>
+<td style="text-align:center;">
+1.3211
+</td>
+<td style="text-align:center;">
+1.1082
+</td>
+<td style="text-align:center;">
+0.0000
+</td>
+<td style="text-align:center;">
+0.9583
+</td>
+<td style="text-align:center;">
+0.0428
+</td>
+<td style="text-align:center;">
+0.0841
+</td>
+<td style="text-align:center;">
+501
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2019
+</td>
+<td style="text-align:center;">
+PTR
+</td>
+<td style="text-align:center;">
+74.3122
+</td>
+<td style="text-align:center;">
+22.2000
+</td>
+<td style="text-align:center;">
+5.2850
+</td>
+<td style="text-align:center;">
+4.5000
+</td>
+<td style="text-align:center;">
+0.0000
+</td>
+<td style="text-align:center;">
+3.9274
+</td>
+<td style="text-align:center;">
+0.1709
+</td>
+<td style="text-align:center;">
+0.3358
+</td>
+<td style="text-align:center;">
+528
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2020
+</td>
+<td style="text-align:center;">
+AMD
+</td>
+<td style="text-align:center;">
+27.3600
+</td>
+<td style="text-align:center;">
+43.6860
+</td>
+<td style="text-align:center;">
+21.5594
+</td>
+<td style="text-align:center;">
+21.3900
+</td>
+<td style="text-align:center;">
+7.3260
+</td>
+<td style="text-align:center;">
+5.8986
+</td>
+<td style="text-align:center;">
+0.2569
+</td>
+<td style="text-align:center;">
+0.5048
+</td>
+<td style="text-align:center;">
+527
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2020
+</td>
+<td style="text-align:center;">
+AP
+</td>
+<td style="text-align:center;">
+24.0927
+</td>
+<td style="text-align:center;">
+3.0333
+</td>
+<td style="text-align:center;">
+1.1945
+</td>
+<td style="text-align:center;">
+1.1600
+</td>
+<td style="text-align:center;">
+0.3600
+</td>
+<td style="text-align:center;">
+0.2878
+</td>
+<td style="text-align:center;">
+0.0124
+</td>
+<td style="text-align:center;">
+0.0243
+</td>
+<td style="text-align:center;">
+543
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2020
+</td>
+<td style="text-align:center;">
+CR
+</td>
+<td style="text-align:center;">
+18.9730
+</td>
+<td style="text-align:center;">
+36.6667
+</td>
+<td style="text-align:center;">
+23.2345
+</td>
+<td style="text-align:center;">
+23.3333
+</td>
+<td style="text-align:center;">
+9.0000
+</td>
+<td style="text-align:center;">
+4.4083
+</td>
+<td style="text-align:center;">
+0.1909
+</td>
+<td style="text-align:center;">
+0.3751
+</td>
+<td style="text-align:center;">
+533
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2020
+</td>
+<td style="text-align:center;">
+DCaule
+</td>
+<td style="text-align:center;">
+17.5042
+</td>
+<td style="text-align:center;">
+4.3733
+</td>
+<td style="text-align:center;">
+2.1321
+</td>
+<td style="text-align:center;">
+2.1207
+</td>
+<td style="text-align:center;">
+1.0547
+</td>
+<td style="text-align:center;">
+0.3732
+</td>
+<td style="text-align:center;">
+0.0160
+</td>
+<td style="text-align:center;">
+0.0315
+</td>
+<td style="text-align:center;">
+543
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2020
+</td>
+<td style="text-align:center;">
+DR
+</td>
+<td style="text-align:center;">
+20.5858
+</td>
+<td style="text-align:center;">
+43.2733
+</td>
+<td style="text-align:center;">
+26.2101
+</td>
+<td style="text-align:center;">
+26.1800
+</td>
+<td style="text-align:center;">
+11.8533
+</td>
+<td style="text-align:center;">
+5.3956
+</td>
+<td style="text-align:center;">
+0.2337
+</td>
+<td style="text-align:center;">
+0.4591
+</td>
+<td style="text-align:center;">
+533
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2020
+</td>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+43.3204
+</td>
+<td style="text-align:center;">
+45.9340
+</td>
+<td style="text-align:center;">
+18.6129
+</td>
+<td style="text-align:center;">
+18.0486
+</td>
+<td style="text-align:center;">
+1.9608
+</td>
+<td style="text-align:center;">
+8.0632
+</td>
+<td style="text-align:center;">
+0.3496
+</td>
+<td style="text-align:center;">
+0.6867
+</td>
+<td style="text-align:center;">
+532
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2020
+</td>
+<td style="text-align:center;">
+MS
+</td>
+<td style="text-align:center;">
+22.5059
+</td>
+<td style="text-align:center;">
+48.3360
+</td>
+<td style="text-align:center;">
+26.2094
+</td>
+<td style="text-align:center;">
+26.0400
+</td>
+<td style="text-align:center;">
+11.9760
+</td>
+<td style="text-align:center;">
+5.8986
+</td>
+<td style="text-align:center;">
+0.2569
+</td>
+<td style="text-align:center;">
+0.5048
+</td>
+<td style="text-align:center;">
+527
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2020
+</td>
+<td style="text-align:center;">
+Nº Hastes
+</td>
+<td style="text-align:center;">
+37.1507
+</td>
+<td style="text-align:center;">
+4.6667
+</td>
+<td style="text-align:center;">
+2.0463
+</td>
+<td style="text-align:center;">
+2.0000
+</td>
+<td style="text-align:center;">
+1.0000
+</td>
+<td style="text-align:center;">
+0.7602
+</td>
+<td style="text-align:center;">
+0.0326
+</td>
+<td style="text-align:center;">
+0.0641
+</td>
+<td style="text-align:center;">
+543
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2020
+</td>
+<td style="text-align:center;">
+NR.P
+</td>
+<td style="text-align:center;">
+47.0839
+</td>
+<td style="text-align:center;">
+10.3330
+</td>
+<td style="text-align:center;">
+4.3060
+</td>
+<td style="text-align:center;">
+4.3330
+</td>
+<td style="text-align:center;">
+0.3330
+</td>
+<td style="text-align:center;">
+2.0274
+</td>
+<td style="text-align:center;">
+0.0881
+</td>
+<td style="text-align:center;">
+0.1730
+</td>
+<td style="text-align:center;">
+530
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2020
+</td>
+<td style="text-align:center;">
+PPA
+</td>
+<td style="text-align:center;">
+42.7475
+</td>
+<td style="text-align:center;">
+61.1670
+</td>
+<td style="text-align:center;">
+25.8653
+</td>
+<td style="text-align:center;">
+25.9165
+</td>
+<td style="text-align:center;">
+3.3330
+</td>
+<td style="text-align:center;">
+11.0568
+</td>
+<td style="text-align:center;">
+0.4794
+</td>
+<td style="text-align:center;">
+0.9417
+</td>
+<td style="text-align:center;">
+532
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2020
+</td>
+<td style="text-align:center;">
+PROD.AMD
+</td>
+<td style="text-align:center;">
+81.2220
+</td>
+<td style="text-align:center;">
+6.0724
+</td>
+<td style="text-align:center;">
+1.5211
+</td>
+<td style="text-align:center;">
+1.2326
+</td>
+<td style="text-align:center;">
+0.0483
+</td>
+<td style="text-align:center;">
+1.2354
+</td>
+<td style="text-align:center;">
+0.0540
+</td>
+<td style="text-align:center;">
+0.1060
+</td>
+<td style="text-align:center;">
+524
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2020
+</td>
+<td style="text-align:center;">
+PTR
+</td>
+<td style="text-align:center;">
+68.4455
+</td>
+<td style="text-align:center;">
+20.5670
+</td>
+<td style="text-align:center;">
+6.5246
+</td>
+<td style="text-align:center;">
+5.9000
+</td>
+<td style="text-align:center;">
+0.4000
+</td>
+<td style="text-align:center;">
+4.4658
+</td>
+<td style="text-align:center;">
+0.1934
+</td>
+<td style="text-align:center;">
+0.3800
+</td>
+<td style="text-align:center;">
+533
+</td>
+</tr>
+</tbody>
+</table>
+<p>Novamente, algumas variáveis não foram computadas para o ano de 2017
+então temos que eliminar esse ano na hora de realizar a análise para
+essas variaveis.</p>
+<p>O que chama atenção nessa tabela são os cv altos para algumas
+característica, especialmente: HI, Nº de Hastes, NR.P, PPA, PROD.AMD e
+PTR.</p>
+<p>Isso pode se dá devido a presença de outliers, vamos fazer uma
+inspeção em todo conjunto de dados para avaliar se há outliers:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">inspect</span>(pheno <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>          <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(Clone)), <span class="at">verbose =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>(<span class="at">escape =</span> F, <span class="at">align =</span> <span class="st">&#39;c&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_classic</span>(</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;hover&quot;</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">full_width =</span> F,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="st">&quot;center&quot;</span>,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">fixed_thead =</span> T</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<table class=" lightable-classic lightable-hover" style='font-family: "Arial Narrow", "Source Sans Pro", sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'>
+<thead>
+<tr>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Variable
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Class
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Missing
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Levels
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Valid_n
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Min
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Median
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Max
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Outlier
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Text
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+Ano
+</td>
+<td style="text-align:center;">
+factor
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2292
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Bloco
+</td>
+<td style="text-align:center;">
+factor
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2292
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+NR.P
+</td>
+<td style="text-align:center;">
+numeric
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+<ul>
+<li></td>
+<td style="text-align:center;">
+1976
+</td>
+<td style="text-align:center;">
+0.00
+</td>
+<td style="text-align:center;">
+4.00
+</td>
+<td style="text-align:center;">
+15.67
+</td>
+<td style="text-align:center;">
+16
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PTR
+</td>
+<td style="text-align:center;">
+numeric
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+<ul>
+<li></td>
+<td style="text-align:center;">
+1984
+</td>
+<td style="text-align:center;">
+0.00
+</td>
+<td style="text-align:center;">
+3.70
+</td>
+<td style="text-align:center;">
+22.20
+</td>
+<td style="text-align:center;">
+76
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PPA
+</td>
+<td style="text-align:center;">
+numeric
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+<ul>
+<li></td>
+<td style="text-align:center;">
+2085
+</td>
+<td style="text-align:center;">
+0.69
+</td>
+<td style="text-align:center;">
+11.17
+</td>
+<td style="text-align:center;">
+61.17
+</td>
+<td style="text-align:center;">
+89
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+MS
+</td>
+<td style="text-align:center;">
+numeric
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+<ul>
+<li></td>
+<td style="text-align:center;">
+1328
+</td>
+<td style="text-align:center;">
+11.98
+</td>
+<td style="text-align:center;">
+28.80
+</td>
+<td style="text-align:center;">
+48.34
+</td>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+PROD.AMD
+</td>
+<td style="text-align:center;">
+numeric
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+<ul>
+<li></td>
+<td style="text-align:center;">
+1319
+</td>
+<td style="text-align:center;">
+0.00
+</td>
+<td style="text-align:center;">
+1.21
+</td>
+<td style="text-align:center;">
+8.87
+</td>
+<td style="text-align:center;">
+49
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+AP
+</td>
+<td style="text-align:center;">
+numeric
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+<ul>
+<li></td>
+<td style="text-align:center;">
+2076
+</td>
+<td style="text-align:center;">
+0.36
+</td>
+<td style="text-align:center;">
+1.16
+</td>
+<td style="text-align:center;">
+3.03
+</td>
+<td style="text-align:center;">
+23
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+numeric
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+<ul>
+<li></td>
+<td style="text-align:center;">
+1977
+</td>
+<td style="text-align:center;">
+0.00
+</td>
+<td style="text-align:center;">
+23.21
+</td>
+<td style="text-align:center;">
+71.97
+</td>
+<td style="text-align:center;">
+14
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+AMD
+</td>
+<td style="text-align:center;">
+numeric
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+<ul>
+<li></td>
+<td style="text-align:center;">
+1328
+</td>
+<td style="text-align:center;">
+7.33
+</td>
+<td style="text-align:center;">
+24.15
+</td>
+<td style="text-align:center;">
+43.69
+</td>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Porte
+</td>
+<td style="text-align:center;">
+factor
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+1618
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+RF
+</td>
+<td style="text-align:center;">
+factor
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+2080
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+CR
+</td>
+<td style="text-align:center;">
+numeric
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+<ul>
+<li></td>
+<td style="text-align:center;">
+1957
+</td>
+<td style="text-align:center;">
+7.00
+</td>
+<td style="text-align:center;">
+23.00
+</td>
+<td style="text-align:center;">
+47.33
+</td>
+<td style="text-align:center;">
+19
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+DR
+</td>
+<td style="text-align:center;">
+numeric
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+<ul>
+<li></td>
+<td style="text-align:center;">
+1957
+</td>
+<td style="text-align:center;">
+6.12
+</td>
+<td style="text-align:center;">
+28.17
+</td>
+<td style="text-align:center;">
+63.30
+</td>
+<td style="text-align:center;">
+32
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+DCaule
+</td>
+<td style="text-align:center;">
+numeric
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+<ul>
+<li></td>
+<td style="text-align:center;">
+2069
+</td>
+<td style="text-align:center;">
+1.01
+</td>
+<td style="text-align:center;">
+2.10
+</td>
+<td style="text-align:center;">
+4.37
+</td>
+<td style="text-align:center;">
+22
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Ácaro
+</td>
+<td style="text-align:center;">
+factor
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+2074
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Nº Hastes
+</td>
+<td style="text-align:center;">
+numeric
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+<ul>
+<li></td>
+<td style="text-align:center;">
+1443
+</td>
+<td style="text-align:center;">
+1.00
+</td>
+<td style="text-align:center;">
+2.00
+</td>
+<td style="text-align:center;">
+6.67
+</td>
+<td style="text-align:center;">
+30
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Stand_Final
+</td>
+<td style="text-align:center;">
+factor
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+8
+</td>
+<td style="text-align:center;">
+1444
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Branching_Level
+</td>
+<td style="text-align:center;">
+factor
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+1619
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Staygreen
+</td>
+<td style="text-align:center;">
+factor
+</td>
+<td style="text-align:center;">
+Yes
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1623
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Ano.Bloco
+</td>
+<td style="text-align:center;">
+factor
+</td>
+<td style="text-align:center;">
+No
+</td>
+<td style="text-align:center;">
+16
+</td>
+<td style="text-align:center;">
+2292
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+</tr>
+</tbody>
+</table></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<p>Confirmando o que foi descrito antes, a maioria das variáveis com
+alto cv apresenta muitos outliers e por isso iremos excluir elas no loop
+para obtenção dos blups.</p>
+<div id="geral-inspection" class="section level4">
+<h4>Geral Inspection</h4>
+<p>Agora vamos realizar apenas uma inspeção geral dos dados para
+finalizar as manipulações.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">corr_plot</span>(pheno, <span class="at">col.by =</span> Ano)</span></code></pre></div>
+<p><img src="figure/phenotype.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Amido com MS e PROD.AMD com PTR apresentam alta correlação.</p>
+<p>Além disso a maioria das variáveis aparentemente apresentação
+distribuição normal dos dados fenotípicos. Dessa forma, vamos prosseguir
+para a obtenção dos blups.</p>
+</div>
+</div>
+</div>
+<div id="genotype-environment-analysis-by-mixed-effect-models"
+class="section level2">
+<h2>Genotype-environment analysis by mixed-effect models</h2>
+<p>Primeiro, vou criar uma função para obter os blups e alguns
+parâmetros do nosso modelo.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>BLUPS_par <span class="ot">&lt;-</span> <span class="cf">function</span>(model, trait) {</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  BLUP <span class="ot">&lt;-</span> <span class="fu">ranef</span>(model, <span class="at">condVar =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>Clone</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  PEV <span class="ot">&lt;-</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">attr</span>(BLUP, <span class="st">&quot;postVar&quot;</span>)) <span class="co"># PEV is a vector of error variances associated with each individual BLUP... # it tells you about how confident you should be in the estimate of an individual CLONE&#39;s BLUP value.</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  Clone.var <span class="ot">&lt;-</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">VarCorr</span>(model)<span class="sc">$</span>Clone) <span class="co"># Extract the variance component for CLONE</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  ResidVar <span class="ot">&lt;-</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    (<span class="fu">attr</span>(<span class="fu">VarCorr</span>(model), <span class="st">&quot;sc&quot;</span>)) <span class="sc">^</span> <span class="dv">2</span> <span class="co"># Extract the residual variance component</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  Ano <span class="ot">&lt;-</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">VarCorr</span>(model)<span class="sc">$</span>Ano) <span class="co"># Extract the variance component for Ano.Bloco</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  Ano.Bloco <span class="ot">&lt;-</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">VarCorr</span>(model)<span class="sc">$</span>Ano.Bloco) <span class="co"># Extract the variance component for Ano.Bloco</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># You will need a line like the one above for every random effect (not for fixed effects)</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    BLUP <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> (PEV <span class="sc">/</span> Clone.var)) <span class="co"># This is the actual de-regress part (the BLUP for CLONE is divided by (1 - PEV/CLONE.var))</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>  r2 <span class="ot">&lt;-</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>    <span class="dv">1</span> <span class="sc">-</span> (PEV <span class="sc">/</span> Clone.var) <span class="co"># Reliability: a confidence value for a BLUP (0 to 1 scale)</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>  H2 <span class="ot">=</span> Clone.var <span class="sc">/</span> (Clone.var <span class="sc">+</span> Ano.Bloco <span class="sc">+</span> ResidVar) <span class="co"># An estimate of the broad-sense heritability, must change this formula when you change the model analysis</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>  wt <span class="ot">=</span> (<span class="dv">1</span> <span class="sc">-</span> H2) <span class="sc">/</span> ((<span class="fl">0.1</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> r2) <span class="sc">/</span> r2) <span class="sc">*</span> H2) <span class="co"># Weights for each de-regressed BLUP</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># There is a paper the determined this crazy formula, Garrick et al. 2009. I wouldn&#39;t pay much attn. to it.</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># These weights will be used in the second-step (e.g. cross-validation) to account for what we&#39;ve done in this step</span></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># The weights will be fit as error variances associated with each residual value</span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>  VarComps <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">VarCorr</span>(model))</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(</span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(</span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>      <span class="at">Trait =</span> trait,</span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">drgBLUP =</span> out,</span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>      <span class="at">BLUP =</span> BLUP,</span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>      <span class="at">weights =</span> wt,</span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>      <span class="at">varcomps =</span> VarComps,</span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a>      <span class="at">H2 =</span> H2,</span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a>      <span class="at">Reliability =</span> r2,</span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>      <span class="at">model =</span> model</span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-39"><a href="#cb23-39" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(BLUPS_par, <span class="at">file =</span> <span class="st">&quot;output/BLUPS_par.Rdata&quot;</span>)</span></code></pre></div>
+<div id="the-blup-model" class="section level3">
+<h3>The BLUP model</h3>
+<p>Aqui temos que lembrar que possuímos outliers para algumas
+características e também que devemos excluir o ano 2017 para
+algumas.</p>
+<p>Vou criar um loop onde informo quais características onde esse ano
+deverá ser excluído e também utilizar a função de remover outliers.</p>
+<p>As características que devemos excluir o ano 2017 são Porte,
+Branching_Level, Staygreen, AMD, MS, Nº Hastes e PROD.AMD.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>excluir_2017 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Porte&quot;</span>, <span class="st">&quot;Branching_Level&quot;</span>, <span class="st">&quot;Staygreen&quot;</span>, <span class="st">&quot;AMD&quot;</span>, <span class="st">&quot;MS&quot;</span>, <span class="st">&quot;Nº Hastes&quot;</span> , <span class="st">&quot;PROD.AMD&quot;</span>)</span></code></pre></div>
+<p>Usaremos esse vetor dentro do loop para exclusão do ano 2017 para
+essas variáveis.</p>
+<p>Vamos converter todas as variáveis para numéricas agora.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>traits <span class="ot">&lt;-</span> <span class="fu">colnames</span>(pheno)[<span class="dv">4</span><span class="sc">:</span><span class="dv">21</span>]</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>pheno<span class="ot">&lt;-</span> pheno <span class="sc">%&gt;%</span> </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(traits, as.numeric)</span></code></pre></div>
+<p>Agora vamos realizar a análise de modelos mistos para obter os
+blups.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;output/BLUPS_par.Rdata&quot;</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">registerDoParallel</span>(<span class="at">cores =</span> <span class="dv">6</span>) <span class="co"># Specify the number of cores (my lab computer has 8; I will use 6 of them)</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>resultMM <span class="ot">&lt;-</span> <span class="fu">foreach</span>(<span class="at">a =</span> traits, <span class="at">i =</span> <span class="fu">icount</span>(), <span class="at">.inorder =</span> <span class="cn">TRUE</span>) <span class="sc">%dopar%</span> {</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">require</span>(lme4)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">require</span>(dplyr)</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(purrr)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Loop para exclusão do ano 2017 de acordo com o vetor com os nomes da variáveis descritos anteriormente.</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (a <span class="sc">%in%</span> excluir_2017) {</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    data <span class="ot">&lt;-</span> pheno <span class="sc">%&gt;%</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(Ano <span class="sc">!=</span> <span class="dv">2017</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">droplevels</span>()</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span>{</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>    data <span class="ot">&lt;-</span> pheno</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Exclusão dos primeiros outliers encontrados</span></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>  outliers <span class="ot">&lt;-</span> <span class="fu">boxplot</span>(data[i<span class="sc">+</span><span class="dv">3</span>], <span class="at">plot =</span> <span class="cn">FALSE</span>)<span class="sc">$</span>out</span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">is_empty</span>(outliers)){</span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">filter</span>(data,data[i<span class="sc">+</span><span class="dv">3</span>] <span class="sc">!=</span> outliers)</span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>  model <span class="ot">&lt;-</span> <span class="fu">lmer</span>(<span class="at">data =</span> data,</span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>                <span class="at">formula =</span> <span class="fu">get</span>(traits[i]) <span class="sc">~</span> (<span class="dv">1</span> <span class="sc">|</span>Clone) <span class="sc">+</span> Ano <span class="sc">+</span> (<span class="dv">1</span><span class="sc">|</span>Ano.Bloco)) <span class="co"># Clone and Ano.Bloco are random and Ano is fixed</span></span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> <span class="fu">BLUPS_par</span>(model, traits[i])</span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(resultMM, <span class="at">file =</span> <span class="st">&quot;output/resultMM.Rdata&quot;</span>)</span></code></pre></div>
+</div>
+<div id="blups-for-clone" class="section level3">
+<h3>BLUPS for <code>Clone</code></h3>
+<p>Como usei “foreach” para executar cada análise do estágio 1 em
+paralelo, cada característica está em um elemento separado de uma lista
+Precisamos processar o objeto resultMM em um data.frame ou matriz para
+análise posterior.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;output/resultMM.Rdata&quot;</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>BLUPS <span class="ot">&lt;-</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">Clone =</span> <span class="fu">unique</span>(pheno<span class="sc">$</span>Clone), <span class="at">stringsAsFactors =</span> F)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>H2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">H2 =</span> <span class="st">&quot;H2&quot;</span>,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>                 <span class="at">stringsAsFactors =</span> F)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>varcomp <span class="ot">&lt;-</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">grp =</span> <span class="fu">c</span>(<span class="st">&quot;Clone&quot;</span>, <span class="st">&quot;Ano&quot;</span>, <span class="st">&quot;Ano.Bloco&quot;</span>, <span class="st">&quot;Residual&quot;</span>),</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">stringsAsFactors =</span> F</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Aqui vamos obter os BLUPS para cada clone</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(resultMM)) {</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">data.frame</span>(<span class="at">Clone =</span> <span class="fu">rownames</span>(resultMM[[i]]<span class="sc">$</span>BLUP),</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>               <span class="at">stringsAsFactors =</span> F)</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>  data[, resultMM[[i]]<span class="sc">$</span>Trait] <span class="ot">&lt;-</span> resultMM[[i]]<span class="sc">$</span>BLUP</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>  BLUPS <span class="ot">&lt;-</span> <span class="fu">merge</span>(BLUPS, data, <span class="at">by =</span> <span class="st">&quot;Clone&quot;</span>, <span class="at">all.x =</span> T)</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>  H2[, resultMM[[i]]<span class="sc">$</span>Trait] <span class="ot">&lt;-</span> resultMM[[i]]<span class="sc">$</span>H2</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(resultMM[[i]]<span class="sc">$</span>varcomps) <span class="ot">&lt;-</span></span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(</span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;grp&quot;</span>,</span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;var1&quot;</span>,</span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;var2&quot;</span>,</span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>      <span class="fu">paste</span>(<span class="st">&quot;vcov&quot;</span>, resultMM[[i]]<span class="sc">$</span>Trait, <span class="at">sep =</span> <span class="st">&quot;.&quot;</span>),</span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a>      <span class="fu">paste</span>(<span class="st">&quot;sdcor&quot;</span>, resultMM[[i]]<span class="sc">$</span>Trait, <span class="at">sep =</span> <span class="st">&quot;.&quot;</span>)</span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a>  varcomp <span class="ot">&lt;-</span> varcomp <span class="sc">%&gt;%</span></span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">right_join</span>(resultMM[[i]]<span class="sc">$</span>varcomps)</span>
+<span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre><code>Joining, by = &quot;grp&quot;
+Joining, by = c(&quot;grp&quot;, &quot;var1&quot;, &quot;var2&quot;)
+Joining, by = c(&quot;grp&quot;, &quot;var1&quot;, &quot;var2&quot;)
+Joining, by = c(&quot;grp&quot;, &quot;var1&quot;, &quot;var2&quot;)
+Joining, by = c(&quot;grp&quot;, &quot;var1&quot;, &quot;var2&quot;)
+Joining, by = c(&quot;grp&quot;, &quot;var1&quot;, &quot;var2&quot;)
+Joining, by = c(&quot;grp&quot;, &quot;var1&quot;, &quot;var2&quot;)
+Joining, by = c(&quot;grp&quot;, &quot;var1&quot;, &quot;var2&quot;)
+Joining, by = c(&quot;grp&quot;, &quot;var1&quot;, &quot;var2&quot;)
+Joining, by = c(&quot;grp&quot;, &quot;var1&quot;, &quot;var2&quot;)
+Joining, by = c(&quot;grp&quot;, &quot;var1&quot;, &quot;var2&quot;)
+Joining, by = c(&quot;grp&quot;, &quot;var1&quot;, &quot;var2&quot;)
+Joining, by = c(&quot;grp&quot;, &quot;var1&quot;, &quot;var2&quot;)
+Joining, by = c(&quot;grp&quot;, &quot;var1&quot;, &quot;var2&quot;)
+Joining, by = c(&quot;grp&quot;, &quot;var1&quot;, &quot;var2&quot;)
+Joining, by = c(&quot;grp&quot;, &quot;var1&quot;, &quot;var2&quot;)
+Joining, by = c(&quot;grp&quot;, &quot;var1&quot;, &quot;var2&quot;)
+Joining, by = c(&quot;grp&quot;, &quot;var1&quot;, &quot;var2&quot;)</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(BLUPS) <span class="ot">&lt;-</span> BLUPS<span class="sc">$</span>Clone</span></code></pre></div>
+<p>Salvando os resultados dos BLUPs e dos parâmetros</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(BLUPS, <span class="at">file =</span> <span class="st">&quot;output/BLUPS.RDS&quot;</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(BLUPS,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;output/BLUPS.csv&quot;</span>,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">row.names =</span> F,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">quote =</span> F)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(H2,</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>          <span class="st">&quot;output/herdabilidade.csv&quot;</span>,</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">row.names =</span> F,</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">quote =</span> F)</span></code></pre></div>
+</div>
+<div id="ploting-blups-for-all-traits" class="section level3">
+<h3>Ploting BLUPS for all traits</h3>
+<p>Primeiros, vou somar a média das variáveis com os BLUPS para melhor
+interpretação.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>BLUPS<span class="ot">&lt;-</span><span class="fu">readRDS</span>(<span class="st">&quot;output/BLUPS.RDS&quot;</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>media_pheno <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(pheno <span class="sc">%&gt;%</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">summarise_if</span>(is.numeric, mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="fu">write.table</span>(media_pheno, <span class="st">&quot;output/media_pheno.csv&quot;</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>phen<span class="ot">&lt;-</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">Clone =</span> <span class="fu">unique</span>(pheno<span class="sc">$</span>Clone), <span class="at">stringsAsFactors =</span> F)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> traits) {</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  phen[i] <span class="ot">&lt;-</span> BLUPS[i] <span class="sc">+</span> media_pheno[, i]</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Vamos plotar os boxplot das variaveis.</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>phen <span class="sc">%&gt;%</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">19</span>, <span class="at">names_to =</span> <span class="st">&quot;Variable&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;Values&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">y =</span> Values, <span class="at">fill =</span> Variable), <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(. <span class="sc">~</span> Variable, <span class="at">ncol =</span> <span class="dv">6</span>, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expand_limits</span>(<span class="at">y =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="figure/phenotype.Rmd/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Aqui vamos avaliar apenas a distribuição dos BLUPs sem a média.</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>BLUPS <span class="sc">%&gt;%</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">19</span>, <span class="at">names_to =</span> <span class="st">&quot;Variable&quot;</span>, <span class="at">values_to =</span> <span class="st">&quot;Values&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="fu">aes</span>(<span class="at">x =</span> Values), <span class="at">show.legend =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(. <span class="sc">~</span> Variable, <span class="at">ncol =</span> <span class="dv">6</span>, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>) <span class="sc">+</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expand_limits</span>(<span class="at">y =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="figure/phenotype.Rmd/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Aparentemente a maioria dos BLUPs para as variáveis seguem
+distribuição normal e pode ser aplicada a GWS pelos métodos
+convencionais.</p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>R version 4.1.3 (2022-03-10)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 19042)
+
+Matrix products: default
+
+locale:
+[1] LC_COLLATE=Portuguese_Brazil.1252  LC_CTYPE=Portuguese_Brazil.1252   
+[3] LC_MONETARY=Portuguese_Brazil.1252 LC_NUMERIC=C                      
+[5] LC_TIME=Portuguese_Brazil.1252    
+
+attached base packages:
+[1] parallel  grid      stats     graphics  grDevices utils     datasets 
+[8] methods   base     
+
+other attached packages:
+ [1] doParallel_1.0.17     iterators_1.0.14      foreach_1.5.2        
+ [4] DataExplorer_0.8.2    metan_1.17.0          readxl_1.4.1         
+ [7] data.table_1.14.2     ComplexHeatmap_2.10.0 forcats_0.5.2        
+[10] stringr_1.4.1         dplyr_1.0.10          purrr_0.3.4          
+[13] readr_2.1.2           tidyr_1.2.1           tibble_3.1.8         
+[16] ggplot2_3.3.6         tidyverse_1.3.2       kableExtra_1.3.4     
+
+loaded via a namespace (and not attached):
+  [1] minqa_1.2.4         googledrive_2.0.0   colorspace_2.0-3   
+  [4] rjson_0.2.21        ellipsis_0.3.2      rprojroot_2.0.3    
+  [7] circlize_0.4.15     GlobalOptions_0.1.2 fs_1.5.2           
+ [10] clue_0.3-61         rstudioapi_0.14     farver_2.1.1       
+ [13] ggrepel_0.9.1       fansi_1.0.3         lubridate_1.8.0    
+ [16] mathjaxr_1.6-0      xml2_1.3.3          codetools_0.2-18   
+ [19] splines_4.1.3       cachem_1.0.6        knitr_1.40         
+ [22] polyclip_1.10-0     jsonlite_1.8.0      nloptr_2.0.3       
+ [25] workflowr_1.7.0     broom_1.0.1         cluster_2.1.2      
+ [28] dbplyr_2.2.1        png_0.1-7           ggforce_0.4.1      
+ [31] compiler_4.1.3      httr_1.4.4          backports_1.4.1    
+ [34] Matrix_1.5-1        assertthat_0.2.1    fastmap_1.1.0      
+ [37] gargle_1.2.1        cli_3.3.0           later_1.3.0        
+ [40] tweenr_2.0.2        htmltools_0.5.3     tools_4.1.3        
+ [43] igraph_1.3.5        lmerTest_3.1-3      gtable_0.3.1       
+ [46] glue_1.6.2          Rcpp_1.0.9          cellranger_1.1.0   
+ [49] jquerylib_0.1.4     vctrs_0.4.1         nlme_3.1-159       
+ [52] svglite_2.1.0       xfun_0.32           networkD3_0.4      
+ [55] lme4_1.1-30         rvest_1.0.3         lifecycle_1.0.3    
+ [58] googlesheets4_1.0.1 MASS_7.3-58.1       scales_1.2.1       
+ [61] hms_1.1.2           promises_1.2.0.1    RColorBrewer_1.1-3 
+ [64] yaml_2.3.5          gridExtra_2.3       sass_0.4.2         
+ [67] reshape_0.8.9       stringi_1.7.6       highr_0.9          
+ [70] S4Vectors_0.32.4    BiocGenerics_0.40.0 boot_1.3-28        
+ [73] shape_1.4.6         rlang_1.0.6         pkgconfig_2.0.3    
+ [76] systemfonts_1.0.4   matrixStats_0.62.0  evaluate_0.17      
+ [79] lattice_0.20-45     labeling_0.4.2      htmlwidgets_1.5.4  
+ [82] patchwork_1.1.2     tidyselect_1.2.0    GGally_2.1.2       
+ [85] plyr_1.8.7          magrittr_2.0.3      R6_2.5.1           
+ [88] magick_2.7.3        IRanges_2.28.0      generics_0.1.3     
+ [91] DBI_1.1.3           pillar_1.8.1        haven_2.5.1        
+ [94] withr_2.5.0         modelr_0.1.9        crayon_1.5.2       
+ [97] utf8_1.2.2          tzdb_0.3.0          rmarkdown_2.17     
+[100] GetoptLong_1.0.5    git2r_0.30.1        reprex_2.0.2       
+[103] digest_0.6.29       webshot_0.5.4       numDeriv_2016.8-1.1
+[106] httpuv_1.6.5        stats4_4.1.3        munsell_0.5.0      
+[109] viridisLite_0.4.1   bslib_0.4.0        </code></pre>
+</div>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>Weverton Gomes da Costa, Pós-Doutorando, Embrapa
+Mandioca e Fruticultura, <a href="mailto:wevertonufv@gmail.com"
+class="email">wevertonufv@gmail.com</a><a href="#fnref1"
+class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
