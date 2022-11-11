@@ -1,5 +1,6 @@
-# Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava
+# Genomic Selection for Drought Tolerance
 
-A [workflowr][] project.
+This website is a project for analysis of the Genomic Selection for Drought Tolerance Using Genome Wide GBS and/or DART in Cassava by EMBRAPA Mandioca.
 
-[workflowr]: https://github.com/workflowr/workflowr
+author: 
+  - Costa, W. G.^[Weverton Gomes da Costa, Pós-Doutorando, Embrapa Mandioca e Fruticultura, wevertonufv@gmail.com]
