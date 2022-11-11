@@ -517,8 +517,8 @@ for(j in traits) {
       Trait = j,
       Rep = z,
       Log = log,
-      Ac = round(cor(GEBV$Yhat, pheno$MS, use = "na.or.complete"), 3),
-      MSPE = round(mean(((GEBV$Yhat - pheno$MS) ^ 2
+      Ac = round(cor(GEBV$Yhat, train_data[[j]], use = "na.or.complete"), 3),
+      MSPE = round(mean(((GEBV$Yhat - train_data[[j]]) ^ 2
       ), na.rm = T), 3)
     )
     
@@ -562,6 +562,5 @@ results_cv %>%
     width = .2,
     position = position_dodge(.9)
   ) +
-  ylim(-0.3,0.3)+
   labs(y = "Accuracy")
 ```
