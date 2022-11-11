@@ -4,37 +4,17 @@ author:
   - Costa, W. G.^[Weverton Gomes da Costa, Pós-Doutorando, Embrapa Mandioca e Fruticultura, wevertonufv@gmail.com]
 date: "`r Sys.Date()`"
 site: workflowr::wflow_site
-url: https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava
-output: workflowr::wflow_html
+url: https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/index
+output:
+  workflowr::wflow_html:
+    toc: false
 editor_options:
   chunk_output_type: console
 github-repo: wevertongomescosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava
 ---
 
-This website is a project for analysis of the Genome Wide Association Studies (GWAS) for Drought Tolerance Using Genome Wide GBS and/or DART in Cassava by EMBRAPA Mandioca.
+This website is a project for analysis of the Genomic Selection for Drought Tolerance Using Genome-Wide GBS and/or DART in Cassava by EMBRAPA Cassava.
 
-```{r}
-geno <-
-  read.table("data/allchrAR08.txt", head = FALSE)
+In this project, you will find how the estimation of BLUPs was performed using mixed models. In addition, we performed the EDA and some manipulations were necessary to estimate the BLUPs.
 
-dim(geno)
-
-geno[1:10,1:20]
-
-write.table(geno, "geno.txt")
-
-geno2 <- geno %>%
-  select(1, 2, which(geno[1,] %in% names$ID_Clone)) %>%
-  janitor::row_to_names(1) %>%
-  separate(alleles, c("REF", "ALT"))
-
-geno3<-geno2 %>%
-  mutate_at(vars(4:20),  ~ ifelse(.x == REF, 2, ifelse(
-    .x == ALT, 0, ifelse(.x != REF |
-                           .x != ALT , "NA", 1)
-  )))
-
-write.table(geno2,"geno2.txt", col.names = FALSE, row.names = FALSE)
-
-dim(geno)
-```
+For the GWS, we used the original marker matrix. Thus, we also had to perform some manipulations to organize and prepare the matrix for input into the models. The models used were RR-BLUP and G-BLUP. Finally, we performed cross-validation only for the G-BLUP, since the results were similar for both methods.

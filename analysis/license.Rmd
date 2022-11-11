@@ -4,11 +4,13 @@ author:
   - Costa, W. G.^[Weverton Gomes da Costa, Pós-Doutorando, Embrapa Mandioca e Fruticultura, wevertonufv@gmail.com]
 date: "`r Sys.Date()`"
 site: workflowr::wflow_site
-url: https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava
-output: workflowr::wflow_html
+url: https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/license
+output:
+  workflowr::wflow_html:
+    toc: false
 editor_options:
   chunk_output_type: console
 github-repo: wevertongomescosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava
 ---
 
-All right reserved to EMBRAPA Mandioca e Fruticultura.
+All right reserved to EMBRAPA Mandioca e Fruticulturato dataset.

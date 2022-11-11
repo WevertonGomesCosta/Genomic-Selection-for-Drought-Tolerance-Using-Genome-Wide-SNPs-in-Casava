@@ -1,10 +1,10 @@
 ---
-title: "GWS"
+title: "Genomic Selection"
 author: 
   - Costa, W. G.^[Weverton Gomes da Costa, Pós-Doutorando, Embrapa Mandioca e Fruticultura, wevertonufv@gmail.com]
 date: "`r Sys.Date()`"
 site: workflowr::wflow_site
-url: https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava
+url: https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS
 output: workflowr::wflow_html
 editor_options:
   chunk_output_type: console
@@ -16,8 +16,6 @@ knitr::opts_chunk$set(echo = T,
                       warning = F)
 memory.limit(70000)
 ```
-
-Yesterday, we learned how to perform genomic selection in a single environment trial. Today, we will expand the models to a multiple-environment context.
 
 To perform the analyses, we will need the following packages:
 

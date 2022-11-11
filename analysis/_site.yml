@@ -7,7 +7,7 @@ navbar:
     href: index.html
   - text: Phenotype
     href: phenotype.html
-  - text: GWS
+  - text: Genomic Selection
     href: GWS.html
   - text: About
     href: about.html

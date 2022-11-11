@@ -4,7 +4,7 @@ author:
   - Costa, W. G.^[Weverton Gomes da Costa, Pós-Doutorando, Embrapa Mandioca e Fruticultura, wevertonufv@gmail.com]
 date: "`r Sys.Date()`"
 site: workflowr::wflow_site
-url: https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava
+url: https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/phenotype
 output: workflowr::wflow_html
 editor_options:
   chunk_output_type: console
@@ -36,7 +36,7 @@ theme_set(theme_bw())
 
 ### Data import and manipulation
 
-Vamos importar o conjunto de dados fenotípicos, excluindo as variaveis sem informações e as variaveis Local (redundante com Ano) e Tratamento (só uma observação).
+Let's import the phenotypic dataset, excluding the variables without information and the variables Local (redundant with Year) and Treatment (only one observation).
 
 ```{r}
 pheno <- read_excel("data/Phenotyping.xlsx",
@@ -45,9 +45,9 @@ pheno <- read_excel("data/Phenotyping.xlsx",
   select(-c("Local", "Tratamento"))
 ```
 
-Vamos realizar alguma manipulações para ajustar nosso banco de dados e para facilitar a visualização da análise exploratória.
+We will perform some manipulations to adjust our database and to facilitate the visualization of the exploratory analysis.
 
-Primeiro, vamos converter as variaveis que são caracter em fatores. Depois vamos converter as variaveis que são referentes as notas para inteiro e logo em seguida em fatores. Após isso, vamos criar a variável ANo.Bloco para o aninhamento no modelo para obtenção dos BLUPs.
+First, let's convert the variables that are character into factors. Then we will convert the variables that refer to the grades to integers and then into factors. After that, let's create the variable ANo.Bloco for nesting in the model to obtain the BLUPs.
 
 ```{r}
 pheno <- pheno %>%
@@ -71,7 +71,7 @@ pheno <- pheno %>%
 
 ## Exploratory Data Analysis
 
-Análise introdutória de todo conjunto de dados
+Introductory analysis of the entire dataset
 
 ```{r}
 introduce(pheno) %>% 
@@ -84,11 +84,11 @@ introduce(pheno) %>%
   )
 ```
 
-Não temos nenhuma coluna que tenha todas observações ausentes, mas temos muitos valores ausentes em todo conjunto de dados. Algumas manipulações deverão ser realizadas para melhorar a qualidade dos dados.
+We don't have any columns that have all of the missing observations, but we do have a lot of missing values ​​in every dataset. Some manipulations should be performed to improve the quality of the data.
 
-### Analise de Ano
+### Year Analysis
 
-Vamos produzir um heatmap para verificar a quantidade de clone em cada ano. Vou criar outro conjunto de dados com a contagem de Ano e Clone. Depois vou criar os objetos correspondentes à matriz de clones e de anos. Por fim, criei a matriz que representa a presença e ausencia do clone no ano.
+Let's produce a heatmap to check the clone amount each year. I'm going to create another dataset with the Year and Clone count. Then I will create the objects corresponding to the clones and years array. Finally, I created the matrix that represents the presence and absence of the clone in the year.
 
 ```{r}
 pheno2 <- pheno %>%
@@ -109,7 +109,7 @@ Heatmap(
 )
 ```
 
-Pelo heatmap, fica claro que o ano 2016 possui muitas poucas observações. Então, devemos eliminá-lo.
+From the heatmap, it is clear that the year 2016 has very few observations. So, we must eliminate it.
 
 ```{r}
 pheno <- pheno %>% 
@@ -117,7 +117,7 @@ pheno <- pheno %>%
   droplevels()
 ```
 
-Apenas para conferência, vamos visualizar novamente o heatmap de clones por ano.
+Just for reference, let's re-view the clone heatmap by year.
 
 ```{r}
 pheno2<- pheno %>% 
@@ -138,7 +138,7 @@ Heatmap(
 )
 ```
 
-Aqui, é possível obervar que nosso conjunto de dados possui clones que foram avaliados em apenas um ano. Vamos visualizar isso, para verificarmos quantos clones foram avaliados de acordo com o número de anos.
+Here, it is possible to observe that our dataset has clones that were evaluated in just one year. Let's visualize this, to see how many clones were evaluated according to the number of years.
 
 ```{r}
 pheno2 %>%
@@ -157,9 +157,9 @@ pheno2 %>%
   )
 ```
 
-Apenas 5 clones foram avaliados em todos os anos, isso possivelmente diminuirá nossa acurácia do modelos.
+Only 5 clones were evaluated in all years, this will possibly decrease our model accuracy.
 
-Além disso, observe que os anos diferem quanto ao número de clones avaliados:
+Also, note that the years differ in the number of clones evaluated:
 
 ```{r}
 pheno2 %>%
@@ -177,9 +177,9 @@ pheno2 %>%
   )
 ```
 
-Outro fator que diminui a acurácia, e por isso adotar modelos mistos na análise é o mais indicado para a obtenção dos BLUPS. 
+Another factor that reduces the accuracy, and therefore adopting mixed models in the analysis is the most suitable for obtaining BLUPs.
 
-Podemos verificar quantos clones temos em comum entre os anos:
+We can check how many clones we have in common between the years:
 
 ```{r}
 genenvmat %*% t(genenvmat) %>% 
@@ -192,17 +192,17 @@ genenvmat %*% t(genenvmat) %>%
   )
 ```
 
-O ano 2020 apresenta menor número de clones em comum, no entanto, vamos mantê-lo para realizar as análises.
+The year 2020 has a lower number of clones in common, however, we will keep it for the analysis.
 
-### Análise das variáveis
+### Analysis of variables
 
-Agora, iremos analisar a frequência para cada característica discreta.
+Now, we will analyze the frequency for each discrete feature.
 
 ```{r, message=FALSE}
 plot_bar(pheno)
 ```
 
-A Incidencia de ácaros e Florescimento possuem poucas informações para alguns níveis e muitos NA's, também vamos excluir essas variáveis. 
+Mite Incidence and Flowering have little information for some levels and many NA's, we will also exclude these variables.
 
 ```{r, message=FALSE}
 pheno <- pheno  %>% 
@@ -211,36 +211,36 @@ pheno <- pheno  %>%
 plot_bar(pheno)
 ```
 
-Vamos observar apenas os valores ausentes agora, para verificar as proporções.
+Let's just look at the missing values now, to check the proportions.
 
 ```{r}
 plot_missing(pheno)
 ```
 
-Temos uma proporção alta de valor ausente para Vigor, Leaf_Lenght, Canopy_Width e Canopy_Lenght, também vou excluir-lás.
+We have a high missing value ratio for Vigor, Leaf_Lenght, Canopy_Width and Canopy_Lenght, I'll exclude those too.
 
 ```{r}
 pheno <- pheno %>% 
   select(-c(Vigor, Leaf_Lenght, Canopy_Width, Canopy_Lenght))
 ```
 
-Vamos verificar a distribuição das características por ano agora.
+Let's check the distribution of characteristics by year now.
 
 ```{r, message=FALSE}
 plot_bar(pheno, by = "Ano")
 ```
 
-Para Porte, Branching_Level e Staygreen temos muitos valores ausentes para o ano de 2017, possivelmente não houve avaliação nesse ano para essas características. Para obter os BLUPs, teremos que remover esse Ano do banco de dados.
+For Porte, Branching_Level and Staygreen we have many missing values for the year 2017, possibly there was no evaluation in that year for these characteristics. To get the BLUPs we will have to remove that Year from the database.
 
-Agora vamos observar os histogramas das varaiveis quantitativas:
+Now let's look at the histograms of the quantitative variables:
 
 ```{r}
 plot_histogram(pheno)
 ```
 
-Vimos aqui que as variáveis quantitativas apresentam correlações entre si, principalmente entre PROD.AMD com PTR e AMD com MS
+We saw here that the quantitative variables present correlations with each other, mainly between PROD.AMD with PTR and AMD with MS
 
-Vamos avaliar as estatisticas descritivas da combinação entre clone e ano para as variaveis.
+Let's evaluate the descriptive statistics of the combination between clone and year for the variables.
 
 ```{r}
 ge_details(pheno, Ano, Clone, resp = everything()) %>% kbl(escape = F, align = 'c') %>%
@@ -252,7 +252,7 @@ ge_details(pheno, Ano, Clone, resp = everything()) %>% kbl(escape = F, align = '
   )
 ```
 
-O genótipo BGM-0044 apresentou valores nulos para a maioria das características, como foi avaliado apenas no ano de 2018, é melhor excluí-lo.
+The BGM-0044 genotype showed null values for most traits, as it was only evaluated in the year 2018, it is better to exclude it.
 
 ```{r}
 pheno<- pheno %>% 
@@ -260,7 +260,7 @@ pheno<- pheno %>%
   droplevels()
 ```
 
-Aparentemente não temos mais um genótipo que possa prejudicar nossa análise. Agora devemos avaliar as estatisticas descritivas apenas de clone para as variaveis.
+Apparently we no longer have a genotype that could harm our analysis. Now we must evaluate the clone-only descriptive statistics for the variables.
 
 ```{r}
 desc_stat(pheno, by = Ano) %>%
@@ -273,11 +273,11 @@ desc_stat(pheno, by = Ano) %>%
   )
 ```
 
-Novamente, algumas variáveis não foram computadas para o ano de 2017 então temos que eliminar esse ano na hora de realizar a análise para essas variaveis. 
+Again, some variables were not computed for the year 2017, so we have to eliminate that year when performing the analysis for these variables.
 
-O que chama atenção nessa tabela são os cv altos para algumas característica, especialmente: HI, Nº de Hastes, NR.P, PPA, PROD.AMD e PTR.
+What draws attention in this table are the high cv for some characteristics, especially: HI, Nº of Stems, NR.P, PPA, PROD.AMD and PTR.
 
-Isso pode se dá devido a presença de outliers, vamos fazer uma inspeção em todo conjunto de dados para avaliar se há outliers:
+This may be due to the presence of outliers, let's inspect the entire dataset to assess whether there are outliers:
 
 ```{r}
 inspect(pheno %>%
@@ -290,23 +290,23 @@ inspect(pheno %>%
   )
 ```
 
-Confirmando o que foi descrito antes, a maioria das variáveis com alto cv apresenta muitos outliers e por isso iremos excluir elas no loop para obtenção dos blups. 
+Confirming what was described before, most variables with high cv have many outliers and therefore we will exclude them in the loop to obtain the blups.
 
-#### Geral Inspection 
+#### General Inspection
 
-Agora vamos realizar apenas uma inspeção geral dos dados para finalizar as manipulações. 
+Now let's just perform a general inspection of the data to finish the manipulations.
 
 ```{r}
 corr_plot(pheno, col.by = Ano)
 ```
 
-Amido com MS e PROD.AMD com PTR apresentam alta correlação. 
+Starch with MS and PROD.AMD with PTR show high correlation.
 
-Além disso a maioria das variáveis aparentemente apresentação distribuição normal dos dados fenotípicos. Dessa forma, vamos prosseguir para a obtenção dos blups.
+Furthermore most of the variables apparently show normal distribution of phenotypic data. So let's move on to getting the blups.
 
 ## Genotype-environment analysis by mixed-effect models
 
-Primeiro, vou criar uma função para obter os blups e alguns parâmetros do nosso modelo.
+First, I'm going to create a function to get the blups and some parameters from our model.
 
 ```{r}
 BLUPS_par <- function(model, trait) {
@@ -350,22 +350,21 @@ BLUPS_par <- function(model, trait) {
 save(BLUPS_par, file = "output/BLUPS_par.Rdata")
 ```
 
-
 ### The BLUP model
 
-Aqui temos que lembrar que possuímos outliers para algumas características e também que devemos excluir o ano 2017 para algumas. 
+Here we have to remember that we have outliers for some characteristics and also that we must exclude the year 2017 for some.
 
-Vou criar um loop onde informo quais características onde  esse ano deverá ser excluído e também utilizar a função de remover outliers.
+I'm going to create a loop where I inform which characteristics where this year should be excluded and also use the function to remove outliers.
 
-As características que devemos excluir o ano 2017 são Porte, Branching_Level, Staygreen, AMD, MS, Nº Hastes e PROD.AMD. 
+The characteristics that we must exclude in the year 2017 are Porte, Branching_Level, Staygreen, AMD, MS, Nº Rods and PROD.AMD.
 
 ```{r}
 excluir_2017 <- c("Porte", "Branching_Level", "Staygreen", "AMD", "MS", "Nº Hastes" , "PROD.AMD")
 ```
 
-Usaremos esse vetor dentro do loop para exclusão do ano 2017 para essas variáveis.
+We will use this vector inside the loop to exclude the year 2017 for these variables.
 
-Vamos converter todas as variáveis para numéricas agora.
+Let's convert all variables to numeric now.
 
 ```{r}
 traits <- colnames(pheno)[4:21]
@@ -373,7 +372,7 @@ pheno<- pheno %>%
   mutate_at(traits, as.numeric)
 ```
 
-Agora vamos realizar a análise de modelos mistos para obter os blups.
+Now let's perform the mixed model analysis to get the BLUPs.
 
 ```{r}
 load("output/BLUPS_par.Rdata")
@@ -385,7 +384,7 @@ resultMM <- foreach(a = traits, i = icount(), .inorder = TRUE) %dopar% {
   require(dplyr)
   library(purrr)
   
-  # Loop para exclusão do ano 2017 de acordo com o vetor com os nomes da variáveis descritos anteriormente.
+  # Loop to exclude the year 2017 according to the vector with the variable names described above.
   if (a %in% excluir_2017) {
     data <- pheno %>%
       filter(Ano != 2017) %>%
@@ -394,7 +393,7 @@ resultMM <- foreach(a = traits, i = icount(), .inorder = TRUE) %dopar% {
     data <- pheno
   }
   
-  # Exclusão dos primeiros outliers encontrados
+  # Deletion of the outliers found
   outliers <- boxplot(data[i+3], plot = FALSE)$out
   
   if(!is_empty(outliers)){
@@ -413,8 +412,8 @@ save(resultMM, file = "output/resultMM.Rdata")
 
 ### BLUPS for `Clone`
 
-Como usei "foreach" para executar cada análise do estágio 1 em paralelo, cada característica está em um elemento separado de uma lista
-Precisamos processar o objeto resultMM em um data.frame ou matriz para análise posterior.
+As I used "foreach" to run each stage 1 analysis in parallel, each characteristic is in a separate element of a list
+We need to process the resultMM object into a data.frame or matrix for further analysis.
 
 ```{r}
 load("output/resultMM.Rdata")
@@ -430,7 +429,7 @@ varcomp <-
     grp = c("Clone", "Ano", "Ano.Bloco", "Residual"),
     stringsAsFactors = F
   )
-# Aqui vamos obter os BLUPS para cada clone
+# Here we will get the BLUPS for each clone
 
 for (i in 1:length(resultMM)) {
   data <-
@@ -459,7 +458,7 @@ for (i in 1:length(resultMM)) {
 rownames(BLUPS) <- BLUPS$Clone
 ```
 
-Salvando os resultados dos BLUPs e dos parâmetros
+Saving the results of BLUPs and parameters
 
 ```{r}
 saveRDS(BLUPS, file = "output/BLUPS.RDS")
@@ -477,7 +476,7 @@ write.csv(H2,
 
 ### Ploting BLUPS for all traits
 
-Primeiros, vou somar a média das variáveis com os BLUPS para melhor interpretação.
+First, I will add the average of the variables with the BLUPs for better interpretation.
 
 ```{r}
 BLUPS<-readRDS("output/BLUPS.RDS")
@@ -494,7 +493,7 @@ for (i in traits) {
 }
 ```
 
-Vamos plotar os boxplot das variaveis.
+Let's plot the boxplots of the variables.
 
 ```{r}
 phen %>%
@@ -506,7 +505,7 @@ phen %>%
   theme_bw()
 ```
 
-Aqui vamos avaliar apenas a distribuição dos BLUPs sem a média.
+Here we will only evaluate the distribution of BLUPs without the mean.
 
 ```{r}
 BLUPS %>%
@@ -518,4 +517,4 @@ BLUPS %>%
   theme_bw()
 ```
 
-Aparentemente a maioria dos BLUPs para as variáveis seguem distribuição normal e pode ser aplicada a GWS pelos métodos convencionais.
+Apparently most BLUPs for the variables follow normal distribution and can be applied to GWS by conventional methods.
