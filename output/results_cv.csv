@@ -69,11 +69,11 @@
 "68","Ácaro",3,TRUE,0.412,0.033
 "69","Ácaro",4,TRUE,0.378,0.033
 "70","Ácaro",5,TRUE,0.409,0.035
-"71","Nº Hastes",1,TRUE,0.328,0.132
-"72","Nº Hastes",2,TRUE,0.325,0.135
-"73","Nº Hastes",3,TRUE,0.315,0.134
-"74","Nº Hastes",4,TRUE,0.255,0.142
-"75","Nº Hastes",5,TRUE,0.274,0.136
+"71","Nº.Hastes",1,TRUE,0.328,0.132
+"72","Nº.Hastes",2,TRUE,0.325,0.135
+"73","Nº.Hastes",3,TRUE,0.315,0.134
+"74","Nº.Hastes",4,TRUE,0.255,0.142
+"75","Nº.Hastes",5,TRUE,0.274,0.136
 "76","Stand_Final",1,TRUE,0.236,0.217
 "77","Stand_Final",2,TRUE,0.243,0.239
 "78","Stand_Final",3,TRUE,0.153,0.216

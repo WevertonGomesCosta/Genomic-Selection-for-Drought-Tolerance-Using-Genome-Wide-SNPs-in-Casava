@@ -4,7 +4,7 @@ author:
   - Costa, W. G.^[Weverton Gomes da Costa, Pós-Doutorando, Embrapa Mandioca e Fruticultura, wevertonufv@gmail.com]
 date: "`r Sys.Date()`"
 site: workflowr::wflow_site
-url: https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/phenotype
+url: https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava
 output: workflowr::wflow_html
 editor_options:
   chunk_output_type: console
@@ -84,7 +84,7 @@ introduce(pheno) %>%
   )
 ```
 
-We don't have any columns that have all of the missing observations, but we do have a lot of missing values ​​in every dataset. Some manipulations should be performed to improve the quality of the data.
+We don't have any columns that have all of the missing observations, but we do have a lot of missing values in every dataset. Some manipulations should be performed to improve the quality of the data.
 
 ### Year Analysis
 
@@ -302,7 +302,11 @@ corr_plot(pheno, col.by = Ano)
 
 Starch with MS and PROD.AMD with PTR show high correlation.
 
-Furthermore most of the variables apparently show normal distribution of phenotypic data. So let's move on to getting the blups.
+Furthermore most of the variables apparently show normal distribution of phenotypic data. So let's save the clean data and move on to getting the blups.
+
+```{r}
+write.csv(pheno, "data/pheno_clean.csv", row.names = FALSE)
+```
 
 ## Genotype-environment analysis by mixed-effect models
 
@@ -317,8 +321,8 @@ BLUPS_par <- function(model, trait) {
     c(VarCorr(model)$Clone) # Extract the variance component for CLONE
   ResidVar <-
     (attr(VarCorr(model), "sc")) ^ 2 # Extract the residual variance component
-  Ano <-
-    c(VarCorr(model)$Ano) # Extract the variance component for Ano.Bloco
+  Ano.var <-
+    c(VarCorr(model)$Ano) # Extract the variance component for Ano
   Ano.Bloco <-
     c(VarCorr(model)$Ano.Bloco) # Extract the variance component for Ano.Bloco
   # You will need a line like the one above for every random effect (not for fixed effects)
@@ -461,8 +465,6 @@ rownames(BLUPS) <- BLUPS$Clone
 Saving the results of BLUPs and parameters
 
 ```{r}
-saveRDS(BLUPS, file = "output/BLUPS.RDS")
-
 write.csv(BLUPS,
           "output/BLUPS.csv",
           row.names = F,
@@ -472,6 +474,11 @@ write.csv(H2,
           "output/herdabilidade.csv",
           row.names = F,
           quote = F)
+
+write.csv(varcomp,
+          "output/varcomp.csv",
+          row.names = F,
+          quote = F)
 ```
 
 ### Ploting BLUPS for all traits
@@ -479,7 +486,9 @@ write.csv(H2,
 First, I will add the average of the variables with the BLUPs for better interpretation.
 
 ```{r}
-BLUPS<-readRDS("output/BLUPS.RDS")
+BLUPS <- read.csv("output/BLUPS.csv") %>% 
+               arrange(Clone, .by_group = TRUE)
+
 media_pheno <- as.data.frame(pheno %>%
                                summarise_if(is.numeric, mean, na.rm = TRUE))
 

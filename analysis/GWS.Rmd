@@ -67,7 +67,7 @@ names %>%
 Agora vamos agrupar os IDs dos marcadores com os nomes dos clones.
 
 ```{r}
-pheno <- readRDS("output/BLUPS.RDS") %>%
+pheno <- read.csv("output/BLUPS.csv") %>%
   inner_join(names) %>% # Join Phenotypic data with Genotypics names (ID_Clones) of the Clones
   mutate(Clone = as.factor(Clone),
          ID_Clone = as.factor(ID_Clone))
@@ -204,7 +204,9 @@ Com o filtro de MAF a 1% restaram 22779 marcadores. Vou salvar a matriz agora pa
 saveRDS(geno, "data/SNPs.rds")
 ```
 
-## Building the G matrix
+## Genomic selection
+
+### Building the G matrix
 
 Again, we will use the [AGHmatrix](https://cran.r-project.org/web/packages/AGHmatrix/vignettes/Tutorial_AGHmatrix.html) package [@amadeu_aghmatrix_2016] to build the G matrix:
 
@@ -562,5 +564,10 @@ results_cv %>%
     width = .2,
     position = position_dodge(.9)
   ) +
+  expand_limits(y = c(0,1)) +
+   theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust=1),
+         text = element_text(size = 15)) +
   labs(y = "Accuracy")
+
+ggsave("output/accuracy_multi.png", width = 16, height = 8, dpi =300)
 ```

@@ -11,7 +11,7 @@
 
 <meta name="author" content="Costa, W. G." />
 
-<meta name="date" content="2022-11-11" />
+<meta name="date" content="2022-11-17" />
 
 <title>Genomic Selection</title>
 
@@ -427,6 +427,12 @@ div.tocify {
   <a href="GWS.html">Genomic Selection</a>
 </li>
 <li>
+  <a href="phenotype_multi.html">Phenotype Multi-environment</a>
+</li>
+<li>
+  <a href="gws-multi-enviroment.html">Genomic Selection Multi-environment</a>
+</li>
+<li>
   <a href="about.html">About</a>
 </li>
 <li>
@@ -447,7 +453,7 @@ div.tocify {
 <h1 class="title toc-ignore">Genomic Selection</h1>
 <h4 class="author">Costa, W. G.<a href="#fn1" class="footnote-ref"
 id="fnref1"><sup>1</sup></a></h4>
-<h4 class="date">2022-11-11</h4>
+<h4 class="date">2022-11-17</h4>
 
 </div>
 
@@ -476,7 +482,7 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-11-11
+<strong>Last updated:</strong> 2022-11-17
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -611,15 +617,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatreed930880aef03c824bb532ffc196a8ad2f9105d51targetblankd930880a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatree0f3154e291670045a96a6a6d5955337add03d85dtargetblank0f3154ea">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/d930880aef03c824bb532ffc196a8ad2f9105d51" target="_blank">d930880</a>
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/0f3154e291670045a96a6a6d5955337add03d85d" target="_blank">0f3154e</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatreed930880aef03c824bb532ffc196a8ad2f9105d51targetblankd930880a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatree0f3154e291670045a96a6a6d5955337add03d85dtargetblank0f3154ea"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -629,7 +635,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/d930880aef03c824bb532ffc196a8ad2f9105d51" target="_blank">d930880</a>.
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/0f3154e291670045a96a6a6d5955337add03d85d" target="_blank">0f3154e</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -647,14 +653,25 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    data/allchrAR08.txt
 
+Untracked files:
+    Untracked:  analysis/figure/
+    Untracked:  analysis/gws-multi-enviroment.Rmd
+    Untracked:  analysis/phenotype_multi.Rmd
+    Untracked:  data/genomic selection.pptx
+    Untracked:  data/pheno_clean.csv
+    Untracked:  output/BLUPS_Multi.csv
+    Untracked:  output/BLUPS_par_ind.Rdata
+    Untracked:  output/accuracy_multi.png
+    Untracked:  output/media_pheno_Multi.csv
+    Untracked:  output/result_G_BLUP.csv
+    Untracked:  output/varcomp.csv
+
 Unstaged changes:
     Modified:   analysis/GWS.Rmd
-    Deleted:    analysis/figure/GWS.Rmd/unnamed-chunk-11-1.png
-    Deleted:    analysis/figure/GWS.Rmd/unnamed-chunk-15-1.png
-    Deleted:    analysis/figure/GWS.Rmd/unnamed-chunk-16-1.png
-    Deleted:    analysis/figure/GWS.Rmd/unnamed-chunk-19-1.png
-    Deleted:    analysis/figure/GWS.Rmd/unnamed-chunk-20-1.png
-    Deleted:    analysis/figure/GWS.Rmd/unnamed-chunk-21-1.png
+    Modified:   analysis/_site.yml
+    Modified:   analysis/phenotype.Rmd
+    Modified:   output/BLUPS_par.Rdata
+    Modified:   output/resultMM.Rdata
     Modified:   output/results_cv.csv
 
 </code></pre>
@@ -700,6 +717,74 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/blob/1936c513a4d0c67c245b9b4f90722de1fe6f8b16/analysis/GWS.Rmd" target="_blank">1936c51</a>
+</td>
+<td>
+WevertonGomesCosta
+</td>
+<td>
+2022-11-11
+</td>
+<td>
+Update
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/1936c513a4d0c67c245b9b4f90722de1fe6f8b16/docs/GWS.html" target="_blank">1936c51</a>
+</td>
+<td>
+WevertonGomesCosta
+</td>
+<td>
+2022-11-11
+</td>
+<td>
+Update
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/blob/62bf2ac6d936e72f793ae07e32b74331a91405bf/analysis/GWS.Rmd" target="_blank">62bf2ac</a>
+</td>
+<td>
+WevertonGomesCosta
+</td>
+<td>
+2022-11-11
+</td>
+<td>
+Update
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/62bf2ac6d936e72f793ae07e32b74331a91405bf/docs/GWS.html" target="_blank">62bf2ac</a>
+</td>
+<td>
+WevertonGomesCosta
+</td>
+<td>
+2022-11-11
+</td>
+<td>
+Update
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -861,7 +946,7 @@ CNPMF19.250370327
 <h3>Phenotypic data</h3>
 <p>Agora vamos agrupar os IDs dos marcadores com os nomes dos
 clones.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pheno <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;output/BLUPS.RDS&quot;</span>) <span class="sc">%&gt;%</span></span>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pheno <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;output/BLUPS.csv&quot;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(names) <span class="sc">%&gt;%</span> <span class="co"># Join Phenotypic data with Genotypics names (ID_Clones) of the Clones</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Clone =</span> <span class="fu">as.factor</span>(Clone),</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">ID_Clone =</span> <span class="fu">as.factor</span>(ID_Clone))</span></code></pre></div>
@@ -924,7 +1009,7 @@ DCaule
 Ácaro
 </th>
 <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
-Nº Hastes
+Nº.Hastes
 </th>
 <th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
 Stand_Final
@@ -2279,8 +2364,10 @@ matriz agora para que possamos carregar ela caso seja necessário.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(geno, <span class="st">&quot;data/SNPs.rds&quot;</span>)</span></code></pre></div>
 </div>
 </div>
-<div id="building-the-g-matrix" class="section level2">
-<h2>Building the G matrix</h2>
+<div id="genomic-selection" class="section level2">
+<h2>Genomic selection</h2>
+<div id="building-the-g-matrix" class="section level3">
+<h3>Building the G matrix</h3>
 <p>Again, we will use the <a
 href="https://cran.r-project.org/web/packages/AGHmatrix/vignettes/Tutorial_AGHmatrix.html">AGHmatrix</a>
 package <span class="citation">[@amadeu_aghmatrix_2016]</span> to build
@@ -2305,7 +2392,7 @@ Summary check:
     Initial:  22779 SNPs 
     Final:  22779  SNPs ( 0  SNPs removed) 
  
-Completed! Time = 24.16  seconds </code></pre>
+Completed! Time = 23.66  seconds </code></pre>
 <p>Now we have the whole G matrix (414 x 414), which we can represent
 using a heatmap:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Heatmap</span>(</span>
@@ -2316,6 +2403,7 @@ using a heatmap:</p>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p><img src="figure/GWS.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>“Res” in the heatmap legend title is for “Resemblance”.</p>
+</div>
 </div>
 <div id="rrblup" class="section level2">
 <h2>RRBLUP</h2>
@@ -3840,7 +3928,7 @@ TRUE
 </tr>
 <tr>
 <td style="text-align:center;">
-Nº Hastes
+Nº.Hastes
 </td>
 <td style="text-align:center;">
 1
@@ -3857,7 +3945,7 @@ TRUE
 </tr>
 <tr>
 <td style="text-align:center;">
-Nº Hastes
+Nº.Hastes
 </td>
 <td style="text-align:center;">
 2
@@ -3874,7 +3962,7 @@ TRUE
 </tr>
 <tr>
 <td style="text-align:center;">
-Nº Hastes
+Nº.Hastes
 </td>
 <td style="text-align:center;">
 3
@@ -3891,7 +3979,7 @@ TRUE
 </tr>
 <tr>
 <td style="text-align:center;">
-Nº Hastes
+Nº.Hastes
 </td>
 <td style="text-align:center;">
 4
@@ -3908,7 +3996,7 @@ TRUE
 </tr>
 <tr>
 <td style="text-align:center;">
-Nº Hastes
+Nº.Hastes
 </td>
 <td style="text-align:center;">
 5
@@ -4206,8 +4294,12 @@ característica</p>
 <span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">width =</span> .<span class="dv">2</span>,</span>
 <span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_dodge</span>(.<span class="dv">9</span>)</span>
 <span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&quot;Accuracy&quot;</span>)</span></code></pre></div>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">expand_limits</span>(<span class="at">y =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>)) <span class="sc">+</span></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">60</span>, <span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">hjust=</span><span class="dv">1</span>),</span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>         <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">15</span>)) <span class="sc">+</span></span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&quot;Accuracy&quot;</span>)</span></code></pre></div>
 <p><img src="figure/GWS.Rmd/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">&quot;output/accuracy_multi.png&quot;</span>, <span class="at">width =</span> <span class="dv">16</span>, <span class="at">height =</span> <span class="dv">8</span>, <span class="at">dpi =</span><span class="dv">300</span>)</span></code></pre></div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -4216,7 +4308,7 @@ Session information
 </button>
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
 <pre><code>R version 4.1.3 (2022-03-10)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 10 x64 (build 19042)
@@ -4261,23 +4353,23 @@ loaded via a namespace (and not attached):
  [49] svglite_2.1.0       iterators_1.0.14    xfun_0.32          
  [52] rvest_1.0.3         lifecycle_1.0.3     googlesheets4_1.0.1
  [55] DEoptimR_1.0-11     MASS_7.3-58.1       zoo_1.8-11         
- [58] scales_1.2.1        hms_1.1.2           promises_1.2.0.1   
- [61] parallel_4.1.3      SparseM_1.81        RColorBrewer_1.1-3 
- [64] yaml_2.3.5          sass_0.4.2          stringi_1.7.6      
- [67] highr_0.9           S4Vectors_0.32.4    foreach_1.5.2      
- [70] BiocGenerics_0.40.0 boot_1.3-28         shape_1.4.6        
- [73] rlang_1.0.6         pkgconfig_2.0.3     systemfonts_1.0.4  
- [76] matrixStats_0.62.0  evaluate_0.17       labeling_0.4.2     
- [79] tidyselect_1.2.0    magrittr_2.0.3      R6_2.5.1           
- [82] magick_2.7.3        IRanges_2.28.0      generics_0.1.3     
- [85] DBI_1.1.3           mgcv_1.8-40         pillar_1.8.1       
- [88] haven_2.5.1         whisker_0.4         withr_2.5.0        
- [91] survival_3.4-0      modelr_0.1.9        crayon_1.5.2       
- [94] utf8_1.2.2          tzdb_0.3.0          rmarkdown_2.17     
- [97] GetoptLong_1.0.5    git2r_0.30.1        reprex_2.0.2       
-[100] digest_0.6.29       webshot_0.5.4       httpuv_1.6.5       
-[103] stats4_4.1.3        munsell_0.5.0       viridisLite_0.4.1  
-[106] bslib_0.4.0        </code></pre>
+ [58] scales_1.2.1        ragg_1.2.3          hms_1.1.2          
+ [61] promises_1.2.0.1    parallel_4.1.3      SparseM_1.81       
+ [64] RColorBrewer_1.1-3  yaml_2.3.5          sass_0.4.2         
+ [67] stringi_1.7.6       highr_0.9           S4Vectors_0.32.4   
+ [70] foreach_1.5.2       BiocGenerics_0.40.0 boot_1.3-28        
+ [73] shape_1.4.6         rlang_1.0.6         pkgconfig_2.0.3    
+ [76] systemfonts_1.0.4   matrixStats_0.62.0  evaluate_0.17      
+ [79] labeling_0.4.2      tidyselect_1.2.0    magrittr_2.0.3     
+ [82] R6_2.5.1            magick_2.7.3        IRanges_2.28.0     
+ [85] generics_0.1.3      DBI_1.1.3           mgcv_1.8-40        
+ [88] pillar_1.8.1        haven_2.5.1         whisker_0.4        
+ [91] withr_2.5.0         survival_3.4-0      modelr_0.1.9       
+ [94] crayon_1.5.2        utf8_1.2.2          tzdb_0.3.0         
+ [97] rmarkdown_2.17      GetoptLong_1.0.5    git2r_0.30.1       
+[100] reprex_2.0.2        digest_0.6.29       webshot_0.5.4      
+[103] httpuv_1.6.5        textshaping_0.3.6   stats4_4.1.3       
+[106] munsell_0.5.0       viridisLite_0.4.1   bslib_0.4.0        </code></pre>
 </div>
 </div>
 </div>

@@ -1,0 +1,518 @@
+---
+title: "gws-multi-enviroment"
+author: 
+  - Costa, W. G.^[Weverton Gomes da Costa, Pós-Doutorando, Embrapa Mandioca e Fruticultura, wevertonufv@gmail.com]
+date: "`r Sys.Date()`"
+site: workflowr::wflow_site
+url: https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+github-repo: wevertongomescosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava
+---
+
+```{r setup, include=F} 
+knitr::opts_chunk$set(echo = T,
+                      warning = F)
+memory.limit(70000)
+```
+
+To perform the analyses, we will need the following packages:
+
+```{r message=F}
+library(readxl)
+require(tidyverse)
+library(kableExtra)
+library(janitor)
+library(genomicMateSelectR)
+library(AGHmatrix)
+require(ComplexHeatmap)
+require(rrBLUP)
+library(ggpmisc)
+library(cvTools)
+theme_set(theme_bw())
+```
+
+<br>
+
+## Data
+
+The data set is based in genotypes evalueted in five years (2016 to 2020), each year was considered as environment. 
+
+### Names marker data
+
+Primeiro vamos buscar os ID dos marcadores para cada clone.
+
+```{r}
+names <-
+  read_excel("data/Phenotyping.xlsx", sheet = "GBS") %>%
+  rename(Clone = `Names trials Petrolina`,
+         ID_Clone = `Nome GBS`) %>%
+  mutate(ID_Clone = str_replace_all(ID_Clone, ":", ".")) %>%
+  select(Clone, ID_Clone)
+
+names %>%
+  head() %>%
+  kbl(escape = F, align = 'c') %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
+```
+
+### Phenotypic data
+
+Agora vamos agrupar os IDs dos marcadores com os nomes dos clones.
+
+```{r}
+pheno <- read.csv("output/BLUPS_Multi.csv") %>%
+  inner_join(names) %>% # Join Phenotypic data with Genotypics names (ID_Clones) of the Clones
+  mutate(Clone = as.factor(Clone),
+         ID_Clone = as.factor(ID_Clone),
+         Ano = as.factor(Ano))
+
+pheno %>%
+  head() %>%
+  kbl(escape = F, align = 'c') %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
+```
+
+### Genotypic data
+
+Com o filtro de MAF a 1% restaram 22779 marcadores. Vou carregar a matriz genotipica agora.
+
+```{r}
+geno <- readRDS("data/SNPs.rds")
+
+geno[1:5,1:5]
+```
+
+#### Building the G matrix
+
+Again, we will use the [AGHmatrix](https://cran.r-project.org/web/packages/AGHmatrix/vignettes/Tutorial_AGHmatrix.html) package [@amadeu_aghmatrix_2016] to build the G matrix:
+
+```{r warning=F}
+G_matrix <- Gmatrix(geno,
+                    method = "VanRaden",
+                    ploidy = 2,
+                    missingValue = NA)
+
+```
+
+Now we have the whole G matrix (414 x 414), which we can represent using a heatmap:
+
+```{r}
+Heatmap(
+  G_matrix,
+  show_row_names = F,
+  show_column_names = F,
+  heatmap_legend_param = list(title = "Res")
+)
+```
+
+"Res" in the heatmap legend title is for "Resemblance".
+
+## Genomic selection
+
+### 1. Restraining the genotype means - only adj. means and genotyped:
+
+For this purpose, we will use only individuals with BLUps and SNPs available. 
+
+```{r}
+pheno <- pheno %>%
+  filter(ID_Clone %in% rownames(geno)) %>%
+  droplevels()
+```
+
+### 2. Building the genotype and environment design matrices:
+
+```{r}
+envmat = model.matrix( ~ -1 + Ano, data = pheno)
+
+```
+
+```{r}
+envmat[1:5, 1:4] %>% kbl(escape = F, align = 'c') %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  ) %>% footnote("Dimension: 534 $\\times$ 4", general_title = "")
+```
+
+```{r}
+genmat = model.matrix( ~ -1 + Clone, data = pheno)
+```
+
+```{r}
+genmat[1:5, 1:5] %>% kbl(escape = F, align = 'c') %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  ) %>% footnote("Dimension: 534 $\\times$ 414", general_title = "")
+```
+
+### 3. Building the environmental and genetic covariance matrices:
+
+```{r}
+G = tcrossprod(tcrossprod(genmat, G_matrix), genmat)
+```
+
+```{r}
+G[1:5, 1:5] %>% kbl(escape = F, align = 'c') %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  ) %>% footnote("Dimension: 534 $\\times$ 534", general_title = "")
+```
+
+
+```{r}
+E = tcrossprod(envmat)
+```
+
+```{r}
+E[1:5, 1:5] %>% kbl(escape = F, align = 'c') %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  ) %>% footnote("Dimension: 534 $\\times$ 534", general_title = "")
+```
+
+<br>
+
+### 4. Building the interaction matrix:
+
+```{r}
+GE = G * E
+```
+
+```{r}
+GE[1:5, 1:5] %>% kbl(escape = F, align = 'c') %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  ) %>% footnote("Dimension: 534 $\\times$ 534", general_title = "")
+```
+
+### GBLUP
+
+In the GBLUP, we will use the G matrix instead of the SNPs matrix. Thus, we will obtain the GEBV directly. Note that we will need to build the G matrix again, since some genotypes were dropped after our filtering. The rrBLUP package has a function called "A.mat" that build the Additive Genomic Matrix from a SNP matrix with "-1,0,1" codification:
+
+```{r}
+year <- levels(pheno$Ano)
+
+traits <- colnames(pheno[3:20])
+
+result <- data.frame()
+result_G_BLUP <- data.frame()
+
+for (i in traits) {
+  
+  for (j in year) {
+
+    data <- pheno %>%
+      filter(Ano == j) %>%
+      droplevels()
+    
+    if (is.na(mean(data[[i]], na.rm = TRUE))) {
+      next
+    }
+    
+    index = rownames(geno) %in% data$ID_Clone
+    data_gen = geno[index,]
+    
+    
+    GBLUP <- mixed.solve(data[[i]], K = A.mat(data_gen - 1))
+    if (dim(result)[1] == 0) {
+      result <- data.frame(
+        ID_Clone = rownames(GBLUP$u),
+        Ano = j,
+        stringsAsFactors = F
+      )
+      result[, i] <- data.frame(GBLUP$u)
+    } else {
+      
+      result1 <- data.frame(
+        ID_Clone = rownames(GBLUP$u),
+        Ano = j,
+        stringsAsFactors = F
+      )
+      
+      result1[, i] <- data.frame(GBLUP$u)
+      
+      result <- rbind(result1, result)
+    }
+  }
+  
+  if (i == "NR.P") {
+    result_G_BLUP <- result
+  } else{
+    
+    if (dim(result)[1] == 0) {
+      next
+    }
+    
+    result_G_BLUP1 <- result
+    
+    result_G_BLUP <- result_G_BLUP %>% 
+    full_join(result_G_BLUP1)
+  }
+    result<-data.frame()
+}
+
+write.csv(result_G_BLUP, "output/result_G_BLUP.csv" , row.names = F,
+  quote = F)
+```
+
+Aqui, iremos adicionar novamente os valores médios dos valores fenotípicos aos GEBVs obtidos pelo G-BLUP.
+
+```{r}
+media_pheno_Multi <- read.csv("output/media_pheno_Multi.csv") %>% 
+  mutate(Ano = as.factor(Ano))
+
+phen<-
+  data.frame(pheno %>% 
+               group_by(ID_Clone, Ano) %>% 
+               group_keys() %>% 
+               arrange(ID_Clone, .by_group = TRUE),
+             stringsAsFactors = F)
+
+media_pheno_Multi <- full_join(phen, media_pheno_Multi)
+
+traits <- colnames(result_G_BLUP[3:ncol(result_G_BLUP)])
+
+result_G_BLUP <- result_G_BLUP %>% 
+  arrange(ID_Clone, .by_group = TRUE)
+
+for (i in traits) {
+  phen[,i] <- result_G_BLUP[,i] + media_pheno_Multi[,i]
+}
+```
+
+
+```{r}
+GEBVS_G_BLUP <- result_G_BLUP %>%
+  pivot_longer(NR.P:Staygreen,
+               names_to = "Variable",
+               values_to = "GEBVS")
+
+BLUPS_MED <- result_G_BLUP %>% 
+  arrange(ID_Clone, .by_group = TRUE)
+
+for (i in traits) {
+  BLUPS_MED[,i] <- BLUPS_MED[,i] + media_pheno_Multi[, i]
+}
+
+BLUPS_MED <- BLUPS_MED %>%
+  pivot_longer(NR.P:Staygreen,
+               names_to = "Variable",
+               values_to = "BLUPS")
+
+data_gws_G_BLUP <- GEBVS_G_BLUP %>%
+  full_join(BLUPS_MED)
+```
+
+Agora vamos produzir os gráficos para cada variável comparando a correlação entre os GEBVs e BLUPs.
+
+```{r}
+data_gws_G_BLUP %>%
+  ggplot(aes(x = BLUPS, y = GEBVS)) +
+  geom_point(aes(color = GEBVS), show.legend = F) +
+  geom_smooth(method = lm, se = F) +
+  stat_poly_eq(formula = y ~ x, label.y = "bottom") +
+  scale_color_gradient(low = '#c80000', high = '#FFFF00') +
+  facet_wrap(. ~ Variable, ncol = 6, scales = "free") +
+  expand_limits(y = 0, x = 0) +
+  ggtitle("G-BLUP")
+```
+
+Agora vamos comparar os modelos por meio de um boxplot.
+
+```{r}
+data_gws_G_BLUP %>%
+  pivot_longer(4:5, names_to = "Method", values_to = "Values") %>%
+  ggplot(aes(x = , y = Values, fill = Method)) +
+  geom_boxplot() +
+  facet_wrap(. ~ Variable, ncol = 6, scales = "free")  +
+  expand_limits(y = 0, x = 0) +
+  ggtitle("G-BLUP")
+```
+
+## Cross-validation
+
+To prove that the prediction is accurate, we should perform a cross-validation (CV) scheme. For this purpose, we divide the data into a training set and a validation set. 
+
+First we separate the data into *k* folds. Then, we attribute *NA* for one fold and try to predict the data from this fold based on the others. When selecting the number of folds, one must prioritize the balance between the number of observations in each fold. 
+
+In addition, this process should be repeated for further validation. The step-by-step below will guide the CV in the data we are analysing.
+
+###  1. Determine the number of folds and repetitions
+
+```{r}
+nfolds = 5
+nrept = 5
+```
+
+Since we defined 5 folds, our data will be divided into 5 parts with 83 observations each.
+
+### 2. Match the data and the rows of the SNP matrix
+
+```{r}
+all(rownames(geno) %in% pheno$ID_Clone)
+all(pheno$ID_Clone %in% rownames(geno))
+```
+
+### 3. Croos-Validation
+
+```{r}
+set.seed(100)
+
+results <- list()
+results_cv <- data.frame()
+
+for (j in traits) {
+  for (a in year) {
+    data <- pheno %>%
+      filter(Ano == a) %>%
+      droplevels()
+    
+    if (is.na(mean(data[[j]], na.rm = TRUE))) {
+      next
+    }
+    
+    index = rownames(geno) %in% data$ID_Clone
+    data_gen = geno[index, ]
+    
+    data$ID <- factor(1:nrow(data))
+    
+    sort <- list()
+    
+    for (r in 1:nrept) {
+      for (f in 1:nfolds) {
+        folds <- cvFolds(nlevels(data$ID),
+                         type = "random",
+                         K = 5,
+                         R = 1)
+        Sample <- cbind(folds$which, folds$subsets)
+        cv <- split(Sample[, 2], f = Sample[, 1])
+      }
+      sort[[r]] <- cv
+    }
+    
+    rm(r, folds, f, cv, Sample)
+    
+    fold.list <- sort
+    
+    for (z in 1:length(fold.list)) {
+      for (i in 1:nfolds) {
+        # Training set
+        train_data <- data
+        
+        # Validation set
+        train_data[train_data$ID %in% fold.list[[z]][[i]], j] <- NA
+        
+        # Fitting model
+        GBLUP <-
+          mixed.solve(train_data[[j]], K = A.mat(data_gen - 1))
+        
+        # GEBV
+        Pred <- data.frame(Yhat = GBLUP$u, G = data$ID)
+        
+        rownames(Pred) <- rownames(data_gen)
+        
+        # Predicted GEBV
+        
+        results[[i]] <- Pred[Pred[, "G"] %in% fold.list[[z]][[i]],]
+        
+        # Remove
+        rm(GBLUP, Pred, train_data)
+      }
+      
+      GEBV <- do.call(rbind, results)
+      GEBV <- GEBV[order(GEBV$G),]
+      
+      # Log
+      log <- all(GEBV$G == data$ID)
+      
+      # Results
+      result_cv <- data.frame(
+        Ano = a,
+        Trait = j,
+        Rep = z,
+        Log = log,
+        Ac = round(cor(GEBV$Yhat, data[[j]], use = "na.or.complete"), 3),
+        MSPE = round(mean(((GEBV$Yhat - data[[j]]) ^ 2
+        ), na.rm = T), 3)
+      )
+      
+      results_cv <-
+        rbind(results_cv, result_cv)
+    }
+  }
+}
+```
+
+
+```{r}
+results_cv %>%
+  kbl(escape = F, align = 'c') %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+    
+  )
+
+write.csv(results_cv, "output/results_cv.csv",    row.names = F,
+  quote = F)
+```
+
+The object "result_cv" is divided by repetition. In the "result_cv" objects for each repetition, "Rep" is the number of the repetition, "Log" is a diagnostic indicating if the order of the predicted breeding values matches the order of the adjusted means, "Ac" is the prediction accuracy (correlation between the GEBV and adjusted means), and "MSPE" is the mean square prediction error (the lower, the better).
+
+Agora vamos plotar os resultados de acurácias para cada característica
+
+```{r}
+results_cv %>%
+  group_by(Ano, Trait) %>%
+  summarise(
+    mean.Ac = mean(Ac),
+    sd.Ac = sd(Ac),
+    mean.MSPE = mean(MSPE),
+    sd.MSPE = sd(MSPE)
+  ) %>%
+  ggplot(aes(x = Ano, y = mean.Ac , fill = Trait)) +
+  geom_col(alpha = 0.8,
+           width = 0.5,
+           show.legend = F) +
+  geom_errorbar(
+    aes(ymin = mean.Ac - sd.Ac, ymax = mean.Ac + sd.Ac),
+    width = .2,
+    position = position_dodge(.9)
+  ) +
+  facet_wrap(. ~ Trait, ncol = 6) +
+  expand_limits(y = c(0,1)) +
+   theme(axis.text.x = element_text(angle = 60, vjust = 1, hjust=1),
+         text = element_text(size = 15)) +
+  labs(y = "Accuracy")
+
+ggsave("output/accuracy_multi.png", width = 16, height = 8, dpi =300)
+```
+

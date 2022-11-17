@@ -1,0 +1,623 @@
+---
+title: "Multi-Enviroment Analysis of Brazilian Drought Trials"
+author: 
+  - Costa, W. G.^[Weverton Gomes da Costa, Pós-Doutorando, Embrapa Mandioca e Fruticultura, wevertonufv@gmail.com]
+date: "`r Sys.Date()`"
+site: workflowr::wflow_site
+url: https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+github-repo: wevertongomescosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava
+---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE)
+memory.limit(70000)
+```
+
+## Data and libraries
+
+Load Libraries
+
+```{r  message=FALSE}
+library(kableExtra)
+library(tidyverse)
+library(metan)
+require(ComplexHeatmap)
+library(data.table)
+library(readxl)
+library(DataExplorer)
+library(doParallel)
+theme_set(theme_bw())
+```
+
+### Data import and manipulation
+
+Como já relaizamos a limpeza dos dados para a análise conjunta, vamos agora buscar os dados limpos.
+
+```{r}
+pheno <- read.csv("data/pheno_clean.csv")
+```
+
+We will perform some manipulations to adjust our database and to facilitate the visualization of the exploratory analysis.
+
+First, let's convert the variables that are character into factors. Then we will convert the variables that refer to the grades to integers and then into factors. After that, let's create the variable ANo.Bloco for nesting in the model to obtain the BLUPs.
+
+```{r}
+pheno <- pheno %>%
+  mutate_if(is.character, as.factor) %>%
+  mutate_if(is.integer, as.factor) %>%
+  mutate_at("Ano.Bloco", as.factor)
+```
+
+## Exploratory Data Analysis
+
+Como vimos anteriormente, nosso dataset possui número de clones avaliados diferentes por ano. Let's visualize this, to see how many clones were evaluated according to the number of Anos.
+
+```{r}
+pheno %>%
+  count(Ano, Clone) %>% 
+  count(Clone) %>%
+  count(n) %>%
+  kbl(
+    escape = F,
+    align = 'c',
+    col.names = c("N of Environments", "Number of genotypes")
+  ) %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
+```
+
+Only 5 clones were evaluated in all Anos.
+
+Also, note that the Anos differ in the number of clones evaluated:
+
+```{r}
+pheno %>%
+  count(Ano, Clone) %>%
+  group_by(Ano) %>%
+  summarise(length(Clone)) %>%
+  kbl(
+    escape = F,
+    align = 'c',
+    col.names = c("Environments", "Number of genotypes")) %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
+```
+
+We can check how many clones we have in common between the Anos:
+
+```{r}
+pheno2<- pheno %>% 
+  count(Ano, Clone)
+  
+genmat = model.matrix( ~ -1 + Clone, data = pheno2)
+envmat = model.matrix( ~ -1 + Ano, data = pheno2)
+genenvmat = t(envmat) %*% genmat
+
+genenvmat %*% t(genenvmat) %>% 
+  kbl(escape = F, align = 'c') %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
+```
+
+The Ano 2020 has a lower number of clones in common, however, we will keep it for the analysis.
+
+We must evaluate the descriptive statistics by Ano for the variables.
+
+```{r}
+desc_stat(pheno, by = Ano) %>%
+  kbl(escape = F, align = 'c') %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
+```
+
+What draws attention in this table are the high cv for some characteristics, especially: HI, Nº of Stems, NR.P, PPA, PROD.AMD and PTR.
+
+This may be due to the presence of outliers, let's inspect the entire dataset to assess whether there are outliers:
+
+```{r}
+inspect(pheno %>%
+          select(-c(Clone)), verbose = FALSE) %>% kbl(escape = F, align = 'c') %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
+```
+
+Confirming what was described before, most variables with high cv have many outliers and therefore we will exclude them in the loop to obtain the blups.
+
+Como nosso objetivo agora é realizar a análise dos blups individuais para cada ano, vamos avaliar cada variável por ano 
+
+```{r}
+plot_boxplot(
+  pheno,
+  by = "Ano",
+  ggtheme = theme_bw(),
+  nrow = 5L,
+  ncol = 4L,
+  geom_boxplot_args = list("outlier.colour" = "red",
+                           "outlier.shape" = 1))
+
+```
+
+Algumas variáveis não apresentam dados para o ano de 2017. Além disso, as variáveis RF e Ácaro apresentam discrepância na distribuição dos dados para o ano 2019, isso também vale para Sataygreen nos anos de 2019 e 2020.
+
+Nesse caso, vamos excluir esses anos para essas variáveis.
+
+## Genotype-environment analysis by mixed-effect models
+
+First, I'm going to create a function to get the blups by Ano and some parameters from our model.
+
+```{r}
+BLUPS_par_ind <- function(model, trait) {
+  BLUP <- ranef(model, condVar = TRUE)$Clone
+  PEV <-
+    c(attr(BLUP, "postVar")) # PEV is a vector of error variances associated with each individual BLUP... # it tells you about how confident you should be in the estimate of an individual CLONE's BLUP value.
+  Clone.var <-
+    c(VarCorr(model)$Clone) # Extract the variance component for CLONE
+  
+  ResidVar <-
+    (attr(VarCorr(model), "sc")) ^ 2 # Extract the residual variance component
+
+  # You will need a line like the one above for every random effect (not for fixed effects)
+  out <-
+    BLUP / (1 - (PEV / Clone.var)) # This is the actual de-regress part (the BLUP for CLONE is divided by (1 - PEV/CLONE.var))
+  r2 <-
+    1 - (PEV / Clone.var) # Reliability: a confidence value for a BLUP (0 to 1 scale)
+  H2 = Clone.var / (Clone.var + ResidVar) # An estimate of the broad-sense heritability, must change this formula when you change the model analysis
+  wt = (1 - H2) / ((0.1 + (1 - r2) / r2) * H2) # Weights for each de-regressed BLUP
+  # There is a paper the determined this crazy formula, Garrick et al. 2009. I wouldn't pay much attn. to it.
+  # These weights will be used in the second-step (e.g. cross-validation) to account for what we've done in this step
+  # The weights will be fit as error variances associated with each residual value
+  VarComps <- as.data.frame(VarCorr(model))
+  
+  return(
+    list(
+      Trait = trait,
+      drgBLUP = out,
+      BLUP = BLUP,
+      weights = wt,
+      varcomps = VarComps,
+      H2 = H2,
+      Reliability = r2,
+      model = model
+    )
+  )
+}
+
+save(BLUPS_par_ind, file = "output/BLUPS_par_ind.Rdata")
+```
+
+### The BLUP model
+
+Here we have to remember that we have outliers for some characteristics and also that we must exclude the Ano 2017 for some.
+
+I'm going to create a loop where I inform which characteristics where this Ano should be excluded and also use the function to remove outliers.
+
+Let's convert all variables to numeric now.
+
+```{r}
+traits <- colnames(pheno)[4:(ncol(pheno)-1)]
+
+pheno<- pheno %>% 
+  mutate_at(traits, as.numeric)
+```
+
+Now let's perform the mixed model analysis to each Ano.
+
+```{r}
+load("output/BLUPS_par_ind.Rdata")
+
+registerDoParallel(cores = 6) # Specify the number of cores (my lab computer has 8; I will use 6 of them)
+```
+
+Ano 2017
+
+```{r}
+data2017 <- pheno %>% 
+  filter(Ano == 2017) %>% 
+  select(where(~sum(!is.na(.)) > 0)) %>% 
+  droplevels()
+
+traits <- colnames(data2017)[4:(ncol(data2017)-1)]
+
+resultMM2017 <- foreach(a = traits, i = icount(), .inorder = TRUE) %dopar% {
+  
+  require(lme4)
+  require(dplyr)
+  library(purrr)
+  
+  # Deletion of the outliers found
+  outliers <- boxplot(data2017[i+3], plot = FALSE)$out
+  
+  if(!is_empty(outliers)){
+  data <- filter(data2017,data2017[i+3] != outliers)
+  }
+  
+  model <- lmer(data = data,
+                formula = get(traits[i]) ~ (1 |Clone) + Ano.Bloco) # Clone are random
+  
+  
+  result <- BLUPS_par_ind(model, traits[i])
+}
+
+BLUPS_2017 <-
+  data.frame(Clone = unique(data2017$Clone),
+             Ano = 2017, 
+             stringsAsFactors = F)
+
+H2_2017 <- data.frame(H2 = "H2",
+                       Ano = 2017, 
+                 stringsAsFactors = F)
+
+varcomp_2017 <-
+  data.frame(
+     Ano = 2017, 
+    grp = c("Clone", "Residual"),
+    stringsAsFactors = F
+  )
+# Here we will get the BLUPS for each clone
+
+for (i in 1:length(resultMM2017)) {
+  data <-
+    data.frame(Clone = rownames(resultMM2017[[i]]$BLUP),
+               stringsAsFactors = F)
+  
+  data[, resultMM2017[[i]]$Trait] <- resultMM2017[[i]]$BLUP
+  
+  BLUPS_2017 <- merge(BLUPS_2017, data, by = "Clone", all.x = T)
+  
+  H2_2017[, resultMM2017[[i]]$Trait] <- resultMM2017[[i]]$H2
+  
+  colnames(resultMM2017[[i]]$varcomps) <-
+    c(
+      "grp",
+      "var1",
+      "var2",
+      paste("vcov", resultMM2017[[i]]$Trait, sep = "."),
+      paste("sdcor", resultMM2017[[i]]$Trait, sep = ".")
+    )
+  
+  varcomp_2017 <- varcomp_2017 %>%
+    right_join(resultMM2017[[i]]$varcomps)
+}
+
+rownames(BLUPS_2017) <- BLUPS_2017$Clone
+```
+
+Ano 2018
+
+```{r}
+data2018 <- pheno %>% 
+  filter(Ano == 2018) %>% 
+  select(where(~sum(!is.na(.)) > 0)) %>% 
+  droplevels()
+
+traits <- colnames(data2018)[4:(ncol(data2018)-1)]
+
+resultMM2018 <- foreach(a = traits, i = icount(), .inorder = TRUE) %dopar% {
+  
+  require(lme4)
+  require(dplyr)
+  library(purrr)
+  
+  # Deletion of the outliers found
+  outliers <- boxplot(data2018[i+3], plot = FALSE)$out
+  
+  if(!is_empty(outliers)){
+  data <- filter(data2018,data2018[i+3] != outliers)
+  }
+  
+  model <- lmer(data = data,
+                formula = get(traits[i]) ~ (1 |Clone) + Ano.Bloco) # Clone are random
+  
+  
+  result <- BLUPS_par_ind(model, traits[i])
+}
+
+BLUPS_2018 <-
+  data.frame(Clone = unique(data2018$Clone),
+              Ano = 2018, stringsAsFactors = F)
+
+H2_2018 <- data.frame(H2 = "H2",
+                       Ano = 2018, 
+                 stringsAsFactors = F)
+
+varcomp_2018 <-
+  data.frame(
+     Ano = 2018, 
+    grp = c("Clone", "Residual"),
+    stringsAsFactors = F
+  )
+# Here we will get the BLUPS for each clone
+
+for (i in 1:length(resultMM2018)) {
+  data <-
+    data.frame(Clone = rownames(resultMM2018[[i]]$BLUP),
+               stringsAsFactors = F)
+  
+  data[, resultMM2018[[i]]$Trait] <- resultMM2018[[i]]$BLUP
+  
+  BLUPS_2018 <- merge(BLUPS_2018, data, by = "Clone", all.x = T)
+  
+  H2_2018[, resultMM2018[[i]]$Trait] <- resultMM2018[[i]]$H2
+  
+  colnames(resultMM2018[[i]]$varcomps) <-
+    c(
+      "grp",
+      "var1",
+      "var2",
+      paste("vcov", resultMM2018[[i]]$Trait, sep = "."),
+      paste("sdcor", resultMM2018[[i]]$Trait, sep = ".")
+    )
+  
+  varcomp_2018 <- varcomp_2018 %>%
+    right_join(resultMM2018[[i]]$varcomps)
+}
+
+rownames(BLUPS_2018) <- BLUPS_2018$Clone
+```
+
+Ano 2019
+
+Nesse ano vamos eliminar excluir da análise as variáveis RF, Ácaro e Sataygren devido a baixa dispersão dos dados.
+
+```{r}
+data2019 <- pheno %>% 
+  filter(Ano == 2019) %>% 
+  select(where(~sum(!is.na(.)) > 0)) %>%
+  select(-c("RF", "Ácaro" , "Staygreen")) %>% 
+  droplevels()
+
+traits <- colnames(data2019)[4:(ncol(data2019)-1)]
+
+resultMM2019 <- foreach(a = traits, i = icount(), .inorder = TRUE) %dopar% {
+  
+  require(lme4)
+  require(dplyr)
+  library(purrr)
+  
+  # Deletion of the outliers found
+  outliers <- boxplot(data2019[i+3], plot = FALSE)$out
+  
+  if(!is_empty(outliers)){
+  data <- filter(data2019,data2019[i+3] != outliers)
+  }
+  
+  model <- lmer(data = data,
+                formula = get(traits[i]) ~ (1 |Clone) + Ano.Bloco) # Clone are random
+  
+  
+  result <- BLUPS_par_ind(model, traits[i])
+}
+
+BLUPS_2019 <-
+  data.frame(Clone = unique(data2019$Clone),
+              Ano = 2019, stringsAsFactors = F)
+
+H2_2019 <- data.frame(H2 = "H2",
+                       Ano = 2019, 
+                 stringsAsFactors = F)
+
+varcomp_2019 <-
+  data.frame(
+     Ano = 2019, 
+    grp = c("Clone", "Residual"),
+    stringsAsFactors = F
+  )
+# Here we will get the BLUPS for each clone
+
+for (i in 1:length(resultMM2019)) {
+  data <-
+    data.frame(Clone = rownames(resultMM2019[[i]]$BLUP),
+               stringsAsFactors = F)
+  
+  data[, resultMM2019[[i]]$Trait] <- resultMM2019[[i]]$BLUP
+  
+  BLUPS_2019 <- merge(BLUPS_2019, data, by = "Clone", all.x = T)
+  
+  H2_2019[, resultMM2019[[i]]$Trait] <- resultMM2019[[i]]$H2
+  
+  colnames(resultMM2019[[i]]$varcomps) <-
+    c(
+      "grp",
+      "var1",
+      "var2",
+      paste("vcov", resultMM2019[[i]]$Trait, sep = "."),
+      paste("sdcor", resultMM2019[[i]]$Trait, sep = ".")
+    )
+  
+  varcomp_2019 <- varcomp_2019 %>%
+    right_join(resultMM2019[[i]]$varcomps)
+}
+
+rownames(BLUPS_2019) <- BLUPS_2019$Clone
+```
+
+Ano 2020
+
+```{r}
+data2020 <- pheno %>% 
+  filter(Ano == 2020) %>% 
+  select(where(~sum(!is.na(.)) > 0)) %>% 
+  select(-Staygreen) %>% 
+  droplevels()
+
+traits <- colnames(data2020)[4:(ncol(data2020)-1)]
+
+resultMM2020 <- foreach(a = traits, i = icount(), .inorder = TRUE) %dopar% {
+  
+  require(lme4)
+  require(dplyr)
+  library(purrr)
+  
+  # Deletion of the outliers found
+  outliers <- boxplot(data2020[i+3], plot = FALSE)$out
+  
+  if(!is_empty(outliers)){
+  data <- filter(data2020,data2020[i+3] != outliers)
+  }
+  
+  model <- lmer(data = data,
+                formula = get(traits[i]) ~ (1 |Clone) + Ano.Bloco) # Clone are random
+  
+  
+  result <- BLUPS_par_ind(model, traits[i])
+}
+
+BLUPS_2020 <-
+  data.frame(Clone = unique(data2020$Clone),
+              Ano = 2020, stringsAsFactors = F)
+
+H2_2020 <- data.frame(H2 = "H2",
+                      Ano = 2020,
+                 stringsAsFactors = F)
+
+varcomp_2020 <-
+  data.frame(
+    Ano = 2020,
+    grp = c("Clone", "Residual"),
+    stringsAsFactors = F
+  )
+# Here we will get the BLUPS for each clone
+
+for (i in 1:length(resultMM2020)) {
+  data <-
+    data.frame(Clone = rownames(resultMM2020[[i]]$BLUP),
+               stringsAsFactors = F)
+  
+  data[, resultMM2020[[i]]$Trait] <- resultMM2020[[i]]$BLUP
+  
+  BLUPS_2020 <- merge(BLUPS_2020, data, by = "Clone", all.x = T)
+  
+  H2_2020[, resultMM2020[[i]]$Trait] <- resultMM2020[[i]]$H2
+  
+  colnames(resultMM2020[[i]]$varcomps) <-
+    c(
+      "grp",
+      "var1",
+      "var2",
+      paste("vcov", resultMM2020[[i]]$Trait, sep = "."),
+      paste("sdcor", resultMM2020[[i]]$Trait, sep = ".")
+    )
+  
+  varcomp_2020 <- varcomp_2020 %>%
+    right_join(resultMM2020[[i]]$varcomps)
+}
+
+rownames(BLUPS_2020) <- BLUPS_2020$Clone
+```
+
+### BLUPS for `Clone`
+
+Saving the results of BLUPs and parameters
+
+```{r}
+BLUPS_Multi <- BLUPS_2017 %>% 
+  full_join(BLUPS_2018) %>% 
+  full_join(BLUPS_2019) %>% 
+  full_join(BLUPS_2020)
+
+write.csv(BLUPS_Multi, "output/BLUPS_Multi.csv", row.names = F, quote =F)
+
+H2_Multi <- H2_2017 %>% 
+  full_join(H2_2018) %>% 
+  full_join(H2_2019) %>% 
+  full_join(H2_2020)
+
+write.csv(BLUPS_Multi, "output/BLUPS_Multi.csv", row.names = F, quote =F)
+
+varcomp_multi <- varcomp_2017 %>% 
+  full_join(varcomp_2018) %>% 
+  full_join(varcomp_2019) %>% 
+  full_join(varcomp_2020)
+
+write.csv(BLUPS_Multi, "output/BLUPS_Multi.csv", row.names = F, quote =F)
+```
+
+### Ploting BLUPS for all traits
+
+First, I will add the average of the variables with the BLUPs for better interpretation.
+
+```{r}
+BLUPS_Multi <- read.csv("output/BLUPS_Multi.csv") %>% 
+               arrange(Clone, .by_group = TRUE)
+  
+media_pheno_Multi <- as.data.frame(
+  pheno %>%
+    group_by(Ano) %>%
+    summarise_if(is.numeric, mean, na.rm = TRUE))
+
+write.csv(
+  media_pheno_Multi,
+  "output/media_pheno_Multi.csv",
+  row.names = F,
+  quote = F
+)
+
+phen<-
+  data.frame(pheno %>% 
+               group_by(Clone, Ano) %>% 
+               group_keys() %>% 
+               arrange(Clone, .by_group = TRUE),
+             stringsAsFactors = F)
+
+media_pheno_Multi <- full_join(phen, media_pheno_Multi)
+
+traits <- colnames(BLUPS_Multi[3:20])
+  
+for (i in traits) {
+  phen[,i] <- BLUPS_Multi[,i] + media_pheno_Multi[,i]
+}
+```
+
+Let's plot the boxplots of the variables.
+
+```{r}
+library(ggthemes)
+phen %>%
+  pivot_longer(3:20, names_to = "Variable", values_to = "Values") %>%
+  ggplot() +
+  geom_boxplot(aes(y = Values, x = as.factor(Ano), fill = as.factor(Ano)), show.legend = FALSE) +
+  facet_wrap(. ~ Variable, ncol = 6, scales = "free") +
+  expand_limits(y = 0) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  scale_fill_gdocs()
+```
+
+Here we will only evaluate the distribution of BLUPs without the mean.
+
+```{r}
+BLUPS_Multi %>%
+  pivot_longer(3:20, names_to = "Variable", values_to = "Values") %>%
+  ggplot() +
+  geom_boxplot(aes(y = Values, x = as.factor(Ano), fill = as.factor(Ano)), show.legend = FALSE) +
+  facet_wrap(. ~ Variable, ncol = 6, scales = "free") +
+  expand_limits(y = 0) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))+
+  scale_fill_gdocs()
+```
+
+Apparently most BLUPs for the variables follow normal distribution and can be applied to GWS by conventional methods.
