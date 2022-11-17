@@ -1,5 +1,5 @@
 ---
-title: "Multi-Enviroment Analysis of Brazilian Drought Trials"
+title: "Phenotype Analysis to Multi-Enviroment Analysis of Brazilian Drought Trials"
 author: 
   - Costa, W. G.^[Weverton Gomes da Costa, Pós-Doutorando, Embrapa Mandioca e Fruticultura, wevertonufv@gmail.com]
 date: "`r Sys.Date()`"
@@ -547,14 +547,14 @@ H2_Multi <- H2_2017 %>%
   full_join(H2_2019) %>% 
   full_join(H2_2020)
 
-write.csv(BLUPS_Multi, "output/BLUPS_Multi.csv", row.names = F, quote =F)
+write.csv(H2_Multi, "output/H2_Multi.csv", row.names = F, quote =F)
 
 varcomp_multi <- varcomp_2017 %>% 
   full_join(varcomp_2018) %>% 
   full_join(varcomp_2019) %>% 
   full_join(varcomp_2020)
 
-write.csv(BLUPS_Multi, "output/BLUPS_Multi.csv", row.names = F, quote =F)
+write.csv(varcomp_multi, "output/varcomp_multi.csv", row.names = F, quote =F)
 ```
 
 ### Ploting BLUPS for all traits

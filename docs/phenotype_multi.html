@@ -11,9 +11,9 @@
 
 <meta name="author" content="Costa, W. G." />
 
-<meta name="date" content="2022-11-16" />
+<meta name="date" content="2022-11-17" />
 
-<title>Multi-Enviroment Analysis of Brazilian Drought Trials</title>
+<title>Phenotype Analysis to Multi-Enviroment Analysis of Brazilian Drought Trials</title>
 
 <script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -427,6 +427,12 @@ div.tocify {
   <a href="GWS.html">Genomic Selection</a>
 </li>
 <li>
+  <a href="phenotype_multi.html">Phenotype Multi-environment</a>
+</li>
+<li>
+  <a href="gws-multi-enviroment.html">Genomic Selection Multi-environment</a>
+</li>
+<li>
   <a href="about.html">About</a>
 </li>
 <li>
@@ -444,11 +450,11 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Multi-Enviroment Analysis of Brazilian
-Drought Trials</h1>
+<h1 class="title toc-ignore">Phenotype Analysis to Multi-Enviroment
+Analysis of Brazilian Drought Trials</h1>
 <h4 class="author">Costa, W. G.<a href="#fn1" class="footnote-ref"
 id="fnref1"><sup>1</sup></a></h4>
-<h4 class="date">2022-11-16</h4>
+<h4 class="date">2022-11-17</h4>
 
 </div>
 
@@ -477,7 +483,7 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2022-11-16
+<strong>Last updated:</strong> 2022-11-17
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -516,10 +522,10 @@ changes </a>
 <div id="strongRMarkdownfilestronguncommittedchanges"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown is untracked by Git. To know which version of the R
-Markdown file created these results, you’ll want to first commit it to
-the Git repo. If you’re still working on the analysis, you can ignore
-this warning. When you’re finished, you can run
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
 <code>wflow_publish</code> to commit the R Markdown file and build the
 HTML.</p>
 </div>
@@ -612,15 +618,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatree0f3154e291670045a96a6a6d5955337add03d85dtargetblank0f3154ea">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatree6cc4d2326a79681446b1ea653122061a959c2ffetargetblank6cc4d23a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/0f3154e291670045a96a6a6d5955337add03d85d" target="_blank">0f3154e</a>
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/6cc4d2326a79681446b1ea653122061a959c2ffe" target="_blank">6cc4d23</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatree0f3154e291670045a96a6a6d5955337add03d85dtargetblank0f3154ea"
+id="strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatree6cc4d2326a79681446b1ea653122061a959c2ffetargetblank6cc4d23a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -630,7 +636,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/0f3154e291670045a96a6a6d5955337add03d85d" target="_blank">0f3154e</a>.
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/6cc4d2326a79681446b1ea653122061a959c2ffe" target="_blank">6cc4d23</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -649,18 +655,22 @@ Ignored files:
     Ignored:    data/allchrAR08.txt
 
 Untracked files:
-    Untracked:  analysis/figure/
-    Untracked:  analysis/phenotype_multi.Rmd
-    Untracked:  data/pheno_clean.csv
-    Untracked:  output/BLUPS_Multi.csv
-    Untracked:  output/BLUPS_par_ind.Rdata
-    Untracked:  output/media_pheno_Multi.csv
-    Untracked:  output/varcomp.csv
+    Untracked:  data/~$Phenotyping.xlsx
+    Untracked:  data/~$genomic selection.pptx
+    Untracked:  output/accuracy_multi.jpeg
 
 Unstaged changes:
-    Modified:   analysis/phenotype.Rmd
+    Modified:   analysis/GWS.Rmd
+    Deleted:    analysis/figure/gws-multi-enviroment.Rmd/unnamed-chunk-21-1.png
+    Deleted:    analysis/figure/gws-multi-enviroment.Rmd/unnamed-chunk-22-1.png
+    Deleted:    analysis/figure/gws-multi-enviroment.Rmd/unnamed-chunk-6-1.png
+    Modified:   analysis/gws-multi-enviroment.Rmd
+    Modified:   analysis/phenotype_multi.Rmd
+    Modified:   data/genomic selection.pptx
     Modified:   output/BLUPS_par.Rdata
+    Modified:   output/accuracy_multi.png
     Modified:   output/resultMM.Rdata
+    Modified:   output/results_cv.csv
 
 </code></pre>
 <p>
@@ -675,10 +685,74 @@ have uncommitted changes.
 <hr>
 </div>
 <div id="versions" class="tab-pane fade">
+
 <p>
-There are no past versions. Publish this analysis with
-<code>wflow_publish()</code> to start tracking its development.
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/phenotype_multi.Rmd</code>) and
+HTML (<code>docs/phenotype_multi.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
 </p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/blob/6cc4d2326a79681446b1ea653122061a959c2ffe/analysis/phenotype_multi.Rmd" target="_blank">6cc4d23</a>
+</td>
+<td>
+WevertonGomesCosta
+</td>
+<td>
+2022-11-17
+</td>
+<td>
+Update
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/6cc4d2326a79681446b1ea653122061a959c2ffe/docs/phenotype_multi.html" target="_blank">6cc4d23</a>
+</td>
+<td>
+WevertonGomesCosta
+</td>
+<td>
+2022-11-17
+</td>
+<td>
+Update
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>
@@ -3862,7 +3936,7 @@ Joining, by = c(&quot;H2&quot;, &quot;Ano&quot;, &quot;NR.P&quot;, &quot;PTR&quo
 Joining, by = c(&quot;H2&quot;, &quot;Ano&quot;, &quot;NR.P&quot;, &quot;PTR&quot;, &quot;PPA&quot;, &quot;AP&quot;, &quot;HI&quot;, &quot;RF&quot;, &quot;CR&quot;,
 &quot;DR&quot;, &quot;DCaule&quot;, &quot;Ácaro&quot;, &quot;MS&quot;, &quot;PROD.AMD&quot;, &quot;AMD&quot;, &quot;Porte&quot;, &quot;Nº.Hastes&quot;,
 &quot;Stand_Final&quot;, &quot;Branching_Level&quot;)</code></pre>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(BLUPS_Multi, <span class="st">&quot;output/BLUPS_Multi.csv&quot;</span>, <span class="at">row.names =</span> F, <span class="at">quote =</span>F)</span>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(H2_Multi, <span class="st">&quot;output/H2_Multi.csv&quot;</span>, <span class="at">row.names =</span> F, <span class="at">quote =</span>F)</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>varcomp_multi <span class="ot">&lt;-</span> varcomp_2017 <span class="sc">%&gt;%</span> </span>
 <span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(varcomp_2018) <span class="sc">%&gt;%</span> </span>
@@ -3887,7 +3961,7 @@ Joining, by = c(&quot;Ano&quot;, &quot;grp&quot;, &quot;var1&quot;, &quot;var2&q
 &quot;sdcor.AMD&quot;, &quot;vcov.Porte&quot;, &quot;sdcor.Porte&quot;, &quot;vcov.Nº.Hastes&quot;, &quot;sdcor.Nº.Hastes&quot;,
 &quot;vcov.Stand_Final&quot;, &quot;sdcor.Stand_Final&quot;, &quot;vcov.Branching_Level&quot;,
 &quot;sdcor.Branching_Level&quot;)</code></pre>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(BLUPS_Multi, <span class="st">&quot;output/BLUPS_Multi.csv&quot;</span>, <span class="at">row.names =</span> F, <span class="at">quote =</span>F)</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(varcomp_multi, <span class="st">&quot;output/varcomp_multi.csv&quot;</span>, <span class="at">row.names =</span> F, <span class="at">quote =</span>F)</span></code></pre></div>
 </div>
 <div id="ploting-blups-for-all-traits" class="section level3">
 <h3>Ploting BLUPS for all traits</h3>
@@ -4010,13 +4084,13 @@ loaded via a namespace (and not attached):
  [82] patchwork_1.1.2     tidyselect_1.2.0    GGally_2.1.2       
  [85] plyr_1.8.7          magrittr_2.0.3      R6_2.5.1           
  [88] IRanges_2.28.0      generics_0.1.3      DBI_1.1.3          
- [91] pillar_1.8.1        haven_2.5.1         withr_2.5.0        
- [94] modelr_0.1.9        crayon_1.5.2        utf8_1.2.2         
- [97] tzdb_0.3.0          rmarkdown_2.17      GetoptLong_1.0.5   
-[100] git2r_0.30.1        reprex_2.0.2        digest_0.6.29      
-[103] webshot_0.5.4       httpuv_1.6.5        numDeriv_2016.8-1.1
-[106] stats4_4.1.3        munsell_0.5.0       viridisLite_0.4.1  
-[109] bslib_0.4.0        </code></pre>
+ [91] pillar_1.8.1        haven_2.5.1         whisker_0.4        
+ [94] withr_2.5.0         modelr_0.1.9        crayon_1.5.2       
+ [97] utf8_1.2.2          tzdb_0.3.0          rmarkdown_2.17     
+[100] GetoptLong_1.0.5    git2r_0.30.1        reprex_2.0.2       
+[103] digest_0.6.29       webshot_0.5.4       httpuv_1.6.5       
+[106] numDeriv_2016.8-1.1 stats4_4.1.3        munsell_0.5.0      
+[109] viridisLite_0.4.1   bslib_0.4.0        </code></pre>
 </div>
 </div>
 </div>

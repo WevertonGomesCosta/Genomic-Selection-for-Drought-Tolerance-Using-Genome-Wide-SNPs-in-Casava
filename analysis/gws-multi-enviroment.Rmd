@@ -1,5 +1,5 @@
 ---
-title: "gws-multi-enviroment"
+title: "Genomic Selection Multi Enviroment"
 author: 
   - Costa, W. G.^[Weverton Gomes da Costa, Pós-Doutorando, Embrapa Mandioca e Fruticultura, wevertonufv@gmail.com]
 date: "`r Sys.Date()`"
@@ -98,7 +98,7 @@ geno[1:5,1:5]
 
 Again, we will use the [AGHmatrix](https://cran.r-project.org/web/packages/AGHmatrix/vignettes/Tutorial_AGHmatrix.html) package [@amadeu_aghmatrix_2016] to build the G matrix:
 
-```{r warning=F}
+```{r}
 G_matrix <- Gmatrix(geno,
                     method = "VanRaden",
                     ploidy = 2,

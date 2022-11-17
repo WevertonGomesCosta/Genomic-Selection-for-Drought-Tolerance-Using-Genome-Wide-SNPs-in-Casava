@@ -263,6 +263,7 @@ for (i in traits) {
   result_RR_BLUP <-
     merge(result_RR_BLUP, result, by = "ID_Clone", all.x = T)
 }
+
 ```
 
 ### GEBV x BLUP
@@ -569,5 +570,5 @@ results_cv %>%
          text = element_text(size = 15)) +
   labs(y = "Accuracy")
 
-ggsave("output/accuracy_multi.png", width = 16, height = 8, dpi =300)
+ggsave("output/accuracy.png", width = 16, height = 8, dpi =300)
 ```

@@ -492,10 +492,14 @@ BLUPS <- read.csv("output/BLUPS.csv") %>%
 media_pheno <- as.data.frame(pheno %>%
                                summarise_if(is.numeric, mean, na.rm = TRUE))
 
+colnames(media_pheno) <- colnames(BLUPS[-1])
+
 write.table(media_pheno, "output/media_pheno.csv")
 
 phen<-
   data.frame(Clone = unique(pheno$Clone), stringsAsFactors = F)
+
+traits <- colnames(media_pheno)
 
 for (i in traits) {
   phen[i] <- BLUPS[i] + media_pheno[, i]
@@ -511,7 +515,10 @@ phen %>%
   geom_boxplot(aes(y = Values, fill = Variable), show.legend = FALSE) +
   facet_wrap(. ~ Variable, ncol = 6, scales = "free") +
   expand_limits(y = 0) +
-  theme_bw()
+  theme_bw() + 
+  theme( text = element_text(size = 15))
+  
+ggsave("output/blups_med.png", width = 16, height = 10, dpi =300)
 ```
 
 Here we will only evaluate the distribution of BLUPs without the mean.
