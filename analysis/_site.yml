@@ -9,10 +9,6 @@ navbar:
     href: phenotype.html
   - text: Genomic Selection
     href: GWS.html
-  - text: Phenotype Multi-environment
-    href: phenotype_multi.html
-  - text: Genomic Selection Multi-environment
-    href: gws-multi-enviroment.html
   - text: About
     href: about.html
   - text: License

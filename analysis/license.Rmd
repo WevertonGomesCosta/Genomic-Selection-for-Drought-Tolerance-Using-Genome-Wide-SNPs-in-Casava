@@ -4,13 +4,25 @@ author:
   - Costa, W. G.^[Weverton Gomes da Costa, Pós-Doutorando, Embrapa Mandioca e Fruticultura, wevertonufv@gmail.com]
 date: "`r Sys.Date()`"
 site: workflowr::wflow_site
-url: https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/license
 output:
   workflowr::wflow_html:
     toc: false
 editor_options:
   chunk_output_type: console
-github-repo: wevertongomescosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava
 ---
 
-All right reserved to EMBRAPA Mandioca e Fruticulturato dataset.
+Este material foi produzido por [Costa, W. G. 2023](https://github.com/WevertonGomesCosta), está licenciado sob a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+
+Isso significa que você é livre para:
+
+-   Compartilhar - copiar e redistribuir o material em qualquer formato ou mídia.
+
+-   Adaptar - remixar, transformar e construir sobre o material.
+
+Desde que você siga os termos da licença:
+
+-   Atribuição - você deve dar o crédito apropriado, fornecer um link para a licença e indicar se foram feitas alterações. Você pode fazê-lo de qualquer forma razoável, mas não de forma que sugira que o licenciante endossa você ou o seu uso.
+Não comercial - você não pode usar o material para fins comerciais.
+
+-   Compartilhamento pela mesma licença - se você remixar, transformar ou construir sobre o material, você deve distribuir suas contribuições sob a mesma licença que o original.
+Para mais informações, consulte a licença completa em [https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.pt](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.pt).
