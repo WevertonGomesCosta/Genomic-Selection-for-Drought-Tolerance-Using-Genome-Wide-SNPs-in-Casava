@@ -4,7 +4,9 @@ author:
   - Costa, W. G.^[Weverton Gomes da Costa, Pós-Doutorando, Embrapa Mandioca e Fruticultura, wevertonufv@gmail.com]
 date: "`r Sys.Date()`"
 site: workflowr::wflow_site
-output: workflowr::wflow_html
+output:
+  workflowr::wflow_html:
+    toc: FALSE
 editor_options:
   chunk_output_type: console
 ---
@@ -15,13 +17,16 @@ knitr::opts_chunk$set(
 	warning = FALSE)
 ```
 
-## Data and libraries
+## Libraries
 
 Load Libraries
 
 ```{r  message=FALSE}
 library(kableExtra)
 library(tidyverse)
+#if (!require("BiocManager", quietly = TRUE))
+#    install.packages("BiocManager")
+#BiocManager::install("ComplexHeatmap")
 require(ComplexHeatmap)
 library(data.table)
 library(readxl)
@@ -29,19 +34,16 @@ library(metan)
 library(DataExplorer)
 library(ggthemes)
 library(GGally)
-library(furrr)
-library(future)
-plan(multisession)
 theme_set(theme_bw())
 ```
 
-### Data import and manipulation
+## Data import and manipulation
 
 Let's import the phenotypic dataset, excluding the traits without information and the traits Local (redundant with Year) and Treatment (only one observation).
 
 ```{r}
-pheno <- read_excel("data/Phenotyping.xlsx", na = "NA") %>%
-  select_if( ~ !all(is.na(.))) %>%  # Deleting traits without information 
+pheno <- read_excel("data/Phenotyping2.xlsx", na = "NA") %>%
+  select_if(~ !all(is.na(.))) %>%  # Deleting traits without information
   select(-c("Local", "Tratamento"))
 ```
 
@@ -51,9 +53,13 @@ First, let's convert the traits that are character into factors. Then we will co
 
 ```{r}
 pheno <- pheno %>%
-  mutate(Clone = as.factor(Clone),
-         Ano = as.factor(Ano),
-         Bloco = as.factor(Bloco))   # Convert Clone, Ano,Bloco in factors
+  mutate(
+    Clone = as.factor(Clone),
+    Ano = as.factor(Ano),
+    Bloco = as.factor(Bloco),
+    row = as.factor(row),
+    col = as.factor(col)
+  )   # Convert Clone, Ano, row, col and Bloco in factors
 ```
 
 ## Exploratory Data Analysis
@@ -61,8 +67,8 @@ pheno <- pheno %>%
 Introductory analysis of the entire dataset
 
 ```{r}
-introduce(pheno) %>% 
-  t() %>% 
+introduce(pheno) %>%
+  t() %>%
   kbl(escape = F, align = 'c') %>%
   kable_classic(
     "hover",
@@ -82,8 +88,8 @@ Let's produce a heatmap to check the clone amount each year. I'm going to create
 pheno2 <- pheno %>%
   count(Ano, Clone)
 
-genmat <- model.matrix(~ -1 + Clone, data = pheno2)
-envmat <- model.matrix(~ -1 + Ano, data = pheno2)
+genmat <- model.matrix( ~ -1 + Clone, data = pheno2)
+envmat <- model.matrix( ~ -1 + Ano, data = pheno2)
 genenvmat <- t(envmat) %*% genmat
 genenvmat_ch <- ifelse(genenvmat == 1, "Present", "Abscent")
 
@@ -95,26 +101,24 @@ Heatmap(
   column_title = "Genotypes",
   row_title = "Environments"
 )
-
-rm(pheno2, genmat, envmat, genenvmat, genenvmat_ch)
 ```
 
 From the heatmap, it is clear that the year 2016 has very few observations. So, we must eliminate it.
 
 ```{r}
-pheno <- pheno %>% 
-  filter(Ano != 2016) %>% 
+pheno <- pheno %>%
+  filter(Ano != 2016) %>%
   droplevels()
 ```
 
 Just for reference, let's re-view the clone heatmap by year.
 
 ```{r}
-pheno2<- pheno %>% 
+pheno2 <- pheno %>%
   count(Ano, Clone)
-  
-genmat = model.matrix( ~ -1 + Clone, data = pheno2)
-envmat = model.matrix( ~ -1 + Ano, data = pheno2)
+
+genmat = model.matrix(~ -1 + Clone, data = pheno2)
+envmat = model.matrix(~ -1 + Ano, data = pheno2)
 genenvmat = t(envmat) %*% genmat
 genenvmat_ch = ifelse(genenvmat == 1, "Present", "Abscent")
 
@@ -126,23 +130,22 @@ Heatmap(
   column_title = "Genotypes",
   row_title = "Environments"
 )
-
-rm(pheno2, genmat, envmat, genenvmat, genenvmat_ch)
 ```
 
 We can check how many clones we have in common between the years and also note that the years differ in the number of clones evaluated:
 
+############# Table 1 - Year of evaluation and number of genotypes evaluated
+
 ```{r}
-pheno2<- pheno %>% 
+pheno2 <- pheno %>%
   count(Ano, Clone)
-  
-genmat = model.matrix( ~ -1 + Clone, data = pheno2)
-envmat = model.matrix( ~ -1 + Ano, data = pheno2)
+
+genmat = model.matrix(~ -1 + Clone, data = pheno2)
+envmat = model.matrix(~ -1 + Ano, data = pheno2)
 genenvmat = t(envmat) %*% genmat
 
 genenvmat %*% t(genenvmat) %>%
-  kbl(escape = F,
-      align = 'c') %>%
+  kbl(escape = F, align = 'c') %>%
   kable_classic(
     "hover",
     full_width = F,
@@ -150,17 +153,16 @@ genenvmat %*% t(genenvmat) %>%
     fixed_thead = T
   )
 
-rm(pheno2, genmat, envmat, genenvmat)
+rm(pheno2, genmat, envmat, genenvmat, genenvmat_ch)
 ```
 
 The year 2020 has a lower number of clones in common, however, we will keep it for the analysis.
-
 
 Here, it is possible to observe that our dataset has clones that were evaluated in just one year. Let's visualize this, to see how many clones were evaluated according to the number of years.
 
 ```{r}
 pheno %>%
-  count(Ano, Clone) %>% 
+  count(Ano, Clone) %>%
   count(Clone) %>%
   count(n) %>%
   kbl(
@@ -182,17 +184,32 @@ Another factor that reduces the accuracy, and therefore adopting mixed models vi
 
 ### Analysis of traits
 
-Now, we will analyze the frequency for each discrete feature.
+Inicialmente, iremos verificar as estatísticas descritivas para cada coluna.
 
-```{r, message=FALSE}
-plot_bar(pheno, ncol = 4)
+```{r}
+summary(pheno) %>%
+  t() %>%
+  kbl(escape = F, align = 'c') %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
 ```
 
-Mite Incidence and Flowering  have little information for some levels and many NA's, we will also exclude these traits.
+We have a high missing value ratio for Vigor, Leaf_Lenght, Canopy_Width and Canopy_Lenght, I'll exclude those too. Mite Incidence and Flowering  have little information for some levels and many NA's, we will also exclude these traits.
 
-```{r, message=FALSE}
-pheno <- pheno  %>% 
-  select(-c(Incidence_Mites, Flowering))
+```{r}
+pheno <- pheno %>%
+  select(-c(
+    Incidence_Mites,
+    Vigor,
+    Flowering,
+    Leaf_Lenght,
+    Canopy_Width,
+    Canopy_Lenght
+  ))
 ```
 
 Let's just look at the missing values now, to check the proportions.
@@ -201,23 +218,18 @@ Let's just look at the missing values now, to check the proportions.
 plot_missing(pheno)
 ```
 
-We have a high missing value ratio for Vigor, Leaf_Lenght, Canopy_Width and Canopy_Lenght, I'll exclude those too.
-
-```{r}
-pheno <- pheno %>% 
-  select(-c(Vigor, Leaf_Lenght, Canopy_Width, Canopy_Lenght))
-```
+StC, DMC and StY still do not have good quality, but we will maintain these traits, as they are important to us.
 
 Let's check the distribution of traits by year now and let's look at the histograms of the quantitative traits:
 
 ```{r}
-plot_histogram(pheno, ncol = 5)
+plot_histogram(pheno, ncol = 6)
 ```
 
 For Branching, Leaf.Ret, Mite, PltArc, Stand6MAP and Staygreen don't have normal distribution. To get the BLUPs we will have to remove that traits from the database.
 
 ```{r}
-pheno <- pheno %>% 
+pheno <- pheno %>%
   select(-c(Branching, Leaf.Ret, Mite, PltArc, Stand6MAP, Staygreen))
 ```
 
@@ -226,18 +238,17 @@ pheno <- pheno %>%
 First, let's check the amount of missing values for each clone by year. We are filtering the Clones with the average bigger than 2 missing values by year. 
 
 ```{r}
-pheno2 <- pheno %>% 
-  select(-Bloco) %>% 
-  group_by(Clone, Ano) %>% 
-  summarise_all(.funs = list(~sum(is.na(.)))) %>% 
-  ungroup() %>% 
+pheno2 <- pheno %>%
+  select(-Bloco) %>%
+  group_by(Clone, Ano) %>%
+  summarise_all(.funs = list(~ sum(is.na(.)))) %>%
+  ungroup() %>%
   select_numeric_cols() %>%
-  mutate(mean = rowMeans(.),
-         Clone.Ano = unique(interaction(pheno$Clone, pheno$Ano))) %>%
+  mutate(mean = rowMeans(.), Clone.Ano = unique(interaction(pheno$Clone, pheno$Ano))) %>%
   filter(mean > 2) %>%
   droplevels()
 
-nlevels(pheno2$Clone.Ano) %>% 
+nlevels(pheno2$Clone.Ano) %>%
   kbl(
     escape = F,
     align = 'c',
@@ -253,14 +264,14 @@ nlevels(pheno2$Clone.Ano) %>%
 rm(pheno2)
 ```
 
-54 clones presented many missing values, i.e., they were evaluated in less than two blocks by year. Therefore, they should be excluded from future analyses, according to the year.
+76 clones presented many missing values, i.e., they were evaluated in less than two blocks by year. Therefore, they should be excluded from future analyses, according to the year.
 
 Let's evaluate the descriptive statistics of the combination between clone and year for the traits.
 
 ```{r}
-ge_details(pheno, Ano, Clone, resp = everything()) %>% 
-  t() %>% 
-kbl(escape = F, align = 'c') %>%
+ge_details(pheno, Ano, Clone, resp = everything()) %>%
+  t() %>%
+  kbl(escape = F, align = 'c') %>%
   kable_classic(
     "hover",
     full_width = F,
@@ -273,7 +284,13 @@ Apparently we no longer have a genotype that could harm our analysis. Now we mus
 Some traits presented hight cv, StY and FRY, but we will go continue.
 
 ```{r}
-desc_stat(pheno, by = Ano) %>%
+desc_stat(pheno,
+          by = Ano,
+          na.rm = TRUE,
+          stats = "cv") %>%
+  na.omit() %>%
+  arrange(desc(cv)) %>%
+  pivot_wider(names_from = "Ano", values_from = "cv") %>%
   kbl(escape = F, align = 'c') %>%
   kable_classic(
     "hover",
@@ -291,7 +308,8 @@ This may be due to the presence of outliers, let's inspect the entire dataset to
 
 ```{r}
 inspect(pheno %>%
-          select_if( ~ !is.factor(.)), verbose = FALSE, plot =T) %>%
+          select_if(~ !is.factor(.)), verbose = FALSE) %>%
+  arrange(desc(Outlier)) %>%
   kbl(escape = F, align = 'c') %>%
   kable_classic(
     "hover",
@@ -316,225 +334,17 @@ StC with DMC and StY with FRY show high correlation.
 Furthermore most of the traits apparently show normal distribution of phenotypic data. So let's save the clean data and move on to getting the blups.
 
 ```{r}
-write.csv(pheno, "data/pheno_clean.csv", row.names = F, quote = F)
-
-pheno<-read.csv("data/pheno_clean.csv") %>% 
-  mutate(Clone = as.factor(Clone),
-         Ano = as.factor(Ano),
-         Bloco = as.factor(Bloco))
-```
-
-## Genotype-environment analysis by mixed-effect models
-
-First, I'm going to create a function to get the blups and some parameters from our model.
-
-```{r}
-BLUPS_par_mmer <- function(model, trait) {
-  # log likelihood of the model, AIC, convergence T/F
-  modelfit <- summary(model)$logo
-  # number of groups for factors, could be used to compute DF
-  groups <- summary(model)$groups
-  # variance components
-  varcomp <- summary(model)$varcomp
-  
-  # variance components
-  Vg <- model$sigma$Clone %>% as.vector()
-  Ve <- model$sigma$units %>% as.vector()
-  
-  # Narrow-sense heritability
-  H2_narrow <- Vg / (Vg + Ve)
-  
-  # Broad-sense heritability
-  Va <- model$sigma$`Ano:Clone` %>% as.vector()
-  Ve <- model$sigma$units %>% as.vector()
-  n.ano <- length(model$U$Ano[[trait]])
-  H2_Broad<- (Vg) / (Vg + (Va/n.ano) + (Ve/(2*n.ano)))  
-  
-  # Extract the BLUPs and PEVs, compute Reliability (REL),
-  # de-regressed BLUPs and weights for downstream analysis
-  blups <- model$U$Clone %>%
-    unlist() %>%
-    tibble(Clone = names(.), BLUP = .) %>%
-    mutate(
-      Clone = gsub("Clone", "", Clone),
-      PEV = diag(as.matrix(model$PevU$Clone[[1]])),
-      # prediction error variance
-      REL = 1 - PEV / Vg,
-      # Reliability
-      drgBLUP = BLUP / REL,
-      # De-regressed BLUP
-      WT = (1 - H2_narrow) / ((0.1 + (1 - REL) / REL) * H2_narrow) # weight for downstream
-    )
-  
-  # Combine all outputs into one object the function can return()
-  out <- list(
-    Trait = trait,
-    H2_Broad = H2_Broad,
-    H2_narrow=H2_narrow,
-    modelfit = list(modelfit),
-    groups = list(groups),
-    blups = list(blups),
-    varcomp = list(varcomp)
-  )
-  
-  return(out)
-}
-
-save(BLUPS_par_mmer, file = "output/BLUPS_par_mmer.Rdata")
-```
-
-### The BLUP model
-
-Here we have to remember that we have outliers for some traits and also that we must exclude the year 2017 for some.
-
-```{r}
-traits <- colnames(pheno)[4:ncol(pheno)]
-pheno <- pheno %>%
-  mutate_at(traits, as.numeric)
-```
-
-Now let's perform the mixed model analysis to get the BLUPs.
-
-```{r}
-load("output/BLUPS_par_mmer.Rdata")
-
-resultMM <- future_map(traits, function(i) {
-      data <- pheno %>%
-        select(1:3,all_of(i)) %>% 
-        na.omit() %>% 
-        droplevels()
-    
-    model <- sommer::mmer(fixed = as.formula(paste(i, "~", "Ano:Bloco")),
-      random = ~ Clone + Ano + Ano:Clone,
-      rcov= ~ units,
-      data = data,
-      verbose = FALSE) # Clone:Ano and Ano.Bloco are random and Clone and Ano is fixed
-    
-    result <- BLUPS_par_mmer(model, i)
-  }
-)
-
-names(resultMM) <- traits
-save(resultMM, file = "output/result_sommer.RData")
-```
-
-### BLUPS for `Clone`
-
-First, I will add the average of the traits with the BLUPs for better interpretation.
-
-```{r}
-mean_pheno <- as.data.frame(pheno %>%
-                               summarise_if(is.numeric, mean, na.rm = TRUE))
-
-write.csv(mean_pheno, "output/mean_pheno.csv", row.names = F)
-```
-
-As I used "future_map" to run each stage 1 analysis in parallel, each trait is in a separate element of a list.
-We need to process the resultMM object into a data.frame or matrix for further analysis.
-
-```{r}
-BLUPS <- bind_rows(lapply(traits, function(i) {
-  data.frame(
-    trait = i,
-    Clone = str_split_i(resultMM[[i]][["blups"]][[1]][["Clone"]], pattern = "[.]", -1),
-    resultMM[[i]][["blups"]][[1]][-1],
-    BLUPS_mean = resultMM[[i]][["blups"]][[1]][["BLUP"]] + mean_pheno[, i],
-    drgBLUP_mean = resultMM[[i]][["blups"]][[1]][["drgBLUP"]] + mean_pheno[, i]
-  )
-}))
-
-H2 <- bind_rows(lapply(traits, function(i) {
-  data.frame(trait = i,
-             H2_Broad =  resultMM[[i]][["H2_Broad"]],
-             H2_narrow =  resultMM[[i]][["H2_narrow"]])
-}))
-
-varcomp <- bind_rows(lapply(traits, function(i) {
-  data.frame(
-    trait = i,
-    grp = c("Clone", "Ano", "Ano:Clone", "units"),
-    resultMM[[i]][["varcomp"]][[1]]
-  )
-}))
-```
-
-Saving the results of BLUPs and parameters
-
-```{r}
-write.csv(BLUPS,
-          "output/BLUPS.csv",
+write.csv(pheno,
+          "data/pheno_clean.csv",
           row.names = F,
           quote = F)
 
-write.csv(H2,
-          "output/H2.csv",
-          row.names = F,
-          quote = F)
+pheno_mean_sd <- desc_stat(pheno, stats = c("mean, min, max, cv"))
 
-write.csv(varcomp,
-          "output/varcomp.csv",
+write.csv(pheno_mean_sd,
+          "output/pheno_mean_sd.csv",
           row.names = F,
           quote = F)
 ```
 
-Create a figure about de variance components
-
-```{r}
-varcomp |> 
-  ggplot(aes(x = trait, y =  VarComp, fill = fct_reorder(grp, VarComp), by = trait)) +
-  geom_col(position = "fill")+ 
-  labs(y="Variance Component (%)",
-       x="Traits",
-       fill = "Var. Comp.")+
-  scale_fill_gdocs()+
-  theme_minimal()+
-  theme(text = element_text(size = 25, face = "bold"),
-    axis.text.x = element_text(
-      size = 20,
-      angle = 45,
-      hjust = 1,
-      vjust = 1
-    )) 
-
-ggsave("output/varcomp.tiff", width = 16, height = 8)
-```
-
-### Ploting BLUPS for all traits
-
-Let's plot the density and boxplots figures of the traits.
-
-```{r}
-BLUPS %>%
-  pivot_longer(8:9, names_to = "Method", values_to = "Values") %>%
-  ggplot(aes(x = Values, fill = Method)) +
-  geom_boxplot(alpha = 0.8) +
-  facet_wrap(trait~., ncol = 4, scales = "free") +
-  theme_bw() + 
-  theme(text = element_text(size = 15)) +
-  scale_fill_gdocs() +
-  scale_color_gdocs() +
-  labs(x = "", y = "")
-  
-ggsave("output/BLUPS_drgBLUPs__boxplot_med.png", width = 16, height = 10, dpi =300)
-```
-
-Here we will only evaluate the distribution of BLUPs without the mean.
-
-```{r}
-BLUPS %>%
-  pivot_longer(8:9, names_to = "Method", values_to = "Values") %>%
-  ggplot(aes(x = Values, fill = Method, color = Method)) +
-  geom_density(alpha = 0.8) +
-  facet_wrap(trait~., ncol = 4, scales = "free") +
-  theme_bw() + 
-  theme(text = element_text(size = 15)) +
-  scale_fill_gdocs() +
-  scale_color_gdocs() +
-  labs(x = "", y = "")
-  
-ggsave("output/BLUPS_drgBLUPs_density_med.png", width = 16, height = 10, dpi =300)
-```
-
-Apparently most BLUPs for the traits follow normal distribution and can be applied to GWS by conventional methods.
-
-Then, now we go to execute the Genomic Wide Selection script: [GWS.Rmd](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS)
+Proceed with Genotype-environment analysis using mixed-effect models to obtain BLUPs (Best Linear Unbiased Predictors) and further interpret the results to identify superior genotypes.

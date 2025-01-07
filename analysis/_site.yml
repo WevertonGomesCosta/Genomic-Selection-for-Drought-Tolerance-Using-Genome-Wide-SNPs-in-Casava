@@ -7,8 +7,24 @@ navbar:
     href: index.html
   - text: Phenotype
     href: phenotype.html
+  - text: GxE Analysis
+    href: mixed_models.html
   - text: Genomic Selection
-    href: GWS.html
+    menu:
+      - text: Overview
+        href: GWS.html
+      - text: RR-BLUP
+        href: GWS_RR-BLUP.html
+      - text: G-BLUP (additive and additive-dominant)
+        href: GWS_G-BLUP.html
+      - text: Bayes A
+        href: GWS_BayesA.html
+      - text: Bayes B
+        href: GWS_BayesB.html
+      - text: RKHS
+        href: GWS_RKHS.html
+      - text: Random Forest
+        href: GWS_RF.html
   - text: About
     href: about.html
   - text: License

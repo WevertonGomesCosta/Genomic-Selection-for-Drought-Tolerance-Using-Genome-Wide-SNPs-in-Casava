@@ -1,18 +1,52 @@
 ---
-title: "Home"
-author: 
-  - Costa, W. G.^[Weverton Gomes da Costa, Pós-Doutorando, Embrapa Mandioca e Fruticultura, wevertonufv@gmail.com]
+title: "Genomic Selection for Drought Tolerance"
+author: "Weverton Gomes da Costa^[Pós-Doutorando, Embrapa Mandioca e Fruticultura, weverton.costa@ufv.br]"
 date: "`r Sys.Date()`"
-site: workflowr::wflow_site
 output:
   workflowr::wflow_html:
-    toc: false
-editor_options:
-  chunk_output_type: console
+    toc: true
+    toc_float: true
+    theme: flatly
+    highlight: haddock
 ---
 
-This website is a project for analysis of the Genomic Selection for Drought Tolerance Using Genome-Wide GBS and/or DART in Cassava by EMBRAPA Cassava.
+# Genomic Selection for Drought Tolerance
 
-In this project, you will find how the estimation of BLUPs was performed using mixed models. In addition, we performed the EDA and some manipulations were necessary to estimate the BLUPs.
+Welcome to the Genomic Selection for Drought Tolerance project website! This initiative by EMBRAPA Mandioca focuses on utilizing Genome Wide GBS and/or DART in Cassava to achieve drought tolerance through genomic selection.
 
-For the GWS, we used the original marker matrix. Thus, we also had to perform some manipulations to organize and prepare the matrix for input into the models. The models used were RR-BLUP and G-BLUP. Finally, we performed cross-validation only for the G-BLUP, since the results were similar for both methods.
+## About the Project
+
+This project aims to analyze the phenotypic data of Brazilian drought trials to evaluate the performance of various genotypes under drought conditions. The goal is to identify the genotypes that exhibit superior performance and resilience. The analysis follows a structured workflow, including data import and manipulation, exploratory data analysis, and genotype-environment analysis using mixed-effect models. This project details the estimation of Best Linear Unbiased Predictions (BLUPs) using mixed models, along with extensive Exploratory Data Analysis (EDA) and necessary manipulations to accurately estimate the BLUPs.
+
+## Project Structure
+
+### 1. [Exploratory Data Analysis (EDA)](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/phenotype.html)
+
+We used packages such as DataExplorer, metan, and data.table to perform extensive exploratory data analysis on our dataset. The goal was to understand the data structure, identify missing values, and detect patterns that might influence the subsequent analyses.
+
+### 2. [Genotype x Environment Interaction Analysis (GxE)](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/mixed_models.html)
+
+The GxE analysis aims to evaluate the performance of genotypes across different environments to identify those with stable performance and high resilience. We used mixed-effect models to estimate the variance components and calculate BLUPs for each genotype.
+
+### 3. Genomic Wide Selection (GWS)
+
+For GWS, we employed the original marker matrix, followed by necessary data manipulations to organize and prepare the matrix for model input. We used various models, including:
+
+- [**RR-BLUP**](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_RR-BLUP.html)
+- [**G-BLUP (additive and additive-dominant)**](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_G-BLUP.html)
+- [**Bayes A**](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_BayesA.html)
+- [**Bayes B**](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_BayesB.html)
+- [**RKHS**](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_RKHS.html)
+- [**Random Forest**](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_RF.html)
+
+(Note: Some models might be computationally intensive.)
+
+## Study Highlights
+
+- **Manuscript Access**: [Genomic Selection for Drought Tolerance Using Genome Wide SNPs in Cassava](https://doi.org/10.3389/fpls.2024.1483340)
+- **Authors**: 
+  - Weverton Gomes da Costa (Pós-Doutorando, Embrapa Mandioca e Fruticultura) - weverton.costa@ufv.br
+
+## Visit the Project Website
+
+For detailed information and resources, visit our [Project Website](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/).
