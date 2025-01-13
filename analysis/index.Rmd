@@ -28,7 +28,7 @@ We used packages such as DataExplorer, metan, and data.table to perform extensiv
 
 The GxE analysis aims to evaluate the performance of genotypes across different environments to identify those with stable performance and high resilience. We used mixed-effect models to estimate the variance components and calculate BLUPs for each genotype.
 
-### 3. [Genomic Wide Selection (GWS)](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS.html))
+### 3. [Genomic Wide Selection (GWS)](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS.html)
 
 For GWS, we employed the original marker matrix, followed by necessary data manipulations to organize and prepare the matrix for model input. We used various models, including:
 
