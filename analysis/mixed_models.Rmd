@@ -1,0 +1,484 @@
+---
+title: "Genotype-environment analysis by mixed-effect models"
+author: 
+  - Costa, W. G.^[Weverton Gomes da Costa, Pós-Doutorando, Embrapa Mandioca e Fruticultura, wevertonufv@gmail.com]
+date: "`r Sys.Date()`"
+site: workflowr::wflow_site
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE)
+```
+
+## Data and libraries
+
+Load Libraries
+
+```{r libraries, message=FALSE}
+library(kableExtra)
+library(tidyverse)
+library(data.table)
+library(metan)
+library(ggthemes)
+library(GGally)
+library(furrr)
+theme_set(theme_bw())
+```
+
+Import and prepare dataset:
+
+```{r import-data}
+pheno <- read.csv("data/pheno_clean.csv") %>%
+  mutate(across(c(Clone, Ano, row, col, Bloco), as.factor))
+```
+
+## Genotype-environment analysis by mixed-effect models
+
+Define a function to obtain the BLUPs and other model parameters:
+
+```{r blups-function}
+BLUPS_par_mmer <- function(model, trait, teste_LRT) {
+  # log likelihood of the model, AIC, convergence T/F
+  modelfit <- summary(model)$logo
+  # number of groups for factors, could be used to compute DF
+  groups <- summary(model)$groups
+  # variance components
+  varcomp <- summary(model)$varcomp
+  
+  # variance components
+  Vg <- model$sigma$Clone %>% as.vector()
+  Ve <- model$sigma$units %>% as.vector()
+  
+  # Narrow-sense heritability
+  H2_narrow <- Vg / (Vg + Ve)
+  
+  # Broad-sense heritability
+  Va <- model$sigma$`Ano:Clone` %>% as.vector()
+  Ve <- model$sigma$units %>% as.vector()
+  n.ano <- length(model$U$Ano[[trait]])
+  H2_Broad <- (Vg) / (Vg + (Va / n.ano) + (Ve / (2 * n.ano)))
+  
+  # Extract the BLUPs and PEVs, compute Reliability (REL),
+  # de-regressed BLUPs and weights for downstream analysis
+  blups <- model$U$Clone %>%
+    unlist() %>%
+    tibble(Clone = names(.), BLUP = .) %>%
+    mutate(
+      Clone = gsub("Clone", "", Clone),
+      PEV = diag(as.matrix(model$PevU$Clone[[1]])),
+      # prediction error variance
+      REL = 1 - PEV / Vg,
+      # Reliability
+      drgBLUP = BLUP / REL,
+      # De-regressed BLUP
+      WT = (1 - H2_narrow) / ((0.1 + (1 - REL) / REL) * H2_narrow) # weight for downstream
+    )
+  
+  # Combine all outputs into one object the function can return()
+  out <- list(
+    Trait = trait,
+    H2_Broad = H2_Broad,
+    H2_narrow = H2_narrow,
+    model = model,
+    modelfit = list(modelfit),
+    groups = list(groups),
+    blups = list(blups),
+    varcomp = list(varcomp),
+    teste_LRT = teste_LRT
+  )
+  
+  return(out)
+}
+
+save(BLUPS_par_mmer, file = "output/BLUPS_par_mmer.Rdata")
+```
+
+Convert trait columns to numeric and calculate the mean for each trait:
+
+```{r convert-traits}
+traits <- colnames(pheno)[6:ncol(pheno)]
+pheno <- pheno %>%
+  mutate_at(traits, as.numeric)
+
+mean_pheno <- pheno %>%
+  summarise(across(where(is.numeric), mean, na.rm = TRUE)) %>%
+  as.data.frame()
+
+write.csv(mean_pheno, "output/mean_pheno.csv", row.names = FALSE)
+```
+
+Set up parallel processing. Define and run multiple models to get the BLUPs: *ATTENTION: This process is time-consuming.*
+
+```{r include=FALSE}
+# Carregar os dados
+load("output/BLUPS_par_mmer.Rdata")
+```
+
+
+```{r function-run-models}
+# Função para rodar os modelos e coletar os resultados
+run_models <- function(trait, pheno) {
+  # Selecionar apenas as colunas necessárias no início
+  data <- pheno %>%
+    select(1:5, all_of(trait)) %>%
+    na.omit() %>%
+    droplevels() %>%
+    as.data.table()
+  
+  formula <- as.formula(paste(trait, "~ Ano:Bloco"))
+  
+  formulas_random <- list(
+    as.formula("~ Clone + Ano + Ano:Clone + row + col"),
+    as.formula("~ Clone + Ano + row + col"),
+    as.formula("~ Clone + Ano:Clone + row + col"),
+    as.formula("~ Ano + Ano:Clone + row + col"),
+    as.formula("~ Clone + Ano + Ano:Clone + col"),
+    as.formula("~ Clone + Ano + Ano:Clone + row")
+  )
+  
+  model <- function(formulas_random) {
+    sommer::mmer(
+      fixed = formula,
+      random = formulas_random,
+      rcov = ~ units,
+      data = data,
+      verbose = TRUE
+    )
+  }
+  
+  models <-
+    map(formulas_random, model)
+  
+  # Nomear os modelos
+  names(models) <-
+    c("Complete", "Clone:Year", "Year", "Clone", "row", "col")
+  
+  # Calcular os testes ANOVA para todos os modelos
+  anova_tests <-
+    list(
+      sommer::anova.mmer(models$Complete, models$`Clone:Year`),
+      sommer::anova.mmer(models$Complete, models$Year),
+      sommer::anova.mmer(models$Complete, models$Clone),
+      sommer::anova.mmer(models$Complete, models$row),
+      sommer::anova.mmer(models$Complete, models$col)
+    )
+  
+  teste_LRT <- do.call(bind_rows, anova_tests) %>% 
+    distinct()
+  
+  rownames(teste_LRT) <-
+    c("Complete", "Clone:Year", "Year", "Clone", "row", "col")
+  
+  BLUPS_par_mmer(models$Complete, trait, teste_LRT)
+}
+```
+
+Run models in paralel for each trait
+
+```{r run-models}
+# Definir o plano para execução paralela
+plan(multisession)
+
+results <- future_map(traits, run_models, pheno = pheno)
+
+names(results) <- traits
+
+# Salvar os resultados em formato RDS
+saveRDS(results, file = "output/result_sommer_row_col_random_optimized.RDS")
+```
+
+### Obtain Parameters
+
+As "future_map" was used to run each stage 1 analysis in parallel, each trait is stored as a separate element in a list. We need to process the "results" object into a "data.frame" or "matrix" for further analysis.
+
+Combine the results them into a single data frame for each parameter.
+
+```{r load-results, include =FALSE}
+results <- readRDS("output/result_sommer_row_col_random.RDS")
+```
+
+```{r parameters}
+BLUPS <- map_dfr(results, function(res) {
+  data.frame(
+    trait = res$Trait,
+    Clone = res$blups[[1]]$Clone,
+    BLUP = res$blups[[1]]$BLUP,
+    BLUPS_mean = res$blups[[1]]$BLUP + mean_pheno[, res$Trait],
+    drgBLUP_mean = res$blups[[1]]$drgBLUP + mean_pheno[, res$Trait]
+  )
+})
+
+H2 <- map_dfr(results, function(res) {
+  data.frame(
+    trait = res$Trait,
+    H2_Broad = res$H2_Broad,
+    H2_narrow = res$H2_narrow
+  )
+})
+
+varcomp <- map_dfr(results, function(res) {
+  data.frame(
+    trait = res$Trait,
+    grp = c("Clone", "Ano", "Ano:Clone", "row", "col", "units"),
+    res$varcomp
+  )
+})
+
+teste_LRT <- map_dfr(results, function(res) {
+  data.frame(
+    trait = res$Trait,
+    model = c("Complete", "Clone:Year", "Year", "Clone", "row", "col"),
+    res$teste_LRT
+  )
+})
+
+# Function to extract residuals from each model and create a data frame
+extract_residuals <- function(res) {
+  resid <- residuals(res$model)
+  data.frame(resid, trait = res$Trait, row.names = NULL)
+}
+
+# Função para extrair e criar um data frame a partir dos resíduos de cada modelo
+extract_residuals <- function(res) {
+  extract_res <- residuals(res$model)
+  df <- data.frame(extract_res[, c(1:5, 8, 15)], trait = res$Trait)
+  colnames(df)[6:7] <- c("fitted", "residuals")
+  return(df)
+}
+
+fitted_residual_data <- map_dfr(results, extract_residuals)
+```
+
+```{r Salve-Load-Parameters, include=FALSE}
+# Saving the results of BLUPs and parameters
+write.csv(BLUPS,
+          "output/BLUPS_row_col_random.csv",
+          row.names = F,
+          quote = F)
+
+write.csv(H2,
+          "output/H2_row_col_random.csv",
+          row.names = F,
+          quote = F)
+
+write.csv(
+  varcomp,
+  "output/varcomp_row_col_random.csv",
+  row.names = F,
+  quote = F
+)
+
+write.csv(
+  teste_LRT,
+  "output/teste_LRT_row_col_random.csv",
+  row.names = F,
+  quote = F
+)
+
+write.csv(
+  fitted_residual_data,
+  "output/fitted_residual_data_row_col_random.csv",
+  row.names = F,
+  quote = F
+)
+
+BLUPS <- read.csv("output/BLUPS_row_col_random.csv")
+
+H2 <- read.csv("output/H2_row_col_random.csv")
+
+varcomp <- read.csv("output/varcomp_row_col_random.csv")
+
+teste_LRT <- read.csv("output/teste_LRT_row_col_random.csv")
+
+fitted_residual_data <- read.csv("output/fitted_residual_data_row_col_random.csv")
+```
+
+### Results
+
+#### Variance components 
+
+Distribution of variance components 
+
+```{r}
+varcomp %>%
+  group_by(trait) %>%
+  mutate(freq_relat = VarComp / sum(VarComp)) %>%
+  mutate(freq_relat = round(freq_relat * 100, 2)) %>%  select(1, 2, 7) %>%
+  kbl(escape = F, align = 'c') |>
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
+```
+
+FIGURE 1 Distribution of variance components 
+
+```{r}
+varcomp %>%
+  mutate(
+    grp = recode(
+      grp,
+      "Ano" = "Year",
+      "Ano:Clone" = "Clone:Year",
+      "Clone" = "Clone",
+      "row" = "Row",
+      "col" = "Col",
+      .default = "Residual"
+    ),
+    grp = fct_relevel(grp, c(
+      "Row", "Col", "Year", "Clone", "Clone:Year", "Residual"
+    )) # Coloca Residual como último
+  ) %>%
+  ggplot(aes(
+    x = trait,
+    y = VarComp,
+    fill = grp,
+    by = trait
+  )) +
+  geom_col(position = "fill") +
+  labs(y = "Variance Component (%)", x = "Traits", fill = "Var. Comp.") +
+  scale_fill_gdocs() +
+  theme_minimal() +
+  theme(
+    text = element_text(size = 25, face = "bold"),
+    axis.text.x = element_text(
+      size = 20,
+      angle = 45,
+      hjust = 1,
+      vjust = 1
+    )
+  )
+```
+
+
+```{r include=FALSE}
+ggsave("output/varcomp_row_col.tiff",
+       width = 16,
+       height = 8)
+```
+
+
+#### Ploting BLUPS for all traits
+
+Distribution of the best linear unbiased prediction (BLUP) 
+
+```{r}
+BLUPS %>%
+  pivot_longer(8:9, names_to = "Method", values_to = "Values") %>%
+  filter(Method == "BLUPS_mean") %>%
+  ggplot(aes(x = Values, fill = Method, color = Method)) +
+  geom_density(alpha = 0.8, show.legend = F) +
+  facet_wrap(trait ~ .,
+             ncol = 4,
+             scales = "free",
+             strip.position = "bottom")  +
+  scale_fill_gdocs() +
+  scale_color_gdocs() +
+  theme_bw() +
+  theme(
+    text = element_text(size = 20),
+    panel.spacing = unit(1, "lines"),
+    strip.background = element_blank(),
+    panel.background = element_blank(),
+    plot.background = element_blank(),
+    strip.placement = "outside"
+  ) +
+  labs(x = "", y = "Density")
+
+ggsave(
+  "output/BLUPS_density_med_row_col.png",
+  width = 12,
+  height = 10,
+  dpi = 300
+)
+```
+
+############# SUPLEMMENTARY FIGURE 2 and 3 - residual distribution and their association against fitted values 
+
+
+```{r}
+# 1. Gráfico da distribuição dos resíduos
+fitted_residual_data %>% 
+  ggplot(aes(x = residuals)) +
+  geom_histogram(
+    aes(y = ..density..),
+    bins = 10,
+    fill = "lightblue",
+    color = "black"
+  ) +
+  geom_density(color = "red", size = 1) +
+  facet_wrap(trait ~ .,
+             ncol = 4,
+             scales = "free",
+             strip.position = "bottom")  +
+  labs(x = "Residuals", y = "Density") +
+  theme_bw() +
+  theme(
+    text = element_text(size = 20),
+    panel.spacing = unit(1, "lines"),
+    strip.background = element_blank(),
+    panel.background = element_blank(),
+    plot.background = element_blank(),
+    strip.placement = "outside"
+  )
+
+ggsave(
+  "output/Density_residual_row_col.tiff",
+  width = 12,
+  height = 8,
+  dpi = 600
+)
+```
+
+
+```{r}
+# 2. Associação entre resíduos e valores ajustados
+fitted_residual_data %>%
+  ggplot(aes(x = fitted, y = residuals)) +
+  geom_point(color = "blue", alpha = 0.7) +
+  facet_wrap(trait ~ .,
+             ncol = 4,
+             scales = "free",
+             strip.position = "bottom")  +
+  labs(x = "Fitted Values", y = "Residuals") +
+  theme_bw() +
+  theme(
+    text = element_text(size = 20),
+    panel.spacing = unit(1, "lines"),
+    strip.background = element_blank(),
+    panel.background = element_blank(),
+    plot.background = element_blank(),
+    strip.placement = "outside"
+  )
+
+ggsave(
+  "output/Residuals_vs_fitted_row_col.tiff",
+  width = 12,
+  height = 8,
+  dpi = 600
+)
+```
+
+
+#### Supplementary Table 2 - teste_LRT 
+
+```{r}
+teste_LRT %>%
+  kbl(escape = F, align = 'c') %>%
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
+```
+
+
+Then, now we go to execute the Genomic Wide Selection script: [GWS.Rmd](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS)
