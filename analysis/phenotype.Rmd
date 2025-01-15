@@ -290,4 +290,4 @@ semester_means %>%
 writexl::write_xlsx(semester_means, "output/semester_means.xlsx")
 ```
 
-Then, now we go to execute the mixed models analisys script: [mixed_models.Rmd](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/mixed_models)
+Then, now we go to execute the mixed models analisys script: [mixed_models.Rmd](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/mixed_models.html)

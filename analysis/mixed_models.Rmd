@@ -10,9 +10,7 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE} 
-knitr::opts_chunk$set(
-	echo = TRUE,
-	warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
 ```
 
 ## Data and libraries
@@ -106,7 +104,7 @@ pheno <- pheno %>%
   mutate_at(traits, as.numeric)
 
 mean_pheno <- pheno %>%
-  summarise(across(where(is.numeric), mean, na.rm = TRUE)) %>%
+  summarise(across(where(is.numeric), \(x) mean(x, na.rm = TRUE))) %>%
   as.data.frame()
 
 write.csv(mean_pheno, "output/mean_pheno.csv", row.names = FALSE)
@@ -189,7 +187,7 @@ results <- future_map(traits, run_models, pheno = pheno)
 names(results) <- traits
 
 # Salvar os resultados em formato RDS
-saveRDS(results, file = "output/result_sommer_row_col_random_optimized.RDS")
+saveRDS(results, file = "output/result_sommer_row_col_random.RDS")
 ```
 
 ### Obtain Parameters
@@ -229,6 +227,7 @@ varcomp <- map_dfr(results, function(res) {
   )
 })
 
+
 teste_LRT <- map_dfr(results, function(res) {
   data.frame(
     trait = res$Trait,
@@ -238,20 +237,12 @@ teste_LRT <- map_dfr(results, function(res) {
 })
 
 # Function to extract residuals from each model and create a data frame
-extract_residuals <- function(res) {
-  resid <- residuals(res$model)
-  data.frame(resid, trait = res$Trait, row.names = NULL)
-}
-
-# Função para extrair e criar um data frame a partir dos resíduos de cada modelo
-extract_residuals <- function(res) {
-  extract_res <- residuals(res$model)
-  df <- data.frame(extract_res[, c(1:5, 8, 15)], trait = res$Trait)
+fitted_residual_data <- map_dfr(results, function(res) {
+  extract_res <- sommer::residuals.mmer(res$model)
+  df <- data.frame(residuals(res$model)[, c(1:5, 8, 15)], trait = res$Trait)
   colnames(df)[6:7] <- c("fitted", "residuals")
   return(df)
-}
-
-fitted_residual_data <- map_dfr(results, extract_residuals)
+})
 ```
 
 ```{r Salve-Load-Parameters, include=FALSE}
@@ -304,23 +295,19 @@ fitted_residual_data <- read.csv("output/fitted_residual_data_row_col_random.csv
 
 Distribution of variance components 
 
-```{r}
+```{r varcomp}
 varcomp %>%
   group_by(trait) %>%
   mutate(freq_relat = VarComp / sum(VarComp)) %>%
-  mutate(freq_relat = round(freq_relat * 100, 2)) %>%  select(1, 2, 7) %>%
-  kbl(escape = F, align = 'c') |>
-  kable_classic(
-    "hover",
-    full_width = F,
-    position = "center",
-    fixed_thead = T
-  )
+  mutate(freq_relat = round(freq_relat * 100, 2)) %>%
+  select(trait, grp, freq_relat) %>%
+  kbl(escape = F, align = 'c') %>%
+  kable_classic("hover", full_width = F, position = "center", fixed_thead = T)
 ```
 
 FIGURE 1 Distribution of variance components 
 
-```{r}
+```{r varcomp-plot}
 varcomp %>%
   mutate(
     grp = recode(
@@ -332,53 +319,33 @@ varcomp %>%
       "col" = "Col",
       .default = "Residual"
     ),
-    grp = fct_relevel(grp, c(
-      "Row", "Col", "Year", "Clone", "Clone:Year", "Residual"
-    )) # Coloca Residual como último
+    grp = fct_relevel(grp, c("Row", "Col", "Year", "Clone", "Clone:Year", "Residual"))
   ) %>%
-  ggplot(aes(
-    x = trait,
-    y = VarComp,
-    fill = grp,
-    by = trait
-  )) +
+  ggplot(aes(x = trait, y = VarComp, fill = grp)) +
   geom_col(position = "fill") +
   labs(y = "Variance Component (%)", x = "Traits", fill = "Var. Comp.") +
   scale_fill_gdocs() +
   theme_minimal() +
   theme(
     text = element_text(size = 25, face = "bold"),
-    axis.text.x = element_text(
-      size = 20,
-      angle = 45,
-      hjust = 1,
-      vjust = 1
-    )
+    axis.text.x = element_text(size = 20, angle = 45, hjust = 1, vjust = 1)
   )
 ```
 
 
 ```{r include=FALSE}
-ggsave("output/varcomp_row_col.tiff",
-       width = 16,
-       height = 8)
+ggsave("output/varcomp_row_col.tiff", width = 16, height = 8)
 ```
 
+#### Ploting BLUPS
 
-#### Ploting BLUPS for all traits
+Distribution of the BLUPs
 
-Distribution of the best linear unbiased prediction (BLUP) 
-
-```{r}
+```{r BLUPS}
 BLUPS %>%
-  pivot_longer(8:9, names_to = "Method", values_to = "Values") %>%
-  filter(Method == "BLUPS_mean") %>%
-  ggplot(aes(x = Values, fill = Method, color = Method)) +
+  ggplot(aes(x = BLUPS_mean, fill = trait, color = trait)) +
   geom_density(alpha = 0.8, show.legend = F) +
-  facet_wrap(trait ~ .,
-             ncol = 4,
-             scales = "free",
-             strip.position = "bottom")  +
+  facet_wrap(~ trait, ncol = 4, scales = "free", strip.position = "bottom")  +
   scale_fill_gdocs() +
   scale_color_gdocs() +
   theme_bw() +
@@ -391,33 +358,23 @@ BLUPS %>%
     strip.placement = "outside"
   ) +
   labs(x = "", y = "Density")
-
-ggsave(
-  "output/BLUPS_density_med_row_col.png",
-  width = 12,
-  height = 10,
-  dpi = 300
-)
 ```
 
-############# SUPLEMMENTARY FIGURE 2 and 3 - residual distribution and their association against fitted values 
 
+```{r BLUPS-save}, include=FALSE}
+ggsave("output/BLUPS_density_med_row_col.png", width = 12, height = 10)
+```
 
-```{r}
-# 1. Gráfico da distribuição dos resíduos
+#### Residual Analisys
+
+Residual distribution
+
+```{r residual-plot}
 fitted_residual_data %>% 
   ggplot(aes(x = residuals)) +
-  geom_histogram(
-    aes(y = ..density..),
-    bins = 10,
-    fill = "lightblue",
-    color = "black"
-  ) +
+  geom_histogram(aes(y = ..density..), bins = 10, fill = "lightblue", color = "black") +
   geom_density(color = "red", size = 1) +
-  facet_wrap(trait ~ .,
-             ncol = 4,
-             scales = "free",
-             strip.position = "bottom")  +
+  facet_wrap(~ trait, ncol = 4, scales = "free", strip.position = "bottom")  +
   labs(x = "Residuals", y = "Density") +
   theme_bw() +
   theme(
@@ -428,25 +385,20 @@ fitted_residual_data %>%
     plot.background = element_blank(),
     strip.placement = "outside"
   )
-
-ggsave(
-  "output/Density_residual_row_col.tiff",
-  width = 12,
-  height = 8,
-  dpi = 600
-)
 ```
 
 
-```{r}
-# 2. Associação entre resíduos e valores ajustados
+```{r residual-plot-save, include=FALSE}
+ggsave("output/Density_residual_row_col.tiff", width = 12, height = 8)
+```
+
+Residuals vs fitted values
+
+```{r residualxfitted-plot}
 fitted_residual_data %>%
   ggplot(aes(x = fitted, y = residuals)) +
   geom_point(color = "blue", alpha = 0.7) +
-  facet_wrap(trait ~ .,
-             ncol = 4,
-             scales = "free",
-             strip.position = "bottom")  +
+  facet_wrap(~ trait, ncol = 4, scales = "free", strip.position = "bottom")  +
   labs(x = "Fitted Values", y = "Residuals") +
   theme_bw() +
   theme(
@@ -457,28 +409,22 @@ fitted_residual_data %>%
     plot.background = element_blank(),
     strip.placement = "outside"
   )
-
-ggsave(
-  "output/Residuals_vs_fitted_row_col.tiff",
-  width = 12,
-  height = 8,
-  dpi = 600
-)
 ```
 
 
-#### Supplementary Table 2 - teste_LRT 
+```{r residualxfitted-plot-save, include=FALSE}
+ggsave("output/Residuals_vs_fitted_row_col.tiff", width = 12, height = 8)
+```
 
-```{r}
+
+#### Models Analisys
+
+LRT test for comparation of models
+
+```{r teste_LRT}
 teste_LRT %>%
   kbl(escape = F, align = 'c') %>%
-  kable_classic(
-    "hover",
-    full_width = F,
-    position = "center",
-    fixed_thead = T
-  )
+  kable_classic("hover", full_width = F, position = "center", fixed_thead = T)
 ```
 
-
-Then, now we go to execute the Genomic Wide Selection script: [GWS.Rmd](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS)
+Then, now we go to execute the Genomic Wide Selection script: [GWS.Rmd](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS.html)
