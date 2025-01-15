@@ -1,0 +1,5136 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Costa, W. G." />
+
+<meta name="date" content="2025-01-15" />
+
+<title>Genotype-environment analysis by mixed-effect models</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; } /* Alert */
+code span.an { color: #008000; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #0000ff; } /* ControlFlow */
+code span.ch { color: #008080; } /* Char */
+code span.cn { } /* Constant */
+code span.co { color: #008000; } /* Comment */
+code span.cv { color: #008000; } /* CommentVar */
+code span.do { color: #008000; } /* Documentation */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.im { } /* Import */
+code span.in { color: #008000; } /* Information */
+code span.kw { color: #0000ff; } /* Keyword */
+code span.op { } /* Operator */
+code span.ot { color: #ff4000; } /* Other */
+code span.pp { color: #ff4000; } /* Preprocessor */
+code span.sc { color: #008080; } /* SpecialChar */
+code span.ss { color: #008080; } /* SpecialString */
+code span.st { color: #008080; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #008080; } /* VerbatimString */
+code span.wa { color: #008000; font-weight: bold; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Genomic Selection for Drought Tolerance</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="phenotype.html">Phenotype</a>
+</li>
+<li>
+  <a href="mixed_models.html">GxE Analysis</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Genomic Selection
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="GWS.html">Overview</a>
+    </li>
+    <li>
+      <a href="GWS_RR-BLUP.html">RR-BLUP</a>
+    </li>
+    <li>
+      <a href="GWS_G-BLUP.html">G-BLUP (additive and additive-dominant)</a>
+    </li>
+    <li>
+      <a href="GWS_BayesA.html">Bayes A</a>
+    </li>
+    <li>
+      <a href="GWS_BayesB.html">Bayes B</a>
+    </li>
+    <li>
+      <a href="GWS_RKHS.html">RKHS</a>
+    </li>
+    <li>
+      <a href="GWS_RF.html">Random Forest</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Genotype-environment analysis by
+mixed-effect models</h1>
+<h4 class="author">Costa, W. G.<a href="#fn1" class="footnote-ref"
+id="fnref1"><sup>1</sup></a></h4>
+<h4 class="date">2025-01-15</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2025-01-15
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong>
+<code>Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20221020code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20221020)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20221020code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20221020)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatreec9c68fea126628a4cb8f863dd3a9a0b106dfd9f1targetblankc9c68fea">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/c9c68fea126628a4cb8f863dd3a9a0b106dfd9f1" target="_blank">c9c68fe</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatreec9c68fea126628a4cb8f863dd3a9a0b106dfd9f1targetblankc9c68fea"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/c9c68fea126628a4cb8f863dd3a9a0b106dfd9f1" target="_blank">c9c68fe</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    data/allchrAR08.txt
+
+Untracked files:
+    Untracked:  data/.gitignore
+    Untracked:  data/Artigo/
+    Untracked:  data/Phenotyping2.xlsx
+    Untracked:  data/dados__temp_umi.csv
+    Untracked:  output/BLUPS_par_mmer.Rdata
+    Untracked:  output/BLUPS_row_col_random.csv
+    Untracked:  output/H2_row_col_random.csv
+    Untracked:  output/fitted_residual_data_row_col_random.csv
+    Untracked:  output/mean_pheno.csv
+    Untracked:  output/pheno_mean_sd.csv
+    Untracked:  output/result_sommer_row_col_random.RDS
+    Untracked:  output/semester_means.xlsx
+    Untracked:  output/teste_LRT_row_col_random.csv
+    Untracked:  output/varcomp_row_col_random.csv
+
+Unstaged changes:
+    Modified:   Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava.Rproj
+    Modified:   analysis/GWS.Rmd
+    Modified:   analysis/mixed_models.Rmd
+    Modified:   analysis/phenotype.Rmd
+    Modified:   data/SNPs.rds
+    Modified:   data/pheno_clean.csv
+    Deleted:    output/BLUPS.csv
+    Deleted:    output/BLUPS_par.Rdata
+    Deleted:    output/media_pheno.csv
+    Deleted:    output/varcomp.csv
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/mixed_models.Rmd</code>) and HTML
+(<code>docs/mixed_models.html</code>) files. If you’ve configured a
+remote Git repository (see <code>?wflow_git_remote</code>), click on the
+hyperlinks in the table below to view the files as they were in that
+past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/blob/db9b34f84e100635c38be1e30635efbb81d3e0ec/analysis/mixed_models.Rmd" target="_blank">db9b34f</a>
+</td>
+<td>
+WevertonGomesCosta
+</td>
+<td>
+2025-01-13
+</td>
+<td>
+update mixed_models.Rmd
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="data-and-libraries" class="section level2">
+<h2>Data and libraries</h2>
+<p>Load Libraries</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(metan)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">library</span>(ggthemes)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="fu">library</span>(furrr)</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>())</span></code></pre></div>
+<p>Import and prepare dataset:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>pheno <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/pheno_clean.csv&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(Clone, Ano, row, col, Bloco), as.factor))</span></code></pre></div>
+</div>
+<div id="genotype-environment-analysis-by-mixed-effect-models"
+class="section level2">
+<h2>Genotype-environment analysis by mixed-effect models</h2>
+<p>Define a function to obtain the BLUPs and other model parameters:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>BLUPS_par_mmer <span class="ot">&lt;-</span> <span class="cf">function</span>(model, trait, teste_LRT) {</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="co"># log likelihood of the model, AIC, convergence T/F</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  modelfit <span class="ot">&lt;-</span> <span class="fu">summary</span>(model)<span class="sc">$</span>logo</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="co"># number of groups for factors, could be used to compute DF</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  groups <span class="ot">&lt;-</span> <span class="fu">summary</span>(model)<span class="sc">$</span>groups</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="co"># variance components</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  varcomp <span class="ot">&lt;-</span> <span class="fu">summary</span>(model)<span class="sc">$</span>varcomp</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  </span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="co"># variance components</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>  Vg <span class="ot">&lt;-</span> model<span class="sc">$</span>sigma<span class="sc">$</span>Clone <span class="sc">%&gt;%</span> <span class="fu">as.vector</span>()</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>  Ve <span class="ot">&lt;-</span> model<span class="sc">$</span>sigma<span class="sc">$</span>units <span class="sc">%&gt;%</span> <span class="fu">as.vector</span>()</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>  </span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>  <span class="co"># Narrow-sense heritability</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>  H2_narrow <span class="ot">&lt;-</span> Vg <span class="sc">/</span> (Vg <span class="sc">+</span> Ve)</span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>  </span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>  <span class="co"># Broad-sense heritability</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>  Va <span class="ot">&lt;-</span> model<span class="sc">$</span>sigma<span class="sc">$</span><span class="st">`</span><span class="at">Ano:Clone</span><span class="st">`</span> <span class="sc">%&gt;%</span> <span class="fu">as.vector</span>()</span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>  Ve <span class="ot">&lt;-</span> model<span class="sc">$</span>sigma<span class="sc">$</span>units <span class="sc">%&gt;%</span> <span class="fu">as.vector</span>()</span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>  n.ano <span class="ot">&lt;-</span> <span class="fu">length</span>(model<span class="sc">$</span>U<span class="sc">$</span>Ano[[trait]])</span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>  H2_Broad <span class="ot">&lt;-</span> (Vg) <span class="sc">/</span> (Vg <span class="sc">+</span> (Va <span class="sc">/</span> n.ano) <span class="sc">+</span> (Ve <span class="sc">/</span> (<span class="dv">2</span> <span class="sc">*</span> n.ano)))</span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>  </span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>  <span class="co"># Extract the BLUPs and PEVs, compute Reliability (REL),</span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>  <span class="co"># de-regressed BLUPs and weights for downstream analysis</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>  blups <span class="ot">&lt;-</span> model<span class="sc">$</span>U<span class="sc">$</span>Clone <span class="sc">%&gt;%</span></span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>    <span class="fu">unlist</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a>    <span class="fu">tibble</span>(<span class="at">Clone =</span> <span class="fu">names</span>(.), <span class="at">BLUP =</span> .) <span class="sc">%&gt;%</span></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>      <span class="at">Clone =</span> <span class="fu">gsub</span>(<span class="st">&quot;Clone&quot;</span>, <span class="st">&quot;&quot;</span>, Clone),</span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>      <span class="at">PEV =</span> <span class="fu">diag</span>(<span class="fu">as.matrix</span>(model<span class="sc">$</span>PevU<span class="sc">$</span>Clone[[<span class="dv">1</span>]])),</span>
+<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a>      <span class="co"># prediction error variance</span></span>
+<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a>      <span class="at">REL =</span> <span class="dv">1</span> <span class="sc">-</span> PEV <span class="sc">/</span> Vg,</span>
+<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a>      <span class="co"># Reliability</span></span>
+<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a>      <span class="at">drgBLUP =</span> BLUP <span class="sc">/</span> REL,</span>
+<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a>      <span class="co"># De-regressed BLUP</span></span>
+<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a>      <span class="at">WT =</span> (<span class="dv">1</span> <span class="sc">-</span> H2_narrow) <span class="sc">/</span> ((<span class="fl">0.1</span> <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">-</span> REL) <span class="sc">/</span> REL) <span class="sc">*</span> H2_narrow) <span class="co"># weight for downstream</span></span>
+<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a>    )</span>
+<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a>  </span>
+<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a>  <span class="co"># Combine all outputs into one object the function can return()</span></span>
+<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a>    <span class="at">Trait =</span> trait,</span>
+<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a>    <span class="at">H2_Broad =</span> H2_Broad,</span>
+<span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a>    <span class="at">H2_narrow =</span> H2_narrow,</span>
+<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a>    <span class="at">model =</span> model,</span>
+<span id="cb3-44"><a href="#cb3-44" tabindex="-1"></a>    <span class="at">modelfit =</span> <span class="fu">list</span>(modelfit),</span>
+<span id="cb3-45"><a href="#cb3-45" tabindex="-1"></a>    <span class="at">groups =</span> <span class="fu">list</span>(groups),</span>
+<span id="cb3-46"><a href="#cb3-46" tabindex="-1"></a>    <span class="at">blups =</span> <span class="fu">list</span>(blups),</span>
+<span id="cb3-47"><a href="#cb3-47" tabindex="-1"></a>    <span class="at">varcomp =</span> <span class="fu">list</span>(varcomp),</span>
+<span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a>    <span class="at">teste_LRT =</span> teste_LRT</span>
+<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a>  )</span>
+<span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a>  </span>
+<span id="cb3-51"><a href="#cb3-51" tabindex="-1"></a>  <span class="fu">return</span>(out)</span>
+<span id="cb3-52"><a href="#cb3-52" tabindex="-1"></a>}</span>
+<span id="cb3-53"><a href="#cb3-53" tabindex="-1"></a></span>
+<span id="cb3-54"><a href="#cb3-54" tabindex="-1"></a><span class="fu">save</span>(BLUPS_par_mmer, <span class="at">file =</span> <span class="st">&quot;output/BLUPS_par_mmer.Rdata&quot;</span>)</span></code></pre></div>
+<p>Convert trait columns to numeric and calculate the mean for each
+trait:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>traits <span class="ot">&lt;-</span> <span class="fu">colnames</span>(pheno)[<span class="dv">6</span><span class="sc">:</span><span class="fu">ncol</span>(pheno)]</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>pheno <span class="ot">&lt;-</span> pheno <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="fu">mutate_at</span>(traits, as.numeric)</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>mean_pheno <span class="ot">&lt;-</span> pheno <span class="sc">%&gt;%</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), \(x) <span class="fu">mean</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="fu">as.data.frame</span>()</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="fu">write.csv</span>(mean_pheno, <span class="st">&quot;output/mean_pheno.csv&quot;</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p>Set up parallel processing. Define and run multiple models to get the
+BLUPs: <em>ATTENTION: This process is time-consuming.</em></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Função para rodar os modelos e coletar os resultados</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>run_models <span class="ot">&lt;-</span> <span class="cf">function</span>(trait, pheno) {</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="co"># Selecionar apenas as colunas necessárias no início</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  data <span class="ot">&lt;-</span> pheno <span class="sc">%&gt;%</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    <span class="fu">select</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="fu">all_of</span>(trait)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>    <span class="fu">na.omit</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>    <span class="fu">droplevels</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>    <span class="fu">as.data.table</span>()</span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>  </span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>  formula <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="fu">paste</span>(trait, <span class="st">&quot;~ Ano:Bloco&quot;</span>))</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>  </span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>  formulas_random <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>    <span class="fu">as.formula</span>(<span class="st">&quot;~ Clone + Ano + Ano:Clone + row + col&quot;</span>),</span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>    <span class="fu">as.formula</span>(<span class="st">&quot;~ Clone + Ano + row + col&quot;</span>),</span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>    <span class="fu">as.formula</span>(<span class="st">&quot;~ Clone + Ano:Clone + row + col&quot;</span>),</span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>    <span class="fu">as.formula</span>(<span class="st">&quot;~ Ano + Ano:Clone + row + col&quot;</span>),</span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>    <span class="fu">as.formula</span>(<span class="st">&quot;~ Clone + Ano + Ano:Clone + col&quot;</span>),</span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>    <span class="fu">as.formula</span>(<span class="st">&quot;~ Clone + Ano + Ano:Clone + row&quot;</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>  )</span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a>  </span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a>  model <span class="ot">&lt;-</span> <span class="cf">function</span>(formulas_random) {</span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a>    sommer<span class="sc">::</span><span class="fu">mmer</span>(</span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a>      <span class="at">fixed =</span> formula,</span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a>      <span class="at">random =</span> formulas_random,</span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a>      <span class="at">rcov =</span> <span class="sc">~</span> units,</span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a>      <span class="at">data =</span> data,</span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a>      <span class="at">verbose =</span> <span class="cn">TRUE</span></span>
+<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a>    )</span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a>  }</span>
+<span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a>  </span>
+<span id="cb5-31"><a href="#cb5-31" tabindex="-1"></a>  models <span class="ot">&lt;-</span></span>
+<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a>    <span class="fu">map</span>(formulas_random, model)</span>
+<span id="cb5-33"><a href="#cb5-33" tabindex="-1"></a>  </span>
+<span id="cb5-34"><a href="#cb5-34" tabindex="-1"></a>  <span class="co"># Nomear os modelos</span></span>
+<span id="cb5-35"><a href="#cb5-35" tabindex="-1"></a>  <span class="fu">names</span>(models) <span class="ot">&lt;-</span></span>
+<span id="cb5-36"><a href="#cb5-36" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">&quot;Complete&quot;</span>, <span class="st">&quot;Clone:Year&quot;</span>, <span class="st">&quot;Year&quot;</span>, <span class="st">&quot;Clone&quot;</span>, <span class="st">&quot;row&quot;</span>, <span class="st">&quot;col&quot;</span>)</span>
+<span id="cb5-37"><a href="#cb5-37" tabindex="-1"></a>  </span>
+<span id="cb5-38"><a href="#cb5-38" tabindex="-1"></a>  <span class="co"># Calcular os testes ANOVA para todos os modelos</span></span>
+<span id="cb5-39"><a href="#cb5-39" tabindex="-1"></a>  anova_tests <span class="ot">&lt;-</span></span>
+<span id="cb5-40"><a href="#cb5-40" tabindex="-1"></a>    <span class="fu">list</span>(</span>
+<span id="cb5-41"><a href="#cb5-41" tabindex="-1"></a>      sommer<span class="sc">::</span><span class="fu">anova.mmer</span>(models<span class="sc">$</span>Complete, models<span class="sc">$</span><span class="st">`</span><span class="at">Clone:Year</span><span class="st">`</span>),</span>
+<span id="cb5-42"><a href="#cb5-42" tabindex="-1"></a>      sommer<span class="sc">::</span><span class="fu">anova.mmer</span>(models<span class="sc">$</span>Complete, models<span class="sc">$</span>Year),</span>
+<span id="cb5-43"><a href="#cb5-43" tabindex="-1"></a>      sommer<span class="sc">::</span><span class="fu">anova.mmer</span>(models<span class="sc">$</span>Complete, models<span class="sc">$</span>Clone),</span>
+<span id="cb5-44"><a href="#cb5-44" tabindex="-1"></a>      sommer<span class="sc">::</span><span class="fu">anova.mmer</span>(models<span class="sc">$</span>Complete, models<span class="sc">$</span>row),</span>
+<span id="cb5-45"><a href="#cb5-45" tabindex="-1"></a>      sommer<span class="sc">::</span><span class="fu">anova.mmer</span>(models<span class="sc">$</span>Complete, models<span class="sc">$</span>col)</span>
+<span id="cb5-46"><a href="#cb5-46" tabindex="-1"></a>    )</span>
+<span id="cb5-47"><a href="#cb5-47" tabindex="-1"></a>  </span>
+<span id="cb5-48"><a href="#cb5-48" tabindex="-1"></a>  teste_LRT <span class="ot">&lt;-</span> <span class="fu">do.call</span>(bind_rows, anova_tests) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-49"><a href="#cb5-49" tabindex="-1"></a>    <span class="fu">distinct</span>()</span>
+<span id="cb5-50"><a href="#cb5-50" tabindex="-1"></a>  </span>
+<span id="cb5-51"><a href="#cb5-51" tabindex="-1"></a>  <span class="fu">rownames</span>(teste_LRT) <span class="ot">&lt;-</span></span>
+<span id="cb5-52"><a href="#cb5-52" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">&quot;Complete&quot;</span>, <span class="st">&quot;Clone:Year&quot;</span>, <span class="st">&quot;Year&quot;</span>, <span class="st">&quot;Clone&quot;</span>, <span class="st">&quot;row&quot;</span>, <span class="st">&quot;col&quot;</span>)</span>
+<span id="cb5-53"><a href="#cb5-53" tabindex="-1"></a>  </span>
+<span id="cb5-54"><a href="#cb5-54" tabindex="-1"></a>  <span class="fu">BLUPS_par_mmer</span>(models<span class="sc">$</span>Complete, trait, teste_LRT)</span>
+<span id="cb5-55"><a href="#cb5-55" tabindex="-1"></a>}</span></code></pre></div>
+<p>Run models in paralel for each trait</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Definir o plano para execução paralela</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="fu">plan</span>(multisession)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">future_map</span>(traits, run_models, <span class="at">pheno =</span> pheno)</span></code></pre></div>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -394.699   13:44:3      142           0
+    2      -315.517   13:46:24      283           0
+    3      -290.671   13:48:41      420           0
+    4      -284.172   13:50:58      557           1
+    5      -283.035   13:53:17      696           1
+    6      -283.032   13:55:42      841           1
+    7      -283.032   13:58:5      984           1
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -473.011   14:1:7      122           0
+    2      -353.738   14:3:10      245           0
+    3      -320.891   14:5:24      379           0
+    4      -313.841   14:7:30      505           0
+    5      -312.73   14:9:39      634           1
+    6      -312.632   14:11:47      762           1
+    7      -312.632   14:14:1      896           1
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -394.699   14:16:44      143           0
+    2      -315.517   14:19:9      288           0
+    3      -290.671   14:21:27      426           0
+    4      -284.172   14:23:46      565           1
+    5      -283.035   14:26:4      703           1
+    6      -283.032   14:28:21      840           1
+    7      -283.032   14:30:42      981           1
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -510.615   14:34:8      136           0
+    2      -363.489   14:36:25      273           0
+    3      -320.95   14:38:42      410           0
+    4      -312.27   14:40:58      546           1
+    5      -311.339   14:43:16      684           1
+    6      -311.335   14:45:32      820           1
+    7      -311.335   14:47:35      943           1
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -371.879   14:50:35      123           0
+    2      -302.334   14:52:38      246           0
+    3      -285.188   14:54:43      371           0
+    4      -283.089   14:56:44      492           0
+    5      -283.034   14:58:44      612           0
+    6      -283.032   15:0:34      722           0
+    7      -283.032   15:2:21      829           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -384.654   15:5:9      111           0
+    2      -315.719   15:7:2      224           0
+    3      -296.24   15:8:54      336           0
+    4      -290.797   15:10:44      446           1
+    5      -289.762   15:12:25      547           1
+    6      -289.761   15:14:6      648           1
+Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 54 598.0635 687.4686 -283.0317                                        
+mod2 53 657.2635 746.6685 -312.6317 59.19997     1 1.42436244665181e-14 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik Chisq ChiDf PrChisq
+mod1 54 598.0635 687.4686 -283.0317                    
+mod2 53 598.0635 687.4686 -283.0317     0     1      1 
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 54 598.0635 687.4686 -283.0317                                        
+mod2 53 654.6696 744.0747 -311.3348 56.60615     1 5.32450566461941e-14 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik Chisq ChiDf  PrChisq
+mod1 54 598.0635 687.4686 -283.0317                     
+mod2 53 598.0635 687.4686 -283.0317     0     1 0.99903 
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf     PrChisq
+mod1 54 598.0635 687.4686 -283.0317                           
+mod2 53 611.5227 700.9277 -289.7613 13.45919     1 0.00024 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1iteration    LogLik     wall    cpu(sec)   restrained
+    1      -535.378   15:16:29      96           0
+    2      -470.687   15:18:6      193           0
+    3      -450.476   15:19:43      290           0
+    4      -447.928   15:21:22      389           0
+    5      -447.795   15:22:57      484           0
+    6      -447.769   15:24:29      576           0
+    7      -447.762   15:25:50      657           0
+    8      -447.761   15:27:8      735           0
+    9      -447.76   15:28:27      814           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -614.03   15:30:11      69           0
+    2      -534.113   15:31:27      145           0
+    3      -515.081   15:32:38      216           0
+    4      -512.744   15:33:54      292           0
+    5      -512.512   15:35:12      370           0
+    6      -512.449   15:36:25      443           0
+    7      -512.429   15:37:20      498           0
+    8      -512.422   15:38:7      545           0
+    9      -512.42   15:38:55      593           0
+    10      -512.419   15:39:43      641           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -535.378   15:40:36      46           0
+    2      -470.687   15:41:24      94           0
+    3      -450.476   15:42:10      140           0
+    4      -447.928   15:42:56      186           0
+    5      -447.795   15:43:40      230           0
+    6      -447.769   15:44:26      276           0
+    7      -447.762   15:45:11      321           0
+    8      -447.761   15:45:55      365           0
+    9      -447.76   15:46:39      409           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -641.454   15:47:38      40           0
+    2      -507.57   15:48:19      81           0
+    3      -469.431   15:48:59      121           0
+    4      -465.32   15:49:41      163           0
+    5      -465.161   15:50:23      205           0
+    6      -465.13   15:51:3      245           0
+    7      -465.122   15:51:45      287           0
+    8      -465.12   15:52:30      332           0
+    9      -465.119   15:53:14      376           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -529.4   15:54:15      42           0
+    2      -470.667   15:54:55      82           0
+    3      -453.266   15:55:36      123           0
+    4      -451.512   15:56:20      167           0
+    5      -451.499   15:57:1      208           0
+    6      -451.498   15:57:41      248           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -528.449   15:58:42      41           0
+    2      -475.26   15:59:22      81           0
+    3      -460.44   16:0:6      125           0
+    4      -458.458   16:0:47      166           0
+    5      -458.31   16:1:30      209           0
+    6      -458.279   16:2:15      254           0
+    7      -458.271   16:2:57      296           0
+    8      -458.269   16:3:37      336           0
+    9      -458.268   16:4:17      376           0
+Likelihood ratio test for mixed models
+==============================================================
+     Df       AIC      BIC     loLik     Chisq ChiDf                 PrChisq
+mod1 54  927.5204 1016.820 -447.7602                                        
+mod2 53 1056.8375 1146.137 -512.4187 129.31702     1 5.7807213084901e-30 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC     BIC     loLik Chisq ChiDf PrChisq
+mod1 54 927.5204 1016.82 -447.7602                    
+mod2 53 927.5204 1016.82 -447.7602     0     1      1 
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 54 927.5204 1016.820 -447.7602                                        
+mod2 53 962.2390 1051.538 -465.1195 34.71854     1 3.80986092686306e-09 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik   Chisq ChiDf    PrChisq
+mod1 54 927.5204 1016.820 -447.7602                         
+mod2 53 934.9968 1024.296 -451.4984 7.47637     1 0.00625 **
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 54 927.5204 1016.820 -447.7602                                        
+mod2 53 948.5361 1037.835 -458.2681 21.01567     1 4.55542957069547e-06 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      15.6647   13:44:28      166           0
+    2      117.749   13:47:16      334           0
+    3      148.727   13:50:0      498           0
+    4      152.611   13:52:44      662           0
+    5      152.749   13:55:34      832           0
+    6      152.764   13:58:21      999           0
+    7      152.767   14:1:5      1163           0
+    8      152.767   14:3:56      1334           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -80.7959   14:7:44      150           0
+    2      69.6931   14:10:14      300           0
+    3      116.347   14:12:48      454           0
+    4      121.918   14:15:33      619           0
+    5      122.156   14:18:29      795           0
+    6      122.185   14:21:11      957           0
+    7      122.19   14:23:52      1118           0
+    8      122.192   14:26:34      1280           0
+    9      122.192   14:29:13      1439           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      15.6647   14:32:23      166           0
+    2      117.749   14:35:3      326           0
+    3      148.727   14:37:41      484           0
+    4      152.611   14:40:26      649           0
+    5      152.749   14:43:8      811           0
+    6      152.764   14:45:45      968           0
+    7      152.767   14:48:11      1114           0
+    8      152.767   14:50:36      1259           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -106.064   14:54:8      143           0
+    2      72.0855   14:56:32      287           0
+    3      122.696   14:58:53      428           0
+    4      128.271   15:1:2      557           0
+    5      128.41   15:3:11      686           0
+    6      128.431   15:5:21      816           0
+    7      128.435   15:7:30      945           0
+    8      128.436   15:9:43      1078           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      11.8319   15:12:40      118           0
+    2      108.707   15:14:39      237           0
+    3      137.44   15:16:19      337           0
+    4      140.756   15:17:59      437           0
+    5      140.832   15:19:40      538           0
+    6      140.835   15:21:23      641           0
+    7      140.835   15:23:2      740           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      35.4468   15:25:21      93           0
+    2      123.571   15:26:42      174           0
+    3      145.252   15:28:7      259           0
+    4      147.553   15:29:28      340           0
+    5      147.675   15:30:59      431           0
+    6      147.691   15:32:24      516           0
+    7      147.695   15:33:54      606           0
+    8      147.695   15:35:26      698           0
+Likelihood ratio test for mixed models
+==============================================================
+     Df       AIC       BIC    loLik    Chisq ChiDf                  PrChisq
+mod1 54 -273.5348 -183.2544 152.7674                                        
+mod2 53 -212.3835 -122.1031 122.1918 61.15126     1 5.28539028651048e-15 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df       AIC       BIC    loLik Chisq ChiDf PrChisq
+mod1 54 -273.5348 -183.2544 152.7674                    
+mod2 53 -273.5348 -183.2544 152.7674     0     1      1 
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df       AIC       BIC    loLik    Chisq ChiDf                  PrChisq
+mod1 54 -273.5348 -183.2544 152.7674                                        
+mod2 53 -224.8719 -134.5916 128.4360 48.66283     1 3.03973677890998e-12 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df       AIC       BIC    loLik    Chisq ChiDf                  PrChisq
+mod1 54 -273.5348 -183.2544 152.7674                                        
+mod2 53 -249.6705 -159.3901 140.8352 23.86428     1 1.03372377017493e-06 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df       AIC       BIC    loLik    Chisq ChiDf    PrChisq
+mod1 54 -273.5348 -183.2544 152.7674                          
+mod2 53 -263.3904 -173.1100 147.6952 10.14439     1 0.00145 **
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -162.21   13:42:20      38           0
+    2      -104.964   13:43:6      84           0
+    3      -88.985   13:43:51      129           0
+    4      -86.9112   13:44:32      170           0
+    5      -86.8145   13:45:15      213           0
+    6      -86.808   13:45:59      257           0
+    7      -86.8074   13:46:41      299           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -219.749   13:47:33      36           0
+    2      -130.556   13:48:9      72           0
+    3      -103.442   13:48:46      109           0
+    4      -100.333   13:49:23      146           0
+    5      -100.263   13:50:1      184           0
+    6      -100.261   13:50:36      219           0
+    7      -100.261   13:51:13      256           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -162.21   13:51:55      37           0
+    2      -104.964   13:52:33      75           0
+    3      -88.985   13:53:10      112           0
+    4      -86.9112   13:53:46      148           0
+    5      -86.8145   13:54:25      187           0
+    6      -86.808   13:55:5      227           0
+    7      -86.8074   13:55:42      264           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -230.556   13:56:34      38           0
+    2      -128.304   13:57:13      77           0
+    3      -100.681   13:57:52      116           0
+    4      -97.7205   13:58:28      152           0
+    5      -97.636   13:59:3      187           0
+    6      -97.6332   13:59:40      224           0
+    7      -97.6331   14:0:19      263           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -165.592   14:1:9      35           0
+    2      -113.859   14:1:46      72           0
+    3      -100.718   14:2:24      110           0
+    4      -99.4108   14:3:3      149           0
+    5      -99.3575   14:3:43      189           0
+    6      -99.3527   14:4:24      230           0
+    7      -99.3523   14:5:8      274           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -168.972   14:6:4      40           0
+    2      -119.657   14:6:44      80           0
+    3      -105.653   14:7:23      119           0
+    4      -103.829   14:8:0      156           0
+    5      -103.751   14:8:41      197           0
+    6      -103.747   14:9:21      237           0
+    7      -103.746   14:9:58      274           0
+Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC      loLik    Chisq ChiDf                  PrChisq
+mod1 42 197.6149 259.9120  -86.80744                                        
+mod2 41 224.5228 286.8199 -100.26138 26.90789     1 2.13386444379736e-07 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC     BIC     loLik Chisq ChiDf PrChisq
+mod1 42 197.6149 259.912 -86.80744                    
+mod2 41 197.6149 259.912 -86.80744     0     1      1 
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 42 197.6149 259.9120 -86.80744                                        
+mod2 41 219.2662 281.5633 -97.63308 21.65128     1 3.26990929235941e-06 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 42 197.6149 259.9120 -86.80744                                        
+mod2 41 222.7045 285.0017 -99.35225 25.08963     1 5.47263978461532e-07 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC      loLik    Chisq ChiDf                PrChisq
+mod1 42 197.6149 259.9120  -86.80744                                      
+mod2 41 231.4926 293.7898 -103.74630 33.87773     1 5.868655151605e-09 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1iteration    LogLik     wall    cpu(sec)   restrained
+    1      -461.848   14:10:59      45           0
+    2      -435.948   14:11:45      91           0
+    3      -427.273   14:12:31      137           0
+    4      -425.817   14:13:18      184           0
+    5      -425.693   14:14:5      231           0
+    6      -425.676   14:14:54      280           0
+    7      -425.674   14:15:44      330           0
+    8      -425.673   14:16:36      382           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -504.675   14:17:41      45           0
+    2      -470.459   14:18:26      90           0
+    3      -461.911   14:19:6      130           0
+    4      -460.668   14:19:49      173           0
+    5      -460.557   14:20:31      215           0
+    6      -460.543   14:21:9      253           0
+    7      -460.542   14:21:50      294           0
+    8      -460.541   14:22:33      337           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -461.848   14:23:21      41           0
+    2      -435.948   14:24:1      81           0
+    3      -427.273   14:24:40      120           0
+    4      -425.817   14:25:24      164           0
+    5      -425.693   14:26:5      205           0
+    6      -425.676   14:26:44      244           0
+    7      -425.674   14:27:25      285           0
+    8      -425.673   14:28:8      328           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -512.102   14:29:1      36           0
+    2      -451.936   14:29:45      80           0
+    3      -434.318   14:30:31      126           0
+    4      -431.948   14:31:12      167           0
+    5      -431.788   14:31:52      207           0
+    6      -431.767   14:32:34      249           0
+    7      -431.764   14:33:15      290           0
+    8      -431.763   14:33:57      332           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -456.402   14:34:52      39           0
+    2      -434.7   14:35:34      81           0
+    3      -428.895   14:36:15      122           0
+    4      -428.399   14:36:55      162           0
+    5      -428.393   14:37:34      201           0
+    6      -428.393   14:38:17      244           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -477.151   14:39:20      43           0
+    2      -456.703   14:40:1      84           0
+    3      -449.048   14:40:43      126           0
+    4      -447.556   14:41:23      166           0
+    5      -447.425   14:42:5      208           0
+    6      -447.407   14:42:47      250           0
+    7      -447.405   14:43:30      293           0
+    8      -447.404   14:44:11      334           0
+Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC       BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 42 875.3465  937.5529 -425.6732                                        
+mod2 41 945.0826 1007.2891 -460.5413 69.73615     1 6.77920499480788e-17 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik Chisq ChiDf PrChisq
+mod1 42 875.3465 937.5529 -425.6732                    
+mod2 41 875.3465 937.5529 -425.6732     0     1      1 
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf     PrChisq
+mod1 42 875.3465 937.5529 -425.6732                           
+mod2 41 887.5270 949.7334 -431.7635 12.18049     1 0.00048 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik   Chisq ChiDf   PrChisq
+mod1 42 875.3465 937.5529 -425.6732                        
+mod2 41 880.7859 942.9924 -428.3930 5.43948     1 0.01969 *
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 42 875.3465 937.5529 -425.6732                                        
+mod2 41 918.8085 981.0149 -447.4042 43.46198     1 4.32276349277575e-11 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -289.567   13:44:28      165           0
+    2      -261.843   13:47:13      330           0
+    3      -252.699   13:49:55      492           0
+    4      -251.439   13:52:36      653           0
+    5      -251.401   13:55:23      820           0
+    6      -251.4   13:58:8      985           0
+    7      -251.4   14:0:51      1148           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -345.015   14:4:27      149           0
+    2      -291.708   14:7:3      305           0
+    3      -275.052   14:9:31      453           0
+    4      -272.831   14:12:0      602           0
+    5      -272.769   14:14:38      760           0
+    6      -272.767   14:17:23      925           0
+    7      -272.767   14:20:9      1091           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -289.567   14:23:12      161           0
+    2      -261.843   14:25:52      321           0
+    3      -252.699   14:28:32      481           0
+    4      -251.439   14:31:14      643           0
+    5      -251.401   14:33:54      803           0
+    6      -251.4   14:36:31      960           0
+    7      -251.4   14:39:13      1122           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -359.488   14:43:11      162           0
+    2      -289.428   14:45:46      317           0
+    3      -268.502   14:48:9      460           0
+    4      -265.908   14:50:33      604           0
+    5      -265.836   14:52:56      747           0
+    6      -265.833   14:55:21      892           0
+    7      -265.833   14:57:42      1033           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -304.458   15:0:51      128           0
+    2      -280.074   15:2:57      254           0
+    3      -272.389   15:5:5      382           0
+    4      -271.408   15:7:15      512           0
+    5      -271.387   15:9:23      640           0
+    6      -271.387   15:11:25      762           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -299.241   15:14:22      118           0
+    2      -277.023   15:16:2      218           0
+    3      -270.418   15:17:39      315           0
+    4      -269.617   15:19:21      417           0
+    5      -269.594   15:20:59      515           0
+    6      -269.593   15:22:39      615           0
+    7      -269.593   15:24:15      711           0
+Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 54 534.7999 625.0111 -251.4000                                        
+mod2 53 577.5335 667.7446 -272.7667 42.73355     1 6.27272180767349e-11 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC  loLik Chisq ChiDf PrChisq
+mod1 54 534.7999 625.0111 -251.4                    
+mod2 53 534.7999 625.0111 -251.4     0     1      1 
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 54 534.7999 625.0111 -251.4000                                        
+mod2 53 563.6663 653.8775 -265.8331 28.86639     1 7.75470773833564e-08 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 54 534.7999 625.0111 -251.4000                                        
+mod2 53 574.7737 664.9849 -271.3868 39.97378     1 2.57395491088429e-10 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik   Chisq ChiDf                  PrChisq
+mod1 54 534.7999 625.0111 -251.4000                                       
+mod2 53 571.1866 661.3978 -269.5933 36.3867     1 1.61803235320847e-09 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -528.817   13:44:5      141           0
+    2      -448.392   13:46:21      277           0
+    3      -417.392   13:48:34      410           0
+    4      -412.854   13:50:49      545           0
+    5      -412.724   13:53:5      681           0
+    6      -412.72   13:55:27      823           0
+    7      -412.72   13:57:45      961           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -613.879   14:0:45      121           0
+    2      -519.424   14:2:43      239           0
+    3      -487.898   14:4:56      372           0
+    4      -483.179   14:7:2      498           0
+    5      -483.063   14:9:6      622           0
+    6      -483.059   14:11:8      744           0
+    7      -483.059   14:13:20      876           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -528.817   14:15:54      135           0
+    2      -448.392   14:18:21      282           0
+    3      -417.392   14:20:36      417           0
+    4      -412.854   14:22:51      552           0
+    5      -412.724   14:25:1      682           0
+    6      -412.72   14:27:16      817           0
+    7      -412.72   14:29:26      947           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -631.878   14:32:56      134           0
+    2      -484.676   14:35:8      266           0
+    3      -432.856   14:37:19      397           0
+    4      -425.721   14:39:37      535           0
+    5      -425.545   14:41:49      667           0
+    6      -425.541   14:44:1      799           0
+    7      -425.541   14:46:4      922           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -511.928   14:49:0      117           0
+    2      -441.538   14:50:59      236           0
+    3      -419.121   14:52:59      356           0
+    4      -416.045   14:55:1      478           0
+    5      -415.968   14:56:59      596           0
+    6      -415.966   14:58:55      712           0
+    7      -415.966   15:0:42      819           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -528.577   15:3:23      107           0
+    2      -455.357   15:5:10      214           0
+    3      -428.084   15:7:0      324           0
+    4      -424.43   15:8:48      432           0
+    5      -424.333   15:10:37      541           0
+    6      -424.33   15:12:15      639           0
+    7      -424.33   15:13:53      737           0
+Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC       BIC     loLik     Chisq ChiDf                  PrChisq
+mod1 54 857.4398  946.6902 -412.7199                                         
+mod2 53 998.1175 1087.3678 -483.0588 140.67766     1 1.89246206135505e-32 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik Chisq ChiDf PrChisq
+mod1 54 857.4398 946.6902 -412.7199                    
+mod2 53 857.4398 946.6902 -412.7199     0     1      1 
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 54 857.4398 946.6902 -412.7199                                        
+mod2 53 883.0813 972.3316 -425.5406 25.64142     1 4.11120223239732e-07 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik   Chisq ChiDf   PrChisq
+mod1 54 857.4398 946.6902 -412.7199                        
+mod2 53 863.9312 953.1815 -415.9656 6.49137     1 0.01084 *
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 54 857.4398 946.6902 -412.7199                                        
+mod2 53 880.6592 969.9095 -424.3296 23.21936     1 1.44534923248465e-06 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.286   13:42:23      39           0
+    2      -100.872   13:43:9      85           0
+    3      -84.9006   13:43:54      130           0
+    4      -82.8507   13:44:35      171           0
+    5      -82.7562   13:45:18      214           0
+    6      -82.7498   13:46:2      258           0
+    7      -82.7493   13:46:44      300           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -215.958   13:47:35      35           0
+    2      -126.643   13:48:12      72           0
+    3      -99.5404   13:48:49      109           0
+    4      -96.4518   13:49:26      146           0
+    5      -96.384   13:50:4      184           0
+    6      -96.3825   13:50:39      219           0
+    7      -96.3825   13:51:15      255           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.286   13:51:58      37           0
+    2      -100.872   13:52:36      75           0
+    3      -84.9006   13:53:12      111           0
+    4      -82.8507   13:53:49      148           0
+    5      -82.7562   13:54:28      187           0
+    6      -82.7498   13:55:8      227           0
+    7      -82.7493   13:55:44      263           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -226.713   13:56:37      38           0
+    2      -124.162   13:57:16      77           0
+    3      -96.5196   13:57:54      115           0
+    4      -93.5881   13:58:30      151           0
+    5      -93.5067   13:59:6      187           0
+    6      -93.5041   13:59:43      224           0
+    7      -93.504   14:0:22      263           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -161.587   14:1:13      36           0
+    2      -109.907   14:1:50      73           0
+    3      -96.816   14:2:27      110           0
+    4      -95.5212   14:3:5      148           0
+    5      -95.4687   14:3:47      190           0
+    6      -95.4639   14:4:27      230           0
+    7      -95.4635   14:5:11      274           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -166.076   14:6:6      39           0
+    2      -116.645   14:6:46      79           0
+    3      -102.599   14:7:25      118           0
+    4      -100.777   14:8:2      155           0
+    5      -100.699   14:8:43      196           0
+    6      -100.694   14:9:23      236           0
+    7      -100.694   14:10:0      273           0
+Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 42 189.4985 251.7957 -82.74926                                        
+mod2 41 216.7650 279.0621 -96.38249 27.26647     1 1.77258942847132e-07 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik Chisq ChiDf PrChisq
+mod1 42 189.4985 251.7957 -82.74926                    
+mod2 41 189.4985 251.7957 -82.74926     0     1      1 
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 42 189.4985 251.7957 -82.74926                                        
+mod2 41 211.0080 273.3051 -93.50400 21.50949     1 3.52082519764859e-06 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik   Chisq ChiDf                  PrChisq
+mod1 42 189.4985 251.7957 -82.74926                                       
+mod2 41 214.9269 277.2241 -95.46346 25.4284     1 4.59109129196136e-07 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC      loLik    Chisq ChiDf                  PrChisq
+mod1 42 189.4985 251.7957  -82.74926                                        
+mod2 41 225.3872 287.6843 -100.69358 35.88865     1 2.08922621245291e-09 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1iteration    LogLik     wall    cpu(sec)   restrained
+    1      -562.778   14:12:43      146           0
+    2      -547.208   14:15:23      306           0
+    3      -537.405   14:18:10      473           0
+    4      -535.015   14:20:46      629           0
+    5      -534.857   14:23:22      785           0
+    6      -534.837   14:25:56      939           0
+    7      -534.834   14:28:30      1093           0
+    8      -534.833   14:31:8      1251           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -592.784   14:34:28      132           0
+    2      -563.979   14:36:42      266           0
+    3      -549.176   14:38:57      401           0
+    4      -545.856   14:41:9      533           0
+    5      -545.652   14:43:22      666           0
+    6      -545.625   14:45:33      797           0
+    7      -545.62   14:47:34      918           0
+    8      -545.619   14:49:32      1036           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -562.778   14:51:48      120           0
+    2      -547.208   14:53:47      239           0
+    3      -537.405   14:55:47      359           0
+    4      -535.015   14:57:47      479           0
+    5      -534.857   14:59:38      590           0
+    6      -534.837   15:1:24      696           0
+    7      -534.834   15:3:11      803           0
+    8      -534.833   15:4:58      910           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -602.519   15:7:38      106           0
+    2      -565.678   15:9:28      216           0
+    3      -549.257   15:11:13      321           0
+    4      -545.996   15:12:51      419           0
+    5      -545.805   15:14:30      518           0
+    6      -545.78   15:15:55      603           0
+    7      -545.776   15:17:14      682           0
+    8      -545.775   15:18:38      766           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -558.087   15:20:44      84           0
+    2      -547.294   15:22:8      168           0
+    3      -540.355   15:23:28      248           0
+    4      -538.859   15:24:48      328           0
+    5      -538.832   15:25:55      395           0
+    6      -538.832   15:27:2      462           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -551.481   15:28:46      67           0
+    2      -543.944   15:29:52      133           0
+    3      -539.714   15:31:10      211           0
+    4      -538.537   15:32:20      281           0
+    5      -538.407   15:33:36      357           0
+    6      -538.388   15:34:47      428           0
+    7      -538.385   15:36:6      507           0
+    8      -538.385   15:37:3      564           0
+Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                 PrChisq
+mod1 54 1101.667 1190.934 -534.8335                                       
+mod2 53 1123.239 1212.506 -545.6195 21.57199     1 3.4079354505434e-06 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik Chisq ChiDf PrChisq
+mod1 54 1101.667 1190.934 -534.8335                    
+mod2 53 1101.667 1190.934 -534.8335     0     1      1 
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 54 1101.667 1190.934 -534.8335                                        
+mod2 53 1123.551 1212.817 -545.7753 21.88364     1 2.89692983267488e-06 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik   Chisq ChiDf    PrChisq
+mod1 54 1101.667 1190.934 -534.8335                         
+mod2 53 1109.663 1198.930 -538.8316 7.99634     1 0.00469 **
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik   Chisq ChiDf    PrChisq
+mod1 54 1101.667 1190.934 -534.8335                         
+mod2 53 1108.770 1198.037 -538.3850 7.10313     1 0.00769 **
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -361.373   13:44:7      141           0
+    2      -331.894   13:46:22      276           0
+    3      -316.66   13:48:37      411           0
+    4      -314.616   13:50:51      545           0
+    5      -314.564   13:53:7      681           0
+    6      -314.563   13:55:30      824           0
+    7      -314.563   13:57:49      963           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -406.497   14:0:49      121           0
+    2      -359.525   14:2:48      240           0
+    3      -339.983   14:4:59      371           0
+    4      -337.587   14:7:6      498           0
+    5      -337.545   14:9:11      623           0
+    6      -337.545   14:11:13      745           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -361.373   14:13:42      132           0
+    2      -331.894   14:16:0      270           0
+    3      -316.66   14:18:23      413           0
+    4      -314.616   14:20:41      551           0
+    5      -314.564   14:22:56      686           0
+    6      -314.563   14:25:7      817           0
+    7      -314.563   14:27:20      950           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -421.695   14:30:49      139           0
+    2      -357.221   14:33:1      271           0
+    3      -330.404   14:35:14      404           0
+    4      -326.633   14:37:25      535           0
+    5      -326.553   14:39:45      675           0
+    6      -326.551   14:41:58      808           0
+    7      -326.551   14:44:15      945           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -369.406   14:47:15      119           0
+    2      -347.739   14:49:14      238           0
+    3      -336.137   14:51:12      356           0
+    4      -334.358   14:53:11      475           0
+    5      -334.318   14:55:13      597           0
+    6      -334.317   14:57:11      715           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -346.626   14:59:59      107           0
+    2      -326.464   15:1:45      213           0
+    3      -318.912   15:3:31      319           0
+    4      -318.059   15:5:20      428           0
+    5      -318.043   15:7:9      537           0
+    6      -318.043   15:8:58      646           0
+Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                 PrChisq
+mod1 54 661.1255 750.3922 -314.5627                                       
+mod2 53 707.0892 796.3559 -337.5446 45.96368     1 1.2046603370457e-11 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik Chisq ChiDf PrChisq
+mod1 54 661.1255 750.3922 -314.5627                    
+mod2 53 661.1255 750.3922 -314.5627     0     1      1 
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 54 661.1255 750.3922 -314.5627                                        
+mod2 53 685.1023 774.3689 -326.5511 23.97677     1 9.75052895926333e-07 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 54 661.1255 750.3922 -314.5627                                        
+mod2 53 700.6341 789.9008 -334.3170 39.50859     1 3.26620244912293e-10 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik   Chisq ChiDf    PrChisq
+mod1 54 661.1255 750.3922 -314.5627                         
+mod2 53 668.0854 757.3521 -318.0427 6.95995     1 0.00834 **
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -805.664   13:44:29      163           0
+    2      -784.384   13:47:14      328           0
+    3      -772.521   13:49:54      488           0
+    4      -770.251   13:52:36      650           0
+    5      -770.14   13:55:21      815           0
+    6      -770.129   13:58:5      979           0
+    7      -770.128   14:0:47      1141           0
+    8      -770.127   14:3:32      1306           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -849.138   14:7:19      151           0
+    2      -815.256   14:9:45      297           0
+    3      -798.999   14:12:14      446           0
+    4      -795.924   14:14:54      606           0
+    5      -795.774   14:17:43      775           0
+    6      -795.757   14:20:28      940           0
+    7      -795.755   14:23:9      1101           0
+    8      -795.755   14:25:46      1258           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -805.664   14:28:43      156           0
+    2      -784.384   14:31:25      318           0
+    3      -772.521   14:34:3      476           0
+    4      -770.251   14:36:38      631           0
+    5      -770.14   14:39:18      791           0
+    6      -770.129   14:41:56      949           0
+    7      -770.128   14:44:34      1107           0
+    8      -770.127   14:46:57      1250           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -855.04   14:50:29      143           0
+    2      -804.801   14:52:51      285           0
+    3      -783.083   14:55:15      429           0
+    4      -779.144   14:57:35      569           0
+    5      -778.979   14:59:48      702           0
+    6      -778.964   15:1:53      827           0
+    7      -778.963   15:3:57      951           0
+    8      -778.962   15:6:5      1079           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -797.541   15:9:11      128           0
+    2      -782.619   15:11:14      251           0
+    3      -774.976   15:13:10      367           0
+    4      -773.812   15:15:1      478           0
+    5      -773.799   15:16:38      575           0
+    6      -773.798   15:18:18      675           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -802.88   15:20:47      100           0
+    2      -789.111   15:22:26      199           0
+    3      -782.559   15:24:1      294           0
+    4      -781.079   15:25:30      383           0
+    5      -780.963   15:26:48      461           0
+    6      -780.95   15:28:12      545           0
+    7      -780.949   15:29:32      625           0
+    8      -780.949   15:31:2      715           0
+Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 54 1572.255 1662.435 -770.1274                                        
+mod2 53 1623.509 1713.690 -795.7547 51.25459     1 8.11307329704012e-13 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik Chisq ChiDf PrChisq
+mod1 54 1572.255 1662.435 -770.1274                    
+mod2 53 1572.255 1662.435 -770.1274     0     1      1 
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf   PrChisq
+mod1 54 1572.255 1662.435 -770.1274                         
+mod2 53 1589.925 1680.105 -778.9624 17.67003     1 3e-05 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik   Chisq ChiDf    PrChisq
+mod1 54 1572.255 1662.435 -770.1274                         
+mod2 53 1579.597 1669.777 -773.7984 7.34197     1 0.00674 **
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf                  PrChisq
+mod1 54 1572.255 1662.435 -770.1274                                        
+mod2 53 1593.897 1684.078 -780.9486 21.64253     1 3.28486263381027e-06 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1iteration    LogLik     wall    cpu(sec)   restrained
+    1      -362.218   15:32:13      33           0
+    2      -332.02   15:32:46      66           0
+    3      -310.736   15:33:23      103           1
+    4      -306.197   15:33:56      136           2
+    5      -305.828   15:34:28      168           2
+    6      -305.828   15:35:7      207           2
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -403.57   15:35:47      28           0
+    2      -363.974   15:36:19      60           0
+    3      -341.893   15:36:41      82           1
+    4      -336.72   15:37:4      105           1
+    5      -336.115   15:37:25      126           1
+    6      -336.007   15:37:44      145           2
+    7      -335.992   15:38:3      164           2
+    8      -335.992   15:38:22      183           2
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -362.218   15:38:44      19           0
+    2      -332.02   15:39:3      38           0
+    3      -310.736   15:39:21      56           1
+    4      -306.197   15:39:42      77           2
+    5      -305.828   15:40:0      95           2
+    6      -305.828   15:40:18      113           2
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -407.423   15:40:43      17           0
+    2      -346.71   15:41:3      37           0
+    3      -317.669   15:41:22      56           1
+    4      -311.539   15:41:41      75           2
+    5      -311.025   15:41:59      93           2
+    6      -311.025   15:42:17      111           2
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -336.469   15:42:42      19           0
+    2      -318.793   15:43:0      37           0
+    3      -309.671   15:43:18      55           0
+    4      -306.216   15:43:36      73           0
+    5      -305.83   15:43:53      90           1
+    6      -305.828   15:44:12      109           1
+    7      -305.828   15:44:31      128           1
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -347.932   15:44:56      19           0
+    2      -322.828   15:45:13      36           0
+    3      -307.526   15:45:30      53           1
+    4      -305.828   15:45:49      72           1
+    5      -305.828   15:46:6      89           1
+Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik   Chisq ChiDf                  PrChisq
+mod1 42 635.6560 698.9746 -305.8280                                       
+mod2 41 695.9839 759.3025 -335.9919 60.3279     1 8.03011934485854e-15 ***
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df     AIC      BIC    loLik Chisq ChiDf PrChisq
+mod1 42 635.656 698.9746 -305.828                    
+mod2 41 635.656 698.9746 -305.828     0     1      1 
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC     loLik    Chisq ChiDf    PrChisq
+mod1 42 635.6560 698.9746 -305.8280                          
+mod2 41 646.0491 709.3678 -311.0246 10.39316     1 0.00126 **
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df      AIC      BIC    loLik Chisq ChiDf  PrChisq
+mod1 42 635.6560 698.9746 -305.828                     
+mod2 41 635.6559 698.9746 -305.828 3e-05     1 0.99558 
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1Likelihood ratio test for mixed models
+==============================================================
+     Df     AIC      BIC    loLik Chisq ChiDf  PrChisq
+mod1 42 635.656 698.9746 -305.828                     
+mod2 41 635.656 698.9746 -305.828 1e-05     1 0.99784 
+==============================================================
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">names</span>(results) <span class="ot">&lt;-</span> traits</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="co"># Salvar os resultados em formato RDS</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="fu">saveRDS</span>(results, <span class="at">file =</span> <span class="st">&quot;output/result_sommer_row_col_random.RDS&quot;</span>)</span></code></pre></div>
+<div id="obtain-parameters" class="section level3">
+<h3>Obtain Parameters</h3>
+<p>As “future_map” was used to run each stage 1 analysis in parallel,
+each trait is stored as a separate element in a list. We need to process
+the “results” object into a “data.frame” or “matrix” for further
+analysis.</p>
+<p>Combine the results them into a single data frame for each
+parameter.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>BLUPS <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(results, <span class="cf">function</span>(res) {</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>    <span class="at">trait =</span> res<span class="sc">$</span>Trait,</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>    <span class="at">Clone =</span> res<span class="sc">$</span>blups[[<span class="dv">1</span>]]<span class="sc">$</span>Clone,</span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>    <span class="at">BLUP =</span> res<span class="sc">$</span>blups[[<span class="dv">1</span>]]<span class="sc">$</span>BLUP,</span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>    <span class="at">BLUPS_mean =</span> res<span class="sc">$</span>blups[[<span class="dv">1</span>]]<span class="sc">$</span>BLUP <span class="sc">+</span> mean_pheno[, res<span class="sc">$</span>Trait],</span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>    <span class="at">drgBLUP_mean =</span> res<span class="sc">$</span>blups[[<span class="dv">1</span>]]<span class="sc">$</span>drgBLUP <span class="sc">+</span> mean_pheno[, res<span class="sc">$</span>Trait]</span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>  )</span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>})</span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>H2 <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(results, <span class="cf">function</span>(res) {</span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a>    <span class="at">trait =</span> res<span class="sc">$</span>Trait,</span>
+<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a>    <span class="at">H2_Broad =</span> res<span class="sc">$</span>H2_Broad,</span>
+<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a>    <span class="at">H2_narrow =</span> res<span class="sc">$</span>H2_narrow</span>
+<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a>  )</span>
+<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a>})</span>
+<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a></span>
+<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a>varcomp <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(results, <span class="cf">function</span>(res) {</span>
+<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a>    <span class="at">trait =</span> res<span class="sc">$</span>Trait,</span>
+<span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a>    <span class="at">grp =</span> <span class="fu">c</span>(<span class="st">&quot;Clone&quot;</span>, <span class="st">&quot;Ano&quot;</span>, <span class="st">&quot;Ano:Clone&quot;</span>, <span class="st">&quot;row&quot;</span>, <span class="st">&quot;col&quot;</span>, <span class="st">&quot;units&quot;</span>),</span>
+<span id="cb16-23"><a href="#cb16-23" tabindex="-1"></a>    res<span class="sc">$</span>varcomp</span>
+<span id="cb16-24"><a href="#cb16-24" tabindex="-1"></a>  )</span>
+<span id="cb16-25"><a href="#cb16-25" tabindex="-1"></a>})</span>
+<span id="cb16-26"><a href="#cb16-26" tabindex="-1"></a></span>
+<span id="cb16-27"><a href="#cb16-27" tabindex="-1"></a></span>
+<span id="cb16-28"><a href="#cb16-28" tabindex="-1"></a>teste_LRT <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(results, <span class="cf">function</span>(res) {</span>
+<span id="cb16-29"><a href="#cb16-29" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb16-30"><a href="#cb16-30" tabindex="-1"></a>    <span class="at">trait =</span> res<span class="sc">$</span>Trait,</span>
+<span id="cb16-31"><a href="#cb16-31" tabindex="-1"></a>    <span class="at">model =</span> <span class="fu">c</span>(<span class="st">&quot;Complete&quot;</span>, <span class="st">&quot;Clone:Year&quot;</span>, <span class="st">&quot;Year&quot;</span>, <span class="st">&quot;Clone&quot;</span>, <span class="st">&quot;row&quot;</span>, <span class="st">&quot;col&quot;</span>),</span>
+<span id="cb16-32"><a href="#cb16-32" tabindex="-1"></a>    res<span class="sc">$</span>teste_LRT</span>
+<span id="cb16-33"><a href="#cb16-33" tabindex="-1"></a>  )</span>
+<span id="cb16-34"><a href="#cb16-34" tabindex="-1"></a>})</span>
+<span id="cb16-35"><a href="#cb16-35" tabindex="-1"></a></span>
+<span id="cb16-36"><a href="#cb16-36" tabindex="-1"></a><span class="co"># Function to extract residuals from each model and create a data frame</span></span>
+<span id="cb16-37"><a href="#cb16-37" tabindex="-1"></a>fitted_residual_data <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(results, <span class="cf">function</span>(res) {</span>
+<span id="cb16-38"><a href="#cb16-38" tabindex="-1"></a>  extract_res <span class="ot">&lt;-</span> sommer<span class="sc">::</span><span class="fu">residuals.mmer</span>(res<span class="sc">$</span>model)</span>
+<span id="cb16-39"><a href="#cb16-39" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">residuals</span>(res<span class="sc">$</span>model)[, <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">8</span>, <span class="dv">15</span>)], <span class="at">trait =</span> res<span class="sc">$</span>Trait)</span>
+<span id="cb16-40"><a href="#cb16-40" tabindex="-1"></a>  <span class="fu">colnames</span>(df)[<span class="dv">6</span><span class="sc">:</span><span class="dv">7</span>] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;fitted&quot;</span>, <span class="st">&quot;residuals&quot;</span>)</span>
+<span id="cb16-41"><a href="#cb16-41" tabindex="-1"></a>  <span class="fu">return</span>(df)</span>
+<span id="cb16-42"><a href="#cb16-42" tabindex="-1"></a>})</span></code></pre></div>
+</div>
+<div id="results" class="section level3">
+<h3>Results</h3>
+<div id="variance-components" class="section level4">
+<h4>Variance components</h4>
+<p>Distribution of variance components</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>varcomp <span class="sc">%&gt;%</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>  <span class="fu">group_by</span>(trait) <span class="sc">%&gt;%</span></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">freq_relat =</span> VarComp <span class="sc">/</span> <span class="fu">sum</span>(VarComp)) <span class="sc">%&gt;%</span></span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">freq_relat =</span> <span class="fu">round</span>(freq_relat <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>  <span class="fu">select</span>(trait, grp, freq_relat) <span class="sc">%&gt;%</span></span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">escape =</span> F, <span class="at">align =</span> <span class="st">&#39;c&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>  <span class="fu">kable_classic</span>(<span class="st">&quot;hover&quot;</span>, <span class="at">full_width =</span> F, <span class="at">position =</span> <span class="st">&quot;center&quot;</span>, <span class="at">fixed_thead =</span> T)</span></code></pre></div>
+<table class=" lightable-classic lightable-hover" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+trait
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+grp
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+freq_relat
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+N_Roots
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+34.04
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+N_Roots
+</td>
+<td style="text-align:center;">
+Ano
+</td>
+<td style="text-align:center;">
+9.46
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+N_Roots
+</td>
+<td style="text-align:center;">
+Ano:Clone
+</td>
+<td style="text-align:center;">
+15.76
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+N_Roots
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+N_Roots
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+1.45
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+N_Roots
+</td>
+<td style="text-align:center;">
+units
+</td>
+<td style="text-align:center;">
+39.29
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+FRY
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+22.22
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+FRY
+</td>
+<td style="text-align:center;">
+Ano
+</td>
+<td style="text-align:center;">
+9.47
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+FRY
+</td>
+<td style="text-align:center;">
+Ano:Clone
+</td>
+<td style="text-align:center;">
+25.75
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+FRY
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+2.37
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+FRY
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+1.66
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+FRY
+</td>
+<td style="text-align:center;">
+units
+</td>
+<td style="text-align:center;">
+38.53
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+ShY
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+38.82
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+ShY
+</td>
+<td style="text-align:center;">
+Ano
+</td>
+<td style="text-align:center;">
+8.67
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+ShY
+</td>
+<td style="text-align:center;">
+Ano:Clone
+</td>
+<td style="text-align:center;">
+14.56
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+ShY
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+3.65
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+ShY
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+0.70
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+ShY
+</td>
+<td style="text-align:center;">
+units
+</td>
+<td style="text-align:center;">
+33.60
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+DMC
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+37.91
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+DMC
+</td>
+<td style="text-align:center;">
+Ano
+</td>
+<td style="text-align:center;">
+8.64
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+DMC
+</td>
+<td style="text-align:center;">
+Ano:Clone
+</td>
+<td style="text-align:center;">
+13.82
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+DMC
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+2.50
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+DMC
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+4.18
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+DMC
+</td>
+<td style="text-align:center;">
+units
+</td>
+<td style="text-align:center;">
+32.95
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StY
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+15.90
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StY
+</td>
+<td style="text-align:center;">
+Ano
+</td>
+<td style="text-align:center;">
+9.74
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StY
+</td>
+<td style="text-align:center;">
+Ano:Clone
+</td>
+<td style="text-align:center;">
+25.73
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StY
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+1.82
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StY
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+4.83
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StY
+</td>
+<td style="text-align:center;">
+units
+</td>
+<td style="text-align:center;">
+41.98
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Plant.Height
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+23.32
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Plant.Height
+</td>
+<td style="text-align:center;">
+Ano
+</td>
+<td style="text-align:center;">
+9.89
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Plant.Height
+</td>
+<td style="text-align:center;">
+Ano:Clone
+</td>
+<td style="text-align:center;">
+15.06
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Plant.Height
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+4.38
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Plant.Height
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+3.32
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Plant.Height
+</td>
+<td style="text-align:center;">
+units
+</td>
+<td style="text-align:center;">
+44.04
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+23.65
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+Ano
+</td>
+<td style="text-align:center;">
+9.16
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+Ano:Clone
+</td>
+<td style="text-align:center;">
+28.91
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+0.61
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+1.92
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+units
+</td>
+<td style="text-align:center;">
+35.76
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StC
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+37.81
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StC
+</td>
+<td style="text-align:center;">
+Ano
+</td>
+<td style="text-align:center;">
+8.62
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StC
+</td>
+<td style="text-align:center;">
+Ano:Clone
+</td>
+<td style="text-align:center;">
+13.90
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StC
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+2.52
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StC
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+4.29
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StC
+</td>
+<td style="text-align:center;">
+units
+</td>
+<td style="text-align:center;">
+32.85
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Le
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+17.91
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Le
+</td>
+<td style="text-align:center;">
+Ano
+</td>
+<td style="text-align:center;">
+11.07
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Le
+</td>
+<td style="text-align:center;">
+Ano:Clone
+</td>
+<td style="text-align:center;">
+12.46
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Le
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+1.85
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Le
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+1.22
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Le
+</td>
+<td style="text-align:center;">
+units
+</td>
+<td style="text-align:center;">
+55.49
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Di
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+20.14
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Di
+</td>
+<td style="text-align:center;">
+Ano
+</td>
+<td style="text-align:center;">
+10.43
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Di
+</td>
+<td style="text-align:center;">
+Ano:Clone
+</td>
+<td style="text-align:center;">
+17.93
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Di
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+2.50
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Di
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+0.90
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Di
+</td>
+<td style="text-align:center;">
+units
+</td>
+<td style="text-align:center;">
+48.10
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Stem.D
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+16.10
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Stem.D
+</td>
+<td style="text-align:center;">
+Ano
+</td>
+<td style="text-align:center;">
+10.73
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Stem.D
+</td>
+<td style="text-align:center;">
+Ano:Clone
+</td>
+<td style="text-align:center;">
+18.62
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Stem.D
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+1.58
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Stem.D
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+1.85
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Stem.D
+</td>
+<td style="text-align:center;">
+units
+</td>
+<td style="text-align:center;">
+51.12
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Nstem.Plant
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+14.52
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Nstem.Plant
+</td>
+<td style="text-align:center;">
+Ano
+</td>
+<td style="text-align:center;">
+10.65
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Nstem.Plant
+</td>
+<td style="text-align:center;">
+Ano:Clone
+</td>
+<td style="text-align:center;">
+24.66
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Nstem.Plant
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Nstem.Plant
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Nstem.Plant
+</td>
+<td style="text-align:center;">
+units
+</td>
+<td style="text-align:center;">
+50.17
+</td>
+</tr>
+</tbody>
+</table>
+<p>FIGURE 1 Distribution of variance components</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>varcomp <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a>    <span class="at">grp =</span> <span class="fu">recode</span>(</span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a>      grp,</span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>      <span class="st">&quot;Ano&quot;</span> <span class="ot">=</span> <span class="st">&quot;Year&quot;</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>      <span class="st">&quot;Ano:Clone&quot;</span> <span class="ot">=</span> <span class="st">&quot;Clone:Year&quot;</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a>      <span class="st">&quot;Clone&quot;</span> <span class="ot">=</span> <span class="st">&quot;Clone&quot;</span>,</span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a>      <span class="st">&quot;row&quot;</span> <span class="ot">=</span> <span class="st">&quot;Row&quot;</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>      <span class="st">&quot;col&quot;</span> <span class="ot">=</span> <span class="st">&quot;Col&quot;</span>,</span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>      <span class="at">.default =</span> <span class="st">&quot;Residual&quot;</span></span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a>    ),</span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a>    <span class="at">grp =</span> <span class="fu">fct_relevel</span>(grp, <span class="fu">c</span>(<span class="st">&quot;Row&quot;</span>, <span class="st">&quot;Col&quot;</span>, <span class="st">&quot;Year&quot;</span>, <span class="st">&quot;Clone&quot;</span>, <span class="st">&quot;Clone:Year&quot;</span>, <span class="st">&quot;Residual&quot;</span>))</span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> trait, <span class="at">y =</span> VarComp, <span class="at">fill =</span> grp)) <span class="sc">+</span></span>
+<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">&quot;fill&quot;</span>) <span class="sc">+</span></span>
+<span id="cb18-16"><a href="#cb18-16" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&quot;Variance Component (%)&quot;</span>, <span class="at">x =</span> <span class="st">&quot;Traits&quot;</span>, <span class="at">fill =</span> <span class="st">&quot;Var. Comp.&quot;</span>) <span class="sc">+</span></span>
+<span id="cb18-17"><a href="#cb18-17" tabindex="-1"></a>  <span class="fu">scale_fill_gdocs</span>() <span class="sc">+</span></span>
+<span id="cb18-18"><a href="#cb18-18" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb18-19"><a href="#cb18-19" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb18-20"><a href="#cb18-20" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">25</span>, <span class="at">face =</span> <span class="st">&quot;bold&quot;</span>),</span>
+<span id="cb18-21"><a href="#cb18-21" tabindex="-1"></a>    <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">20</span>, <span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">vjust =</span> <span class="dv">1</span>)</span>
+<span id="cb18-22"><a href="#cb18-22" tabindex="-1"></a>  )</span></code></pre></div>
+<p><img src="figure/mixed_models.Rmd/varcomp-plot-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="ploting-blups" class="section level4">
+<h4>Ploting BLUPS</h4>
+<p>Distribution of the BLUPs</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>BLUPS <span class="sc">%&gt;%</span></span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> BLUPS_mean, <span class="at">fill =</span> trait, <span class="at">color =</span> trait)) <span class="sc">+</span></span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">show.legend =</span> F) <span class="sc">+</span></span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> trait, <span class="at">ncol =</span> <span class="dv">4</span>, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>, <span class="at">strip.position =</span> <span class="st">&quot;bottom&quot;</span>)  <span class="sc">+</span></span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>  <span class="fu">scale_fill_gdocs</span>() <span class="sc">+</span></span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>  <span class="fu">scale_color_gdocs</span>() <span class="sc">+</span></span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">20</span>),</span>
+<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a>    <span class="at">panel.spacing =</span> <span class="fu">unit</span>(<span class="dv">1</span>, <span class="st">&quot;lines&quot;</span>),</span>
+<span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a>    <span class="at">strip.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb19-12"><a href="#cb19-12" tabindex="-1"></a>    <span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb19-13"><a href="#cb19-13" tabindex="-1"></a>    <span class="at">plot.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb19-14"><a href="#cb19-14" tabindex="-1"></a>    <span class="at">strip.placement =</span> <span class="st">&quot;outside&quot;</span></span>
+<span id="cb19-15"><a href="#cb19-15" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb19-16"><a href="#cb19-16" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Density&quot;</span>)</span></code></pre></div>
+<p><img src="figure/mixed_models.Rmd/BLUPS-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="residual-analisys" class="section level4">
+<h4>Residual Analisys</h4>
+<p>Residual distribution</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>fitted_residual_data <span class="sc">%&gt;%</span> </span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> residuals)) <span class="sc">+</span></span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> ..density..), <span class="at">bins =</span> <span class="dv">10</span>, <span class="at">fill =</span> <span class="st">&quot;lightblue&quot;</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>) <span class="sc">+</span></span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">color =</span> <span class="st">&quot;red&quot;</span>, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> trait, <span class="at">ncol =</span> <span class="dv">4</span>, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>, <span class="at">strip.position =</span> <span class="st">&quot;bottom&quot;</span>)  <span class="sc">+</span></span>
+<span id="cb20-6"><a href="#cb20-6" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Residuals&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Density&quot;</span>) <span class="sc">+</span></span>
+<span id="cb20-7"><a href="#cb20-7" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb20-8"><a href="#cb20-8" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb20-9"><a href="#cb20-9" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">20</span>),</span>
+<span id="cb20-10"><a href="#cb20-10" tabindex="-1"></a>    <span class="at">panel.spacing =</span> <span class="fu">unit</span>(<span class="dv">1</span>, <span class="st">&quot;lines&quot;</span>),</span>
+<span id="cb20-11"><a href="#cb20-11" tabindex="-1"></a>    <span class="at">strip.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb20-12"><a href="#cb20-12" tabindex="-1"></a>    <span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb20-13"><a href="#cb20-13" tabindex="-1"></a>    <span class="at">plot.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb20-14"><a href="#cb20-14" tabindex="-1"></a>    <span class="at">strip.placement =</span> <span class="st">&quot;outside&quot;</span></span>
+<span id="cb20-15"><a href="#cb20-15" tabindex="-1"></a>  )</span></code></pre></div>
+<p><img src="figure/mixed_models.Rmd/residual-plot-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Residuals vs fitted values</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>fitted_residual_data <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> residuals)) <span class="sc">+</span></span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">&quot;blue&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> trait, <span class="at">ncol =</span> <span class="dv">4</span>, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>, <span class="at">strip.position =</span> <span class="st">&quot;bottom&quot;</span>)  <span class="sc">+</span></span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Fitted Values&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Residuals&quot;</span>) <span class="sc">+</span></span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">20</span>),</span>
+<span id="cb21-9"><a href="#cb21-9" tabindex="-1"></a>    <span class="at">panel.spacing =</span> <span class="fu">unit</span>(<span class="dv">1</span>, <span class="st">&quot;lines&quot;</span>),</span>
+<span id="cb21-10"><a href="#cb21-10" tabindex="-1"></a>    <span class="at">strip.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb21-11"><a href="#cb21-11" tabindex="-1"></a>    <span class="at">panel.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb21-12"><a href="#cb21-12" tabindex="-1"></a>    <span class="at">plot.background =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb21-13"><a href="#cb21-13" tabindex="-1"></a>    <span class="at">strip.placement =</span> <span class="st">&quot;outside&quot;</span></span>
+<span id="cb21-14"><a href="#cb21-14" tabindex="-1"></a>  )</span></code></pre></div>
+<p><img src="figure/mixed_models.Rmd/residualxfitted-plot-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="models-analisys" class="section level4">
+<h4>Models Analisys</h4>
+<p>LRT test for comparation of models</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>teste_LRT <span class="sc">%&gt;%</span></span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">escape =</span> F, <span class="at">align =</span> <span class="st">&#39;c&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>  <span class="fu">kable_classic</span>(<span class="st">&quot;hover&quot;</span>, <span class="at">full_width =</span> F, <span class="at">position =</span> <span class="st">&quot;center&quot;</span>, <span class="at">fixed_thead =</span> T)</span></code></pre></div>
+<table class=" lightable-classic lightable-hover" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+trait
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+model
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Df
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+AIC
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+BIC
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+loLik
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Chisq
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+ChiDf
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+PrChisq
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+N_Roots
+</td>
+<td style="text-align:center;">
+Complete
+</td>
+<td style="text-align:center;">
+54
+</td>
+<td style="text-align:center;">
+598.0635
+</td>
+<td style="text-align:center;">
+687.4686
+</td>
+<td style="text-align:center;">
+-283.03174
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+N_Roots
+</td>
+<td style="text-align:center;">
+Clone:Year
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+657.2635
+</td>
+<td style="text-align:center;">
+746.6685
+</td>
+<td style="text-align:center;">
+-312.63173
+</td>
+<td style="text-align:center;">
+59.19997
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1.42436244665181e-14 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+N_Roots
+</td>
+<td style="text-align:center;">
+Year
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+598.0635
+</td>
+<td style="text-align:center;">
+687.4686
+</td>
+<td style="text-align:center;">
+-283.03174
+</td>
+<td style="text-align:center;">
+0.00000
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+N_Roots
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+654.6696
+</td>
+<td style="text-align:center;">
+744.0747
+</td>
+<td style="text-align:center;">
+-311.33482
+</td>
+<td style="text-align:center;">
+56.60615
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+5.32450566461941e-14 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+N_Roots
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+598.0635
+</td>
+<td style="text-align:center;">
+687.4686
+</td>
+<td style="text-align:center;">
+-283.03174
+</td>
+<td style="text-align:center;">
+0.00000
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.99903
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+N_Roots
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+611.5227
+</td>
+<td style="text-align:center;">
+700.9277
+</td>
+<td style="text-align:center;">
+-289.76134
+</td>
+<td style="text-align:center;">
+13.45919
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.00024 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+FRY
+</td>
+<td style="text-align:center;">
+Complete
+</td>
+<td style="text-align:center;">
+54
+</td>
+<td style="text-align:center;">
+927.5204
+</td>
+<td style="text-align:center;">
+1016.8198
+</td>
+<td style="text-align:center;">
+-447.76022
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+FRY
+</td>
+<td style="text-align:center;">
+Clone:Year
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+1056.8375
+</td>
+<td style="text-align:center;">
+1146.1368
+</td>
+<td style="text-align:center;">
+-512.41873
+</td>
+<td style="text-align:center;">
+129.31702
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+5.7807213084901e-30 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+FRY
+</td>
+<td style="text-align:center;">
+Year
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+927.5204
+</td>
+<td style="text-align:center;">
+1016.8198
+</td>
+<td style="text-align:center;">
+-447.76022
+</td>
+<td style="text-align:center;">
+0.00000
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+FRY
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+962.2390
+</td>
+<td style="text-align:center;">
+1051.5383
+</td>
+<td style="text-align:center;">
+-465.11949
+</td>
+<td style="text-align:center;">
+34.71854
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3.80986092686306e-09 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+FRY
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+934.9968
+</td>
+<td style="text-align:center;">
+1024.2962
+</td>
+<td style="text-align:center;">
+-451.49841
+</td>
+<td style="text-align:center;">
+7.47637
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.00625 **
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+FRY
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+948.5361
+</td>
+<td style="text-align:center;">
+1037.8355
+</td>
+<td style="text-align:center;">
+-458.26806
+</td>
+<td style="text-align:center;">
+21.01567
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+4.55542957069547e-06 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+ShY
+</td>
+<td style="text-align:center;">
+Complete
+</td>
+<td style="text-align:center;">
+54
+</td>
+<td style="text-align:center;">
+-273.5348
+</td>
+<td style="text-align:center;">
+-183.2544
+</td>
+<td style="text-align:center;">
+152.76738
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+ShY
+</td>
+<td style="text-align:center;">
+Clone:Year
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+-212.3835
+</td>
+<td style="text-align:center;">
+-122.1031
+</td>
+<td style="text-align:center;">
+122.19175
+</td>
+<td style="text-align:center;">
+61.15126
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+5.28539028651048e-15 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+ShY
+</td>
+<td style="text-align:center;">
+Year
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+-273.5348
+</td>
+<td style="text-align:center;">
+-183.2544
+</td>
+<td style="text-align:center;">
+152.76738
+</td>
+<td style="text-align:center;">
+0.00000
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+ShY
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+-224.8719
+</td>
+<td style="text-align:center;">
+-134.5916
+</td>
+<td style="text-align:center;">
+128.43597
+</td>
+<td style="text-align:center;">
+48.66283
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3.03973677890998e-12 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+ShY
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+-249.6705
+</td>
+<td style="text-align:center;">
+-159.3901
+</td>
+<td style="text-align:center;">
+140.83525
+</td>
+<td style="text-align:center;">
+23.86428
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1.03372377017493e-06 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+ShY
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+-263.3904
+</td>
+<td style="text-align:center;">
+-173.1100
+</td>
+<td style="text-align:center;">
+147.69519
+</td>
+<td style="text-align:center;">
+10.14439
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.00145 **
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+DMC
+</td>
+<td style="text-align:center;">
+Complete
+</td>
+<td style="text-align:center;">
+42
+</td>
+<td style="text-align:center;">
+197.6149
+</td>
+<td style="text-align:center;">
+259.9120
+</td>
+<td style="text-align:center;">
+-86.80744
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+DMC
+</td>
+<td style="text-align:center;">
+Clone:Year
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+224.5228
+</td>
+<td style="text-align:center;">
+286.8199
+</td>
+<td style="text-align:center;">
+-100.26138
+</td>
+<td style="text-align:center;">
+26.90789
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2.13386444379736e-07 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+DMC
+</td>
+<td style="text-align:center;">
+Year
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+197.6149
+</td>
+<td style="text-align:center;">
+259.9120
+</td>
+<td style="text-align:center;">
+-86.80744
+</td>
+<td style="text-align:center;">
+0.00000
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+DMC
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+219.2662
+</td>
+<td style="text-align:center;">
+281.5633
+</td>
+<td style="text-align:center;">
+-97.63308
+</td>
+<td style="text-align:center;">
+21.65128
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3.26990929235941e-06 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+DMC
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+222.7045
+</td>
+<td style="text-align:center;">
+285.0017
+</td>
+<td style="text-align:center;">
+-99.35225
+</td>
+<td style="text-align:center;">
+25.08963
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+5.47263978461532e-07 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+DMC
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+231.4926
+</td>
+<td style="text-align:center;">
+293.7898
+</td>
+<td style="text-align:center;">
+-103.74630
+</td>
+<td style="text-align:center;">
+33.87773
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+5.868655151605e-09 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StY
+</td>
+<td style="text-align:center;">
+Complete
+</td>
+<td style="text-align:center;">
+42
+</td>
+<td style="text-align:center;">
+875.3465
+</td>
+<td style="text-align:center;">
+937.5529
+</td>
+<td style="text-align:center;">
+-425.67323
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StY
+</td>
+<td style="text-align:center;">
+Clone:Year
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+945.0826
+</td>
+<td style="text-align:center;">
+1007.2891
+</td>
+<td style="text-align:center;">
+-460.54131
+</td>
+<td style="text-align:center;">
+69.73615
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+6.77920499480788e-17 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StY
+</td>
+<td style="text-align:center;">
+Year
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+875.3465
+</td>
+<td style="text-align:center;">
+937.5529
+</td>
+<td style="text-align:center;">
+-425.67323
+</td>
+<td style="text-align:center;">
+0.00000
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StY
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+887.5270
+</td>
+<td style="text-align:center;">
+949.7334
+</td>
+<td style="text-align:center;">
+-431.76348
+</td>
+<td style="text-align:center;">
+12.18049
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.00048 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StY
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+880.7859
+</td>
+<td style="text-align:center;">
+942.9924
+</td>
+<td style="text-align:center;">
+-428.39297
+</td>
+<td style="text-align:center;">
+5.43948
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.01969 *
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StY
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+918.8085
+</td>
+<td style="text-align:center;">
+981.0149
+</td>
+<td style="text-align:center;">
+-447.40423
+</td>
+<td style="text-align:center;">
+43.46198
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+4.32276349277575e-11 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Plant.Height
+</td>
+<td style="text-align:center;">
+Complete
+</td>
+<td style="text-align:center;">
+54
+</td>
+<td style="text-align:center;">
+534.7999
+</td>
+<td style="text-align:center;">
+625.0111
+</td>
+<td style="text-align:center;">
+-251.39996
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Plant.Height
+</td>
+<td style="text-align:center;">
+Clone:Year
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+577.5335
+</td>
+<td style="text-align:center;">
+667.7446
+</td>
+<td style="text-align:center;">
+-272.76673
+</td>
+<td style="text-align:center;">
+42.73355
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+6.27272180767349e-11 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Plant.Height
+</td>
+<td style="text-align:center;">
+Year
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+534.7999
+</td>
+<td style="text-align:center;">
+625.0111
+</td>
+<td style="text-align:center;">
+-251.39996
+</td>
+<td style="text-align:center;">
+0.00000
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Plant.Height
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+563.6663
+</td>
+<td style="text-align:center;">
+653.8775
+</td>
+<td style="text-align:center;">
+-265.83315
+</td>
+<td style="text-align:center;">
+28.86639
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+7.75470773833564e-08 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Plant.Height
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+574.7737
+</td>
+<td style="text-align:center;">
+664.9849
+</td>
+<td style="text-align:center;">
+-271.38684
+</td>
+<td style="text-align:center;">
+39.97378
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2.57395491088429e-10 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Plant.Height
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+571.1866
+</td>
+<td style="text-align:center;">
+661.3978
+</td>
+<td style="text-align:center;">
+-269.59331
+</td>
+<td style="text-align:center;">
+36.38670
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1.61803235320847e-09 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+Complete
+</td>
+<td style="text-align:center;">
+54
+</td>
+<td style="text-align:center;">
+857.4398
+</td>
+<td style="text-align:center;">
+946.6902
+</td>
+<td style="text-align:center;">
+-412.71992
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+Clone:Year
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+998.1175
+</td>
+<td style="text-align:center;">
+1087.3678
+</td>
+<td style="text-align:center;">
+-483.05875
+</td>
+<td style="text-align:center;">
+140.67766
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1.89246206135505e-32 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+Year
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+857.4398
+</td>
+<td style="text-align:center;">
+946.6902
+</td>
+<td style="text-align:center;">
+-412.71992
+</td>
+<td style="text-align:center;">
+0.00000
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+883.0813
+</td>
+<td style="text-align:center;">
+972.3316
+</td>
+<td style="text-align:center;">
+-425.54063
+</td>
+<td style="text-align:center;">
+25.64142
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+4.11120223239732e-07 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+863.9312
+</td>
+<td style="text-align:center;">
+953.1815
+</td>
+<td style="text-align:center;">
+-415.96561
+</td>
+<td style="text-align:center;">
+6.49137
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.01084 *
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+880.6592
+</td>
+<td style="text-align:center;">
+969.9095
+</td>
+<td style="text-align:center;">
+-424.32960
+</td>
+<td style="text-align:center;">
+23.21936
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1.44534923248465e-06 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StC
+</td>
+<td style="text-align:center;">
+Complete
+</td>
+<td style="text-align:center;">
+42
+</td>
+<td style="text-align:center;">
+189.4985
+</td>
+<td style="text-align:center;">
+251.7957
+</td>
+<td style="text-align:center;">
+-82.74926
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StC
+</td>
+<td style="text-align:center;">
+Clone:Year
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+216.7650
+</td>
+<td style="text-align:center;">
+279.0621
+</td>
+<td style="text-align:center;">
+-96.38249
+</td>
+<td style="text-align:center;">
+27.26647
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1.77258942847132e-07 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StC
+</td>
+<td style="text-align:center;">
+Year
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+189.4985
+</td>
+<td style="text-align:center;">
+251.7957
+</td>
+<td style="text-align:center;">
+-82.74926
+</td>
+<td style="text-align:center;">
+0.00000
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StC
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+211.0080
+</td>
+<td style="text-align:center;">
+273.3051
+</td>
+<td style="text-align:center;">
+-93.50400
+</td>
+<td style="text-align:center;">
+21.50949
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3.52082519764859e-06 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StC
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+214.9269
+</td>
+<td style="text-align:center;">
+277.2241
+</td>
+<td style="text-align:center;">
+-95.46346
+</td>
+<td style="text-align:center;">
+25.42840
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+4.59109129196136e-07 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StC
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+225.3872
+</td>
+<td style="text-align:center;">
+287.6843
+</td>
+<td style="text-align:center;">
+-100.69358
+</td>
+<td style="text-align:center;">
+35.88865
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2.08922621245291e-09 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Le
+</td>
+<td style="text-align:center;">
+Complete
+</td>
+<td style="text-align:center;">
+54
+</td>
+<td style="text-align:center;">
+1101.6669
+</td>
+<td style="text-align:center;">
+1190.9336
+</td>
+<td style="text-align:center;">
+-534.83346
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Le
+</td>
+<td style="text-align:center;">
+Clone:Year
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+1123.2389
+</td>
+<td style="text-align:center;">
+1212.5056
+</td>
+<td style="text-align:center;">
+-545.61945
+</td>
+<td style="text-align:center;">
+21.57199
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3.4079354505434e-06 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Le
+</td>
+<td style="text-align:center;">
+Year
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+1101.6669
+</td>
+<td style="text-align:center;">
+1190.9336
+</td>
+<td style="text-align:center;">
+-534.83346
+</td>
+<td style="text-align:center;">
+0.00000
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Le
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+1123.5506
+</td>
+<td style="text-align:center;">
+1212.8173
+</td>
+<td style="text-align:center;">
+-545.77528
+</td>
+<td style="text-align:center;">
+21.88364
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2.89692983267488e-06 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Le
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+1109.6633
+</td>
+<td style="text-align:center;">
+1198.9300
+</td>
+<td style="text-align:center;">
+-538.83163
+</td>
+<td style="text-align:center;">
+7.99634
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.00469 **
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Le
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+1108.7701
+</td>
+<td style="text-align:center;">
+1198.0367
+</td>
+<td style="text-align:center;">
+-538.38503
+</td>
+<td style="text-align:center;">
+7.10313
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.00769 **
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Di
+</td>
+<td style="text-align:center;">
+Complete
+</td>
+<td style="text-align:center;">
+54
+</td>
+<td style="text-align:center;">
+661.1255
+</td>
+<td style="text-align:center;">
+750.3922
+</td>
+<td style="text-align:center;">
+-314.56275
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Di
+</td>
+<td style="text-align:center;">
+Clone:Year
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+707.0892
+</td>
+<td style="text-align:center;">
+796.3559
+</td>
+<td style="text-align:center;">
+-337.54458
+</td>
+<td style="text-align:center;">
+45.96368
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1.2046603370457e-11 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Di
+</td>
+<td style="text-align:center;">
+Year
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+661.1255
+</td>
+<td style="text-align:center;">
+750.3922
+</td>
+<td style="text-align:center;">
+-314.56275
+</td>
+<td style="text-align:center;">
+0.00000
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Di
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+685.1023
+</td>
+<td style="text-align:center;">
+774.3689
+</td>
+<td style="text-align:center;">
+-326.55113
+</td>
+<td style="text-align:center;">
+23.97677
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+9.75052895926333e-07 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Di
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+700.6341
+</td>
+<td style="text-align:center;">
+789.9008
+</td>
+<td style="text-align:center;">
+-334.31704
+</td>
+<td style="text-align:center;">
+39.50859
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3.26620244912293e-10 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Di
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+668.0854
+</td>
+<td style="text-align:center;">
+757.3521
+</td>
+<td style="text-align:center;">
+-318.04272
+</td>
+<td style="text-align:center;">
+6.95995
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.00834 **
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Stem.D
+</td>
+<td style="text-align:center;">
+Complete
+</td>
+<td style="text-align:center;">
+54
+</td>
+<td style="text-align:center;">
+1572.2548
+</td>
+<td style="text-align:center;">
+1662.4351
+</td>
+<td style="text-align:center;">
+-770.12738
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Stem.D
+</td>
+<td style="text-align:center;">
+Clone:Year
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+1623.5093
+</td>
+<td style="text-align:center;">
+1713.6897
+</td>
+<td style="text-align:center;">
+-795.75467
+</td>
+<td style="text-align:center;">
+51.25459
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+8.11307329704012e-13 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Stem.D
+</td>
+<td style="text-align:center;">
+Year
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+1572.2548
+</td>
+<td style="text-align:center;">
+1662.4351
+</td>
+<td style="text-align:center;">
+-770.12738
+</td>
+<td style="text-align:center;">
+0.00000
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Stem.D
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+1589.9248
+</td>
+<td style="text-align:center;">
+1680.1051
+</td>
+<td style="text-align:center;">
+-778.96239
+</td>
+<td style="text-align:center;">
+17.67003
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3e-05 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Stem.D
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+1579.5967
+</td>
+<td style="text-align:center;">
+1669.7770
+</td>
+<td style="text-align:center;">
+-773.79836
+</td>
+<td style="text-align:center;">
+7.34197
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.00674 **
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Stem.D
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+53
+</td>
+<td style="text-align:center;">
+1593.8973
+</td>
+<td style="text-align:center;">
+1684.0776
+</td>
+<td style="text-align:center;">
+-780.94864
+</td>
+<td style="text-align:center;">
+21.64253
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3.28486263381027e-06 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Nstem.Plant
+</td>
+<td style="text-align:center;">
+Complete
+</td>
+<td style="text-align:center;">
+42
+</td>
+<td style="text-align:center;">
+635.6560
+</td>
+<td style="text-align:center;">
+698.9746
+</td>
+<td style="text-align:center;">
+-305.82798
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+NA
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Nstem.Plant
+</td>
+<td style="text-align:center;">
+Clone:Year
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+695.9839
+</td>
+<td style="text-align:center;">
+759.3025
+</td>
+<td style="text-align:center;">
+-335.99193
+</td>
+<td style="text-align:center;">
+60.32790
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+8.03011934485854e-15 ***
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Nstem.Plant
+</td>
+<td style="text-align:center;">
+Year
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+635.6560
+</td>
+<td style="text-align:center;">
+698.9746
+</td>
+<td style="text-align:center;">
+-305.82798
+</td>
+<td style="text-align:center;">
+0.00000
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Nstem.Plant
+</td>
+<td style="text-align:center;">
+Clone
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+646.0491
+</td>
+<td style="text-align:center;">
+709.3678
+</td>
+<td style="text-align:center;">
+-311.02456
+</td>
+<td style="text-align:center;">
+10.39316
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.00126 **
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Nstem.Plant
+</td>
+<td style="text-align:center;">
+row
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+635.6559
+</td>
+<td style="text-align:center;">
+698.9746
+</td>
+<td style="text-align:center;">
+-305.82797
+</td>
+<td style="text-align:center;">
+0.00003
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.99558
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Nstem.Plant
+</td>
+<td style="text-align:center;">
+col
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+635.6560
+</td>
+<td style="text-align:center;">
+698.9746
+</td>
+<td style="text-align:center;">
+-305.82799
+</td>
+<td style="text-align:center;">
+0.00001
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.99784
+</td>
+</tr>
+</tbody>
+</table>
+<p>Then, now we go to execute the Genomic Wide Selection script: <a
+href="https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS.html">GWS.Rmd</a></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>R version 4.3.3 (2024-02-29 ucrt)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 19045)
+
+Matrix products: default
+
+
+locale:
+[1] LC_COLLATE=Portuguese_Brazil.utf8  LC_CTYPE=Portuguese_Brazil.utf8   
+[3] LC_MONETARY=Portuguese_Brazil.utf8 LC_NUMERIC=C                      
+[5] LC_TIME=Portuguese_Brazil.utf8    
+
+time zone: America/Sao_Paulo
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] furrr_0.3.1       future_1.34.0     GGally_2.2.1      ggthemes_5.1.0   
+ [5] metan_1.19.0      data.table_1.16.4 lubridate_1.9.4   forcats_1.0.0    
+ [9] stringr_1.5.1     dplyr_1.1.4       purrr_1.0.2       readr_2.1.5      
+[13] tidyr_1.3.1       tibble_3.2.1      ggplot2_3.5.1     tidyverse_2.0.0  
+[17] kableExtra_1.4.0 
+
+loaded via a namespace (and not attached):
+ [1] tidyselect_1.2.1    viridisLite_0.4.2   farver_2.1.2       
+ [4] fastmap_1.2.0       tweenr_2.0.3        mathjaxr_1.6-0     
+ [7] promises_1.3.2      digest_0.6.37       timechange_0.3.0   
+[10] lifecycle_1.0.4     magrittr_2.0.3      compiler_4.3.3     
+[13] rlang_1.1.4         sass_0.4.9          tools_4.3.3        
+[16] yaml_2.3.10         knitr_1.49          labeling_0.4.3     
+[19] plyr_1.8.9          xml2_1.3.6          RColorBrewer_1.1-3 
+[22] workflowr_1.7.1     withr_3.0.2         numDeriv_2016.8-1.1
+[25] grid_4.3.3          polyclip_1.10-7     git2r_0.35.0       
+[28] colorspace_2.1-1    globals_0.16.3      scales_1.3.0       
+[31] MASS_7.3-60.0.1     cli_3.6.3           crayon_1.5.3       
+[34] rmarkdown_2.29      ragg_1.3.3          reformulas_0.4.0   
+[37] generics_0.1.3      rstudioapi_0.17.1   tzdb_0.4.0         
+[40] minqa_1.2.8         cachem_1.1.0        ggforce_0.4.2      
+[43] splines_4.3.3       parallel_4.3.3      vctrs_0.6.5        
+[46] boot_1.3-31         Matrix_1.6-1        jsonlite_1.8.9     
+[49] sommer_4.3.6        hms_1.1.3           patchwork_1.3.0    
+[52] ggrepel_0.9.6       listenv_0.9.1       systemfonts_1.1.0  
+[55] jquerylib_0.1.4     parallelly_1.41.0   glue_1.8.0         
+[58] nloptr_2.1.1        ggstats_0.8.0       codetools_0.2-20   
+[61] stringi_1.8.4       gtable_0.3.6        later_1.4.1        
+[64] lme4_1.1-36         lmerTest_3.1-3      munsell_0.5.1      
+[67] pillar_1.10.1       htmltools_0.5.8.1   R6_2.5.1           
+[70] textshaping_0.4.1   Rdpack_2.6.2        rprojroot_2.0.4    
+[73] evaluate_1.0.3      lattice_0.22-6      rbibutils_2.3      
+[76] httpuv_1.6.15       bslib_0.8.0         Rcpp_1.0.14        
+[79] svglite_2.1.3       nlme_3.1-166        whisker_0.4.1      
+[82] xfun_0.50           fs_1.6.5            pkgconfig_2.0.3    </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>Weverton Gomes da Costa, Pós-Doutorando, Embrapa
+Mandioca e Fruticultura, <a href="mailto:wevertonufv@gmail.com"
+class="email">wevertonufv@gmail.com</a><a href="#fnref1"
+class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
