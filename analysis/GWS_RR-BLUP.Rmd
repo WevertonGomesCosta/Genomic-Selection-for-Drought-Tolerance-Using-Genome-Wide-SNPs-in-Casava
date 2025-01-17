@@ -1,0 +1,241 @@
+---
+title: "RR-BLUP"
+author: 
+  - Costa, W. G.^[Weverton Gomes da Costa, Pós-Doutorando, Embrapa Mandioca e Fruticultura, wevertonufv@gmail.com]
+date: "`r Sys.Date()`"
+site: workflowr::wflow_site
+url: https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava
+output:
+  workflowr::wflow_html:
+    toc: TRUE
+editor_options:
+  chunk_output_type: console
+---
+
+## Configurations and packages
+
+```{r setup, include=F} 
+knitr::opts_chunk$set(echo = T, warning = F)
+```
+
+To perform the analyses, we will need the following packages:
+
+```{r libraries, message=FALSE}
+library(furrr)
+library(tidyverse)
+library(cvTools)
+library(kableExtra)
+```
+
+## Data
+
+```{r data}
+geno<- readRDS("data/geno.rds")
+pheno<-readRDS("data/pheno.rds")
+traits <- colnames(pheno)[-1]
+```
+
+## RR-BLUP
+
+The Ridge Regression BLUP, or RRBLUP, will predict the marker effect. In the RRBLUP, we will use the matrix of markers directly.
+
+For this purpose, we will use the [sommer](https://cran.r-project.org/web/packages/sommer/vignettes/v3.sommer.qg.pdf) package [@Covarrubias-Pazaran_2014]. In the code below, *y* is for the vector with the means, *Z* is where we will insert the SNPs matrix, *K* is for a covariance matrix for the random effects, which will be and identity matrix by default; and *X* is a design matrix for the fixed effects, which will be a vector of ones (**1**) by default. Note that we are returning to the "1, 0, -1" codification in the SNPs matrix. This is a requirement of the _rrBlUP_ package.
+
+```{r Z-matrix}
+Z <- geno - 1
+```
+
+### Cross-validation 
+
+To prove that the prediction is accurate, we should perform a cross-validation (CV) scheme. For this purpose, we divide the data into a training set and a validation set. 
+
+First we separate the data into *k* folds. Then, we attribute *NA* for one fold and try to predict the data from this fold based on the others. When selecting the number of folds, one must prioritize the balance between the number of observations in each fold. 
+
+In addition, this process should be repeated for further validation. The step-by-step below will guide the CV in the data we are analysing.
+
+####  1. Determine the number of folds and repetitions
+
+```{r nfolds-nrep}
+nfolds = 5
+nrept = 5
+```
+
+Since we defined 5 folds, our data will be divided into 5 parts with 83 observations each.
+
+#### 2. Match the order of the data and the rows of the SNP matrix
+
+The order is decreasing or increasing (numeric or alphabetical) regarding the name of the genotypes.
+
+```{r order-data}
+pheno <- pheno[order(pheno$ID_Clone, decreasing = F),]
+geno <- geno[order(row.names(geno)),]
+all(rownames(geno) == pheno$ID_Clone)
+```
+
+#### 3. Add a column indicating a number for each observation
+
+This will be useful to assign each observation for a fold, which will be the next step.
+
+```{r add-column}
+pheno$ID <- factor(1:nrow(pheno))
+```
+
+#### 4. Folds assignment
+
+In this step, we will assign each observation to a fold. Bear in mind that for each repetition, the folds will comprise different observations. The purpose of the repetition is to make sure of the randomness of the assignment step. 
+
+In this step, we will use the [cvTools](https://cran.r-project.org/web/packages/cvTools/cvTools.pdf) package [@cvTools]
+
+For better performance, we included this step in the loop of the next step.
+
+### Run model
+
+The next step is the very CV. Here, we will define the linear predictor and the lists that will be useful in the loop. The first list, here called results_cv_RR_BLUP and, contains the results for each fold assignation that we built in the previous step. The second GEBVS_RR_BLUP contains the GEBVs.
+
+Then, we will construct the loop. Each iteration will assign *NA* for a different fold, and we will use the other folds to predict the missing values. Note that the folds vary for each repetition and trait.
+
+Set up parallel processing. Define and run multiple models to get the GEBVs *ATTENTION: This process is time-consuming.*
+
+```{r RR-BLUP}
+# Planejar o processamento em várias sessões para paralelização
+plan(multisession)
+
+# Iniciar uma lista para armazenar os resultados
+results_list <-
+  future_map(traits, .options = furrr_options(seed = 100), function(j)  {
+    # Pré-processamento dos dados
+    pheno2 <- pheno %>%
+      select(ID_Clone, all_of(j)) %>%
+      na.omit() %>%
+      ungroup() %>%
+      filter(ID_Clone %in% rownames(Z)) %>%
+      mutate(ID = factor(1:nrow(.))) %>%
+      droplevels()
+    
+    # Filtrar as linhas de Z com base em pheno2$ID_Clone
+    Z1 <- Z[rownames(Z) %in% pheno2$ID_Clone, ]
+    
+    # Listas das folds
+    fold.list <- lapply(1:nrept, function(a) {
+      folds <- cvFolds(nlevels(pheno2$ID),
+                       type = "random",
+                       K = nfolds)
+      
+      split(folds$subsets, f = folds$which)
+    })
+    
+    # Usar future_map_dfr para criar dobras cruzadas em paralelo
+    future_map_dfr(1:length(fold.list), function(z) {
+      for (i in 1:nfolds) {
+        # Conjunto de treinamento
+        train_data <- pheno2
+        
+        # Conjunto de validação
+        train_data[train_data$ID %in% fold.list[[z]][[i]], j] <- NA
+        
+        # Ajustar o modelo
+        fixed <- formula(paste(j, " ~ 1"))
+        
+        RR_BLUP <-
+          sommer::mmer(
+            fixed,
+            random = ~ sommer::vsr(list(Z1), buildGu = FALSE),
+            data = train_data,
+            getPEV = FALSE,
+            rcov = ~ units
+          )
+        
+        # GEBV (Valores Genômicos Empíricos Melhorados)
+        Pred <-
+          data.frame(
+            Yhat = Z1 %*% RR_BLUP$U$`u:Z1`[[j]],
+            ID = train_data$ID,
+            ID_Clone = train_data$ID_Clone
+          ) %>%
+          filter(ID %in% fold.list[[z]][[i]])
+        
+        result1 <-
+          tibble(
+            GEBV = Pred$Yhat,
+            ID = Pred$ID,
+            ID_Clone = Pred$ID_Clone,
+            Trait = j,
+            rep = z,
+            fold = i
+          )
+        
+        # Resultados da previsão
+        if (i == 1) {
+          result <- result1
+        } else {
+          result <- rbind(result, result1)
+        }
+      }
+      
+      #Ordenando os resultados de acordo com o ID
+      result <- result[order(result$ID, decreasing = F),]
+      
+      # Resultados da validação cruzada
+      result_cv <- tibble(
+        Trait = j,
+        rep = z,
+        Log = all(result$ID == pheno2$ID),
+        Ac = round(cor(result$GEBV, pheno2[[j]], use = "na.or.complete"), 3),
+        MSPE = round(mean((
+          result$GEBV - pheno2[[j]]
+        ) ^ 2, na.rm = TRUE), 3),
+        result = list(result)
+      )
+    })
+  })
+
+# Combinar todos os resultados da validação cruzada em uma única estrutura
+results_cv_RR_BLUP <- do.call(rbind, results_list)
+
+# Extrair os GEBVs (Valores Genômicos Empíricos Melhorados) em uma estrutura separada
+GEBVS_RR_BLUP <- do.call(rbind, results_cv_RR_BLUP$result)
+```
+
+### Results
+
+The object "GEBVS_RR_BLUP" contains the GEBVs for each trait and clone. The table above shows the first five clones and their GEBVs for each trait.
+
+```{r GEBVS_RR_BLUP}
+GEBVS_RR_BLUP |>
+  group_by(Trait, ID_Clone) |>
+  summarise(GEBV = mean(GEBV)) %>%
+  pivot_wider(names_from = Trait, values_from = GEBV) %>%
+  head() %>%
+  kbl(escape = F, align = 'c') |>
+  kable_classic("hover", full_width = F, position = "center", fixed_thead = T)
+```
+
+```{r save-GEBVS_RR_BLUP,  include=FALSE}
+saveRDS(GEBVS_RR_BLUP, "output/GEBVS_RR_BLUP.RDS")
+```
+
+Acuracy and MSPE for each trait and repetition:
+
+```{r results_cv_RR_BLUP}
+results_cv_RR_BLUP[-6] |>
+  group_by(Trait) %>% 
+  summarise_all(mean) %>% 
+  arrange(desc(Ac), MSPE) %>% 
+  kbl(escape = F, align = 'c') |>
+  kable_classic("hover", full_width = F, position = "center", fixed_thead = T)
+```
+
+```{r save-results_cv_RR_BLUP,  include=FALSE}
+saveRDS(results_cv_RR_BLUP, "output/results_cv_RR_BLUP.RDS")
+```
+
+The object "result_cv" is divided by repetition. In the "result_cv" objects for each repetition, "Rep" is the number of the repetition, "Log" is a diagnostic indicating if the order of the predicted breeding values matches the order of the adjusted means, "Ac" is the prediction accuracy (correlation between the GEBV and adjusted means), and "MSPE" is the mean square prediction error (the lower, the better).
+
+Let's now move on to processing each model. Since this can be time-consuming, I've separated it into parallel processing and each model into each script:
+
+- [**RR-BLUP**](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_RR-BLUP.html)
+- [**G-BLUP (additive and additive-dominant)**](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_G-BLUP.html)
+- [**Bayes A**](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_BayesA.html)
+- [**Bayes B**](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_BayesB.html)
+- [**RKHS**](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_RKHS.html)
+- [**Random Forest**](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_RF.html)
