@@ -57,7 +57,7 @@ names |>
 
 Now let's group the marker IDs with the clone names.
 
-```{r import-pheno}-data}
+```{r import-pheno-data}
 pheno <- read.csv("output/BLUPS_row_col_random.csv") |> 
   mutate(Clone = str_split_i(Clone, "[.]", -1)) |>
   inner_join(names) |> # Join Phenotypic with Genotypic datas
