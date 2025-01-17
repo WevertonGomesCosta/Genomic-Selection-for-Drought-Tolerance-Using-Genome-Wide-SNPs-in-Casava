@@ -1,19 +1,23 @@
+# Diretórios e arquivos de configuração do R
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
+
+# Arquivos específicos do projeto
 data/allchrAR08.txt
-data/genomic selection.pptx
-.tiff
-.rds
-.rar
-.docx
-Artigo GS tolerancia a seca_revised.rar
-Seleção Genômica deficit hidrico.pptx
-.pdf
+
+# Tipos de arquivo a serem ignorados
+*.tiff
+*.rds
+*.rar
+*.docx
+*.pdf
+
+# Arquivos específicos do repositório
 output/result_sommer_row_col_random.RDS
+
+# Pastas específicas a serem ignoradas
 data/Artigo/
 data/Articles/
 data/data.rar/
-'data/Artigo/\ndata/data.rar' 
-'data/Artigo/' 
