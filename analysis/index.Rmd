@@ -41,6 +41,14 @@ For GWS, we employed the original marker matrix, followed by necessary data mani
 
 (Note: Some models might be computationally intensive.)
 
+### 4. [Clone Selection](https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/clone_selection.html)
+
+The clone selection analysis aims to identify the best genotypes for drought tolerance based on the GWS results. We used the BLUPs and genomic predictions to rank the genotypes and select the best-performing ones.
+
+We will now obtain the joint results of all methods and compare them. Additionally, we will adopt a selection model to optimize the selection of cassava clones for EMBRAPA's cassava breeding program.
+
+Our aim is to select clones with high GEBVs and high GETGVs, identifying clones with strong intrinsic potential as well as those that can be crossbred to produce high-potential hybrid clones.
+
 ## Study Highlights
 
 - **Manuscript Access**: [Genomic Selection for Drought Tolerance Using Genome Wide SNPs in Cassava](https://doi.org/10.3389/fpls.2024.1483340)

@@ -11,11 +11,11 @@
 
 <meta name="author" content="Weverton Gomes da Costa" />
 
-<meta name="date" content="2025-01-13" />
+<meta name="date" content="2025-01-16" />
 
 <title>Genomic Selection for Drought Tolerance</title>
 
-<script src="site_libs/header-attrs-2.24/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -432,7 +432,7 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="GWS.html">Overview</a>
+      <a href="GWS.html">Prepare Data</a>
     </li>
     <li>
       <a href="GWS_RR-BLUP.html">RR-BLUP</a>
@@ -453,6 +453,9 @@ div.tocify {
       <a href="GWS_RF.html">Random Forest</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="clone_selection.html">Clone Selection</a>
 </li>
 <li>
   <a href="about.html">About</a>
@@ -476,7 +479,7 @@ div.tocify {
 Tolerance</h1>
 <h4 class="author">Weverton Gomes da Costa<a href="#fn1"
 class="footnote-ref" id="fnref1"><sup>1</sup></a></h4>
-<h4 class="date">2025-01-13</h4>
+<h4 class="date">2025-01-16</h4>
 
 </div>
 
@@ -505,7 +508,7 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-01-13
+<strong>Last updated:</strong> 2025-01-16
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -640,15 +643,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatree0d2a1ede387c973268e882a7379670a600206618targetblank0d2a1eda">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatree7db14aba15c19cb52919928db698294f8c9f1b4etargetblank7db14aba">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/0d2a1ede387c973268e882a7379670a600206618" target="_blank">0d2a1ed</a>
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/7db14aba15c19cb52919928db698294f8c9f1b4e" target="_blank">7db14ab</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatree0d2a1ede387c973268e882a7379670a600206618targetblank0d2a1eda"
+id="strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatree7db14aba15c19cb52919928db698294f8c9f1b4etargetblank7db14aba"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -658,7 +661,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/0d2a1ede387c973268e882a7379670a600206618" target="_blank">0d2a1ed</a>.
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/7db14aba15c19cb52919928db698294f8c9f1b4e" target="_blank">7db14ab</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -675,138 +678,39 @@ were generated:
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    Artigo GS tolerancia a seca_revised.rar
-    Ignored:    Seleção Genômica deficit hidrico.pptx
     Ignored:    data/allchrAR08.txt
+    Ignored:    output/BLUPS_density_med_row_col.png
 
 Untracked files:
-    Untracked:  Artigo GS tolerancia a seca_revised/
     Untracked:  ETA_1_ScaleBayesA.dat
-    Untracked:  ETA_1_parBayesB.dat
-    Untracked:  data/Article.docx
-    Untracked:  data/Article2.docx
-    Untracked:  data/Articles/
-    Untracked:  data/Costa et al_FPS_2024 manuscript eng.docx
-    Untracked:  data/Costa et al_FPS_2024 manuscript eng_v1.docx
-    Untracked:  data/Costa et al_FPS_2024 manuscript eng_v2.docx
-    Untracked:  data/Costa et al_FPS_2024 manuscript eng_v3.docx
-    Untracked:  data/Costa et al_FPS_2024 manuscript.docx
-    Untracked:  data/Costa et al_FPS_2024 supplement.docx
-    Untracked:  data/Frontiers_Template.docx
-    Untracked:  data/Phenotyping2.xlsx
-    Untracked:  data/Supplementary_Material.docx
-    Untracked:  data/Tabela auxiliar.xlsx
-    Untracked:  data/dados__temp_umi.csv
-    Untracked:  data/data.rar
+    Untracked:  analysis/GWS_BayesA.Rmd
+    Untracked:  analysis/GWS_BayesB.Rmd
+    Untracked:  analysis/GWS_G-BLUP.Rmd
+    Untracked:  analysis/GWS_RF.Rmd
+    Untracked:  analysis/GWS_RKHS.Rmd
+    Untracked:  analysis/GWS_RR-BLUP.Rmd
+    Untracked:  analysis/clone_selection.Rmd
+    Untracked:  analysis/figure/GWS.Rmd/
+    Untracked:  data/Artigo/
+    Untracked:  data/geno.rds
+    Untracked:  data/pheno.rds
     Untracked:  mu.dat
-    Untracked:  output/BLUPS2.csv
-    Untracked:  output/BLUPS_GEBV_GETG_all clones.csv
-    Untracked:  output/BLUPS_density_med.png
-    Untracked:  output/BLUPS_density_med_row_col.png
-    Untracked:  output/BLUPS_drgBLUPs__boxplot_med.png
-    Untracked:  output/BLUPS_drgBLUPs__boxplot_med_row_col.png
-    Untracked:  output/BLUPS_drgBLUPs_density_med.png
-    Untracked:  output/BLUPS_drgBLUPs_med.png
-    Untracked:  output/BLUPS_par_mmer.Rdata
-    Untracked:  output/BLUPS_row_col.csv
-    Untracked:  output/BLUPS_row_col_random.csv
-    Untracked:  output/BLUPS_x_BLUPS_row_col_boxplot_med.png
-    Untracked:  output/Density_residual_row_col.tiff
-    Untracked:  output/Figuras_article.rar
-    Untracked:  output/GEBVS_BayesA.RDS
-    Untracked:  output/GEBVS_BayesB.RDS
     Untracked:  output/GEBVS_DOM.RDS
     Untracked:  output/GEBVS_G_BLUP.RDS
-    Untracked:  output/GEBVS_G_BLUP_row_col.RDS
-    Untracked:  output/GEBVS_G_BLUP_row_col_random.RDS
-    Untracked:  output/GEBVS_RF.RDS
-    Untracked:  output/GEBVS_RKHS.RDS
     Untracked:  output/GEBVS_RR_BLUP.RDS
-    Untracked:  output/GEBV_BLUP.csv
-    Untracked:  output/GEBV_DOMxBLUPS.tiff
-    Untracked:  output/GEBV_GBLUPxBLUPS.tiff
-    Untracked:  output/GEBVxGETGV.tiff
-    Untracked:  output/GETGVxBLUPS.tiff
     Untracked:  output/G_matrix.rds
-    Untracked:  output/H2.csv
-    Untracked:  output/H2_row_col.csv
-    Untracked:  output/H2_row_col_random.csv
-    Untracked:  output/Heatmap.tiff
-    Untracked:  output/MSPE_all_methods.tiff
-    Untracked:  output/Residuals_vs_fitted_row_col.tiff
-    Untracked:  output/accuracy_all_methods.tiff
-    Untracked:  output/accuracy_all_methods_points.tiff
-    Untracked:  output/cor_GEBVxBLUPS.tiff
-    Untracked:  output/cor_GEBVxBLUPS_all_methods.tiff
-    Untracked:  output/correlation_blups.tiff
-    Untracked:  output/density_blups.tiff
-    Untracked:  output/dierencial_selecao.csv
-    Untracked:  output/dierencial_selecao.xlsx
-    Untracked:  output/drgBLUP.csv
-    Untracked:  output/fitted_residual_data_row_col_random.csv
-    Untracked:  output/fitted_values_row_col_random.csv
-    Untracked:  output/indice_selection.tiff
-    Untracked:  output/indice_selection3.tiff
-    Untracked:  output/indice_selection_GEBV.tiff
-    Untracked:  output/indice_selection_GEBV_GETGV.tiff
-    Untracked:  output/indice_selection_GETGV.tiff
-    Untracked:  output/kappa.tiff
-    Untracked:  output/kappa2.tiff
-    Untracked:  output/mean_pheno.csv
-    Untracked:  output/medias_semestre.xlsx
-    Untracked:  output/pesos_BLUPS_all clones.csv
-    Untracked:  output/pesos_GEBVS_all clones.csv
-    Untracked:  output/pesos_GETGVS_all clones.csv
-    Untracked:  output/pheno_mean_sd.csv
-    Untracked:  output/residuos_row_col_random.csv
-    Untracked:  output/result_sommer.RData
-    Untracked:  output/result_sommer_row_col.RData
-    Untracked:  output/result_sommer_row_col_random.RDS
-    Untracked:  output/result_sommer_row_col_random_optimized.RDS
-    Untracked:  output/results_MSPE.csv
-    Untracked:  output/results_accuracy.csv
-    Untracked:  output/results_cv_BayesA.RDS
-    Untracked:  output/results_cv_BayesB.RDS
-    Untracked:  output/results_cv_DOM.RDS
+    Untracked:  output/results_cv_GEBVS_DOM.RDS
     Untracked:  output/results_cv_G_BLUP.RDS
-    Untracked:  output/results_cv_G_BLUP_row_col.RDS
-    Untracked:  output/results_cv_G_BLUP_row_col_random.RDS
-    Untracked:  output/results_cv_RF.RDS
-    Untracked:  output/results_cv_RKHS.RDS
     Untracked:  output/results_cv_RR_BLUP.RDS
-    Untracked:  output/results_h2_GBLUP (1).rds
-    Untracked:  output/results_h2_GBLUP.csv
-    Untracked:  output/results_h2_GBLUP.rds
-    Untracked:  output/results_h2_GBLUP_D.rds
-    Untracked:  output/results_kappa.csv
-    Untracked:  output/results_kappa2.csv
-    Untracked:  output/results_values-selection.csv
-    Untracked:  output/results_values_kappa.csv
-    Untracked:  output/results_values_rescale_selection.csv
-    Untracked:  output/results_values_selection.csv
-    Untracked:  output/rstudio-export.zip
-    Untracked:  output/semester_means.xlsx
-    Untracked:  output/teste_LRT.csv
-    Untracked:  output/teste_LRT_row_col.csv
-    Untracked:  output/teste_LRT_row_col_random.csv
-    Untracked:  output/varcomp.tiff
-    Untracked:  output/varcomp2.csv
-    Untracked:  output/varcomp_row_col.csv
-    Untracked:  output/varcomp_row_col.tiff
-    Untracked:  output/varcomp_row_col_random.csv
-    Untracked:  output/varcomp_row_col_random.tiff
     Untracked:  varE.dat
 
 Unstaged changes:
     Modified:   Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava.Rproj
     Modified:   analysis/GWS.Rmd
+    Modified:   analysis/_site.yml
     Modified:   analysis/index.Rmd
+    Modified:   analysis/mixed_models.Rmd
     Modified:   data/SNPs.rds
-    Modified:   data/pheno_clean.csv
-    Modified:   output/BLUPS.csv
-    Modified:   output/BLUPS_par.Rdata
-    Modified:   output/media_pheno.csv
-    Modified:   output/varcomp.csv
 
 </code></pre>
 <p>
@@ -850,6 +754,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/blob/78cd01abb55597be14d41c85618c7db2c1d0b81d/analysis/index.Rmd" target="_blank">78cd01a</a>
+</td>
+<td>
+WevertonGomesCosta
+</td>
+<td>
+2025-01-13
+</td>
+<td>
+Update index.Rmd and index.html
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/78cd01abb55597be14d41c85618c7db2c1d0b81d/docs/index.html" target="_blank">78cd01a</a>
+</td>
+<td>
+WevertonGomesCosta
+</td>
+<td>
+2025-01-13
+</td>
+<td>
+Update index.Rmd and index.html
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -1128,6 +1066,21 @@ Forest</strong></a></li>
 </ul>
 <p>(Note: Some models might be computationally intensive.)</p>
 </div>
+<div id="clone-selection" class="section level3">
+<h3>4. <a
+href="https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/clone_selection.html">Clone
+Selection</a></h3>
+<p>The clone selection analysis aims to identify the best genotypes for
+drought tolerance based on the GWS results. We used the BLUPs and
+genomic predictions to rank the genotypes and select the best-performing
+ones.</p>
+<p>We will now obtain the joint results of all methods and compare them.
+Additionally, we will adopt a selection model to optimize the selection
+of cassava clones for EMBRAPA’s cassava breeding program.</p>
+<p>Our aim is to select clones with high GEBVs and high GETGVs,
+identifying clones with strong intrinsic potential as well as those that
+can be crossbred to produce high-potential hybrid clones.</p>
+</div>
 </div>
 <div id="study-highlights" class="section level2">
 <h2>Study Highlights</h2>
@@ -1151,7 +1104,7 @@ Session information
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
-<pre><code>R version 4.3.1 (2023-06-16 ucrt)
+<pre><code>R version 4.3.3 (2024-02-29 ucrt)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 10 x64 (build 19045)
 
@@ -1170,16 +1123,16 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 loaded via a namespace (and not attached):
- [1] vctrs_0.6.3       cli_3.6.1         knitr_1.43        rlang_1.1.1      
- [5] xfun_0.40         stringi_1.7.12    promises_1.2.1    jsonlite_1.8.7   
- [9] workflowr_1.7.1   glue_1.6.2        rprojroot_2.0.3   git2r_0.32.0     
-[13] htmltools_0.5.6   httpuv_1.6.11     sass_0.4.7        fansi_1.0.4      
-[17] rmarkdown_2.24    tibble_3.2.1      evaluate_0.22     jquerylib_0.1.4  
-[21] fastmap_1.1.1     yaml_2.3.7        lifecycle_1.0.3   whisker_0.4.1    
-[25] stringr_1.5.0     compiler_4.3.1    fs_1.6.3          pkgconfig_2.0.3  
-[29] Rcpp_1.0.11       rstudioapi_0.15.0 later_1.3.1       digest_0.6.33    
-[33] R6_2.5.1          utf8_1.2.3        pillar_1.9.0      magrittr_2.0.3   
-[37] bslib_0.5.1       tools_4.3.1       cachem_1.0.8     </code></pre>
+ [1] vctrs_0.6.5       cli_3.6.3         knitr_1.49        rlang_1.1.4      
+ [5] xfun_0.50         stringi_1.8.4     promises_1.3.2    jsonlite_1.8.9   
+ [9] workflowr_1.7.1   glue_1.8.0        rprojroot_2.0.4   git2r_0.35.0     
+[13] htmltools_0.5.8.1 httpuv_1.6.15     sass_0.4.9        rmarkdown_2.29   
+[17] tibble_3.2.1      evaluate_1.0.3    jquerylib_0.1.4   fastmap_1.2.0    
+[21] yaml_2.3.10       lifecycle_1.0.4   whisker_0.4.1     stringr_1.5.1    
+[25] compiler_4.3.3    fs_1.6.5          pkgconfig_2.0.3   Rcpp_1.0.14      
+[29] rstudioapi_0.17.1 later_1.4.1       digest_0.6.37     R6_2.5.1         
+[33] pillar_1.10.1     magrittr_2.0.3    bslib_0.8.0       tools_4.3.3      
+[37] cachem_1.1.0     </code></pre>
 </div>
 </div>
 </div>
