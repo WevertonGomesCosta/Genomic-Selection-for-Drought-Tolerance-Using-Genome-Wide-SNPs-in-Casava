@@ -1,0 +1,3965 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Costa, W. G." />
+
+<meta name="date" content="2025-01-17" />
+
+<title>RKHS</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; } /* Alert */
+code span.an { color: #008000; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #0000ff; } /* ControlFlow */
+code span.ch { color: #008080; } /* Char */
+code span.cn { } /* Constant */
+code span.co { color: #008000; } /* Comment */
+code span.cv { color: #008000; } /* CommentVar */
+code span.do { color: #008000; } /* Documentation */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.im { } /* Import */
+code span.in { color: #008000; } /* Information */
+code span.kw { color: #0000ff; } /* Keyword */
+code span.op { } /* Operator */
+code span.ot { color: #ff4000; } /* Other */
+code span.pp { color: #ff4000; } /* Preprocessor */
+code span.sc { color: #008080; } /* SpecialChar */
+code span.ss { color: #008080; } /* SpecialString */
+code span.st { color: #008080; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #008080; } /* VerbatimString */
+code span.wa { color: #008000; font-weight: bold; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Genomic Selection for Drought Tolerance</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="phenotype.html">Phenotype</a>
+</li>
+<li>
+  <a href="mixed_models.html">GxE Analysis</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Genomic Selection
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="GWS.html">Prepare Data</a>
+    </li>
+    <li>
+      <a href="GWS_RR-BLUP.html">RR-BLUP</a>
+    </li>
+    <li>
+      <a href="GWS_G-BLUP.html">G-BLUP (additive and additive-dominant)</a>
+    </li>
+    <li>
+      <a href="GWS_BayesA.html">Bayes A</a>
+    </li>
+    <li>
+      <a href="GWS_BayesB.html">Bayes B</a>
+    </li>
+    <li>
+      <a href="GWS_RKHS.html">RKHS</a>
+    </li>
+    <li>
+      <a href="GWS_RF.html">Random Forest</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="clone_selection.html">Clone Selection</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">RKHS</h1>
+<h4 class="author">Costa, W. G.<a href="#fn1" class="footnote-ref"
+id="fnref1"><sup>1</sup></a></h4>
+<h4 class="date">2025-01-17</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2025-01-17
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong>
+<code>Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown is untracked by Git. To know which version of the R
+Markdown file created these results, you’ll want to first commit it to
+the Git repo. If you’re still working on the analysis, you can ignore
+this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20221020code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20221020)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20221020code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20221020)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatree7db14aba15c19cb52919928db698294f8c9f1b4etargetblank7db14aba">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/7db14aba15c19cb52919928db698294f8c9f1b4e" target="_blank">7db14ab</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatree7db14aba15c19cb52919928db698294f8c9f1b4etargetblank7db14aba"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/7db14aba15c19cb52919928db698294f8c9f1b4e" target="_blank">7db14ab</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    data/allchrAR08.txt
+    Ignored:    output/BLUPS_density_med_row_col.png
+
+Untracked files:
+    Untracked:  analysis/GWS_BayesA.Rmd
+    Untracked:  analysis/GWS_BayesB.Rmd
+    Untracked:  analysis/GWS_G-BLUP.Rmd
+    Untracked:  analysis/GWS_RF.Rmd
+    Untracked:  analysis/GWS_RKHS.Rmd
+    Untracked:  analysis/GWS_RR-BLUP.Rmd
+    Untracked:  analysis/clone_selection.Rmd
+    Untracked:  analysis/figure/GWS.Rmd/
+    Untracked:  data/Artigo/
+    Untracked:  data/geno.rds
+    Untracked:  data/pheno.rds
+    Untracked:  output/BayesA_ETA_1_ScaleBayesA.dat
+    Untracked:  output/BayesA_mu.dat
+    Untracked:  output/BayesA_varE.dat
+    Untracked:  output/BayesB_ETA_1_parBayesB.dat
+    Untracked:  output/BayesB_mu.dat
+    Untracked:  output/BayesB_varE.dat
+    Untracked:  output/GEBVS_BayesA.RDS
+    Untracked:  output/GEBVS_BayesB.RDS
+    Untracked:  output/GEBVS_DOM.RDS
+    Untracked:  output/GEBVS_G_BLUP.RDS
+    Untracked:  output/GEBVS_RF.RDS
+    Untracked:  output/GEBVS_RKHS.RDS
+    Untracked:  output/GEBVS_RR_BLUP.RDS
+    Untracked:  output/G_matrix.rds
+    Untracked:  output/results_cv_BayesA.RDS
+    Untracked:  output/results_cv_BayesB.RDS
+    Untracked:  output/results_cv_GEBVS_DOM.RDS
+    Untracked:  output/results_cv_G_BLUP.RDS
+    Untracked:  output/results_cv_RF.RDS
+    Untracked:  output/results_cv_RKHS.RDS
+    Untracked:  output/results_cv_RR_BLUP.RDS
+
+Unstaged changes:
+    Modified:   Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava.Rproj
+    Modified:   analysis/GWS.Rmd
+    Modified:   analysis/_site.yml
+    Modified:   analysis/index.Rmd
+    Modified:   analysis/mixed_models.Rmd
+    Modified:   data/SNPs.rds
+    Modified:   output/BLUPS_par_mmer.Rdata
+    Modified:   output/BLUPS_row_col_random.csv
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+There are no past versions. Publish this analysis with
+<code>wflow_publish()</code> to start tracking its development.
+</p>
+<hr>
+</div>
+</div>
+</div>
+<div id="configurations-and-packages" class="section level2">
+<h2>Configurations and packages</h2>
+<p>To peRKHSorm the analyses, we will need the following packages:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(furrr)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(cvTools)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span></code></pre></div>
+</div>
+<div id="data" class="section level2">
+<h2>Data</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>geno<span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;data/geno.rds&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>pheno<span class="ot">&lt;-</span><span class="fu">readRDS</span>(<span class="st">&quot;data/pheno.rds&quot;</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>traits <span class="ot">&lt;-</span> <span class="fu">colnames</span>(pheno)[<span class="sc">-</span><span class="dv">1</span>]</span></code></pre></div>
+</div>
+<div id="rkhs" class="section level2">
+<h2>RKHS</h2>
+<p>We can also use the eigenvalues of the G covariance matrix Gaussian
+Kernel (GK) to perform the analyses. But first, we have to build GK.</p>
+<p>For this purpose, we will use the <a
+href="https://cran.r-project.org/web/packages/sommer/vignettes/v3.sommer.qg.pdf">sommer</a>
+package <span class="citation">[@Covarrubias-Pazaran_2014]</span>. In
+the code below, <em>y</em> is for the vector with the means, <em>GK</em>
+is G covariance matrix Gaussian Kernel for the random effects, which
+will be and identity matrix by default; and <em>X</em> is a design
+matrix for the fixed effects, which will be a vector of ones
+(<strong>1</strong>) by default. Note that we are returning to the “1,
+0, -1” codification in the SNPs matrix. This is a requirement of the
+<em>sommer</em> package.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>dist <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">dist</span>(<span class="fu">scale</span>(geno, <span class="at">center =</span> <span class="cn">TRUE</span>, <span class="at">scale =</span> <span class="cn">TRUE</span>))) <span class="sc">^</span> <span class="dv">2</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>GK <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>dist <span class="sc">/</span> <span class="fu">median</span>(dist))</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>GK[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span></code></pre></div>
+<pre><code>                      Alagoana363.250437472 Arari424.250437476  BGM_2042
+Alagoana363.250437472             1.0000000          0.4278287 0.3892939
+Arari424.250437476                0.4278287          1.0000000 0.3832281
+BGM_2042                          0.3892939          0.3832281 1.0000000
+BGM0290.250581760                 0.3548060          0.3448635 0.3622436
+BGM0368.250437186                 0.3195954          0.3273520 0.3875223
+                      BGM0290.250581760 BGM0368.250437186
+Alagoana363.250437472         0.3548060         0.3195954
+Arari424.250437476            0.3448635         0.3273520
+BGM_2042                      0.3622436         0.3875223
+BGM0290.250581760             1.0000000         0.3404986
+BGM0368.250437186             0.3404986         1.0000000</code></pre>
+<div id="cross-validation" class="section level3">
+<h3>Cross-validation</h3>
+<p>To prove that the prediction is accurate, we should peRKHSorm a
+cross-validation (CV) scheme. For this purpose, we divide the data into
+a training set and a validation set.</p>
+<p>First we separate the data into <em>k</em> folds. Then, we attribute
+<em>NA</em> for one fold and try to predict the data from this fold
+based on the others. When selecting the number of folds, one must
+prioritize the balance between the number of observations in each
+fold.</p>
+<p>In addition, this process should be repeated for further validation.
+The step-by-step below will guide the CV in the data we are
+analysing.</p>
+<div id="determine-the-number-of-folds-and-repetitions"
+class="section level4">
+<h4>1. Determine the number of folds and repetitions</h4>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>nfolds <span class="ot">=</span> <span class="dv">5</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>nrept <span class="ot">=</span> <span class="dv">5</span></span></code></pre></div>
+<p>Since we defined 5 folds, our data will be divided into 5 parts with
+83 observations each.</p>
+</div>
+<div id="match-the-order-of-the-data-and-the-rows-of-the-snp-matrix"
+class="section level4">
+<h4>2. Match the order of the data and the rows of the SNP matrix</h4>
+<p>The order is decreasing or increasing (numeric or alphabetical)
+regarding the name of the genotypes.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>pheno <span class="ot">&lt;-</span> pheno[<span class="fu">order</span>(pheno<span class="sc">$</span>ID_Clone, <span class="at">decreasing =</span> F),]</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>geno <span class="ot">&lt;-</span> geno[<span class="fu">order</span>(<span class="fu">row.names</span>(geno)),]</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="fu">all</span>(<span class="fu">rownames</span>(geno) <span class="sc">==</span> pheno<span class="sc">$</span>ID_Clone)</span></code></pre></div>
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div id="add-a-column-indicating-a-number-for-each-observation"
+class="section level4">
+<h4>3. Add a column indicating a number for each observation</h4>
+<p>This will be useful to assign each observation for a fold, which will
+be the next step.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>pheno<span class="sc">$</span>ID <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(pheno))</span></code></pre></div>
+</div>
+<div id="folds-assignment" class="section level4">
+<h4>4. Folds assignment</h4>
+<p>In this step, we will assign each observation to a fold. Bear in mind
+that for each repetition, the folds will comprise different
+observations. The purpose of the repetition is to make sure of the
+randomness of the assignment step.</p>
+<p>In this step, we will use the <a
+href="https://cran.r-project.org/web/packages/cvTools/cvTools.pdf">cvTools</a>
+package <span class="citation">[@cvTools]</span></p>
+<p>For better peRKHSormance, we included this step in the loop of the
+next step.</p>
+</div>
+</div>
+<div id="run-model" class="section level3">
+<h3>Run model</h3>
+<p>The next step is the very CV. Here, we will define the linear
+predictor and the lists that will be useful in the loop. The first list,
+here called results_cv_RKHS and, contains the results for each fold
+assignation that we built in the previous step. The second GEBVS_RKHS
+contains the GEBVs.</p>
+<p>Then, we will construct the loop. Each iteration will assign
+<em>NA</em> for a different fold, and we will use the other folds to
+predict the missing values. Note that the folds vary for each repetition
+and trait.</p>
+<p>Set up parallel processing. Define and run multiple models to get the
+GEBVs <em>ATTENTION: This process is time-consuming.</em></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Planejar o processamento em várias sessões para paralelização</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">plan</span>(multisession)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co"># Iniciar uma lista para armazenar os resultados</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>results_list <span class="ot">&lt;-</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  <span class="fu">future_map</span>(traits, <span class="at">.options =</span> <span class="fu">furrr_options</span>(<span class="at">seed =</span> <span class="dv">100</span>), <span class="cf">function</span>(j)  {</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>    <span class="co"># Pré-processamento dos dados</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>    pheno2 <span class="ot">&lt;-</span> pheno <span class="sc">%&gt;%</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>      <span class="fu">select</span>(ID_Clone, <span class="fu">all_of</span>(j)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>      <span class="fu">na.omit</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>      <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>      <span class="fu">filter</span>(ID_Clone <span class="sc">%in%</span> <span class="fu">rownames</span>(GK)) <span class="sc">%&gt;%</span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">ID =</span> <span class="fu">factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(.))) <span class="sc">%&gt;%</span></span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>      <span class="fu">droplevels</span>()</span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>    </span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>    <span class="co"># Filtrar as linhas de Z com base em pheno2$ID_Clone</span></span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>    GK1 <span class="ot">&lt;-</span></span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a>      GK[<span class="fu">rownames</span>(GK) <span class="sc">%in%</span> pheno2<span class="sc">$</span>ID_Clone, <span class="fu">rownames</span>(GK) <span class="sc">%in%</span> pheno2<span class="sc">$</span>ID_Clone]</span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a>    </span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a>    <span class="co">#Semente para reprodução</span></span>
+<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a>    <span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
+<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a>    </span>
+<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a>    <span class="co"># Listas das folds</span></span>
+<span id="cb9-24"><a href="#cb9-24" tabindex="-1"></a>    fold.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span>nrept, <span class="cf">function</span>(a) {</span>
+<span id="cb9-25"><a href="#cb9-25" tabindex="-1"></a>      folds <span class="ot">&lt;-</span> <span class="fu">cvFolds</span>(<span class="fu">nlevels</span>(pheno2<span class="sc">$</span>ID),</span>
+<span id="cb9-26"><a href="#cb9-26" tabindex="-1"></a>                       <span class="at">type =</span> <span class="st">&quot;random&quot;</span>,</span>
+<span id="cb9-27"><a href="#cb9-27" tabindex="-1"></a>                       <span class="at">K =</span> nfolds)</span>
+<span id="cb9-28"><a href="#cb9-28" tabindex="-1"></a>      </span>
+<span id="cb9-29"><a href="#cb9-29" tabindex="-1"></a>      <span class="fu">split</span>(folds<span class="sc">$</span>subsets, <span class="at">f =</span> folds<span class="sc">$</span>which)</span>
+<span id="cb9-30"><a href="#cb9-30" tabindex="-1"></a>    })</span>
+<span id="cb9-31"><a href="#cb9-31" tabindex="-1"></a>    </span>
+<span id="cb9-32"><a href="#cb9-32" tabindex="-1"></a>    <span class="co"># Usar future_map_dfr para criar dobras cruzadas em paralelo</span></span>
+<span id="cb9-33"><a href="#cb9-33" tabindex="-1"></a>    <span class="fu">future_map_dfr</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(fold.list), <span class="cf">function</span>(z) {</span>
+<span id="cb9-34"><a href="#cb9-34" tabindex="-1"></a>      <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nfolds) {</span>
+<span id="cb9-35"><a href="#cb9-35" tabindex="-1"></a>        <span class="co"># Conjunto de treinamento</span></span>
+<span id="cb9-36"><a href="#cb9-36" tabindex="-1"></a>        train_data <span class="ot">&lt;-</span> pheno2</span>
+<span id="cb9-37"><a href="#cb9-37" tabindex="-1"></a>        </span>
+<span id="cb9-38"><a href="#cb9-38" tabindex="-1"></a>        <span class="co"># Conjunto de validação</span></span>
+<span id="cb9-39"><a href="#cb9-39" tabindex="-1"></a>        train_data[train_data<span class="sc">$</span>ID <span class="sc">%in%</span> fold.list[[z]][[i]], j] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb9-40"><a href="#cb9-40" tabindex="-1"></a>        </span>
+<span id="cb9-41"><a href="#cb9-41" tabindex="-1"></a>        <span class="co"># Fitting model</span></span>
+<span id="cb9-42"><a href="#cb9-42" tabindex="-1"></a>        fixed <span class="ot">&lt;-</span> <span class="fu">formula</span>(<span class="fu">paste</span>(j, <span class="st">&quot; ~ 1&quot;</span>))</span>
+<span id="cb9-43"><a href="#cb9-43" tabindex="-1"></a>        </span>
+<span id="cb9-44"><a href="#cb9-44" tabindex="-1"></a>        RKHS <span class="ot">&lt;-</span></span>
+<span id="cb9-45"><a href="#cb9-45" tabindex="-1"></a>          sommer<span class="sc">::</span><span class="fu">mmer</span>(</span>
+<span id="cb9-46"><a href="#cb9-46" tabindex="-1"></a>            fixed,</span>
+<span id="cb9-47"><a href="#cb9-47" tabindex="-1"></a>            <span class="at">random =</span> <span class="sc">~</span> sommer<span class="sc">::</span><span class="fu">vsr</span>(ID_Clone, <span class="at">Gu =</span> GK1),</span>
+<span id="cb9-48"><a href="#cb9-48" tabindex="-1"></a>            <span class="at">data =</span> train_data,</span>
+<span id="cb9-49"><a href="#cb9-49" tabindex="-1"></a>            <span class="at">rcov =</span> <span class="sc">~</span> units</span>
+<span id="cb9-50"><a href="#cb9-50" tabindex="-1"></a>          )</span>
+<span id="cb9-51"><a href="#cb9-51" tabindex="-1"></a>        </span>
+<span id="cb9-52"><a href="#cb9-52" tabindex="-1"></a>        <span class="co"># GETGV</span></span>
+<span id="cb9-53"><a href="#cb9-53" tabindex="-1"></a>        Pred <span class="ot">&lt;-</span></span>
+<span id="cb9-54"><a href="#cb9-54" tabindex="-1"></a>          <span class="fu">data.frame</span>(</span>
+<span id="cb9-55"><a href="#cb9-55" tabindex="-1"></a>            <span class="at">Yhat =</span>  RKHS<span class="sc">$</span>U<span class="sc">$</span><span class="st">`</span><span class="at">u:ID_Clone</span><span class="st">`</span>[[j]],</span>
+<span id="cb9-56"><a href="#cb9-56" tabindex="-1"></a>            <span class="at">ID =</span> train_data<span class="sc">$</span>ID,</span>
+<span id="cb9-57"><a href="#cb9-57" tabindex="-1"></a>            <span class="at">ID_Clone =</span> train_data<span class="sc">$</span>ID_Clone</span>
+<span id="cb9-58"><a href="#cb9-58" tabindex="-1"></a>          ) <span class="sc">%&gt;%</span></span>
+<span id="cb9-59"><a href="#cb9-59" tabindex="-1"></a>          <span class="fu">filter</span>(ID <span class="sc">%in%</span> fold.list[[z]][[i]])</span>
+<span id="cb9-60"><a href="#cb9-60" tabindex="-1"></a>        </span>
+<span id="cb9-61"><a href="#cb9-61" tabindex="-1"></a>        result1 <span class="ot">&lt;-</span></span>
+<span id="cb9-62"><a href="#cb9-62" tabindex="-1"></a>          <span class="fu">tibble</span>(</span>
+<span id="cb9-63"><a href="#cb9-63" tabindex="-1"></a>            <span class="at">GEBV =</span> Pred<span class="sc">$</span>Yhat,</span>
+<span id="cb9-64"><a href="#cb9-64" tabindex="-1"></a>            <span class="at">ID =</span> Pred<span class="sc">$</span>ID,</span>
+<span id="cb9-65"><a href="#cb9-65" tabindex="-1"></a>            <span class="at">ID_Clone =</span> Pred<span class="sc">$</span>ID_Clone,</span>
+<span id="cb9-66"><a href="#cb9-66" tabindex="-1"></a>            <span class="at">Trait =</span> j,</span>
+<span id="cb9-67"><a href="#cb9-67" tabindex="-1"></a>            <span class="at">rep =</span> z,</span>
+<span id="cb9-68"><a href="#cb9-68" tabindex="-1"></a>            <span class="at">fold =</span> i</span>
+<span id="cb9-69"><a href="#cb9-69" tabindex="-1"></a>          )</span>
+<span id="cb9-70"><a href="#cb9-70" tabindex="-1"></a>        </span>
+<span id="cb9-71"><a href="#cb9-71" tabindex="-1"></a>        </span>
+<span id="cb9-72"><a href="#cb9-72" tabindex="-1"></a>        <span class="co"># Resultados da previsão</span></span>
+<span id="cb9-73"><a href="#cb9-73" tabindex="-1"></a>        <span class="cf">if</span> (i <span class="sc">==</span> <span class="dv">1</span>) {</span>
+<span id="cb9-74"><a href="#cb9-74" tabindex="-1"></a>          result <span class="ot">&lt;-</span> result1</span>
+<span id="cb9-75"><a href="#cb9-75" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
+<span id="cb9-76"><a href="#cb9-76" tabindex="-1"></a>          result <span class="ot">&lt;-</span> <span class="fu">rbind</span>(result, result1)</span>
+<span id="cb9-77"><a href="#cb9-77" tabindex="-1"></a>        }</span>
+<span id="cb9-78"><a href="#cb9-78" tabindex="-1"></a>      }</span>
+<span id="cb9-79"><a href="#cb9-79" tabindex="-1"></a>      </span>
+<span id="cb9-80"><a href="#cb9-80" tabindex="-1"></a>      <span class="co">#Ordenando os resultados de acordo com o ID</span></span>
+<span id="cb9-81"><a href="#cb9-81" tabindex="-1"></a>      result <span class="ot">&lt;-</span> result[<span class="fu">order</span>(result<span class="sc">$</span>ID, <span class="at">decreasing =</span> F),]</span>
+<span id="cb9-82"><a href="#cb9-82" tabindex="-1"></a>      </span>
+<span id="cb9-83"><a href="#cb9-83" tabindex="-1"></a>      <span class="co"># Resultados da validação cruzada</span></span>
+<span id="cb9-84"><a href="#cb9-84" tabindex="-1"></a>      result_cv <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb9-85"><a href="#cb9-85" tabindex="-1"></a>        <span class="at">Trait =</span> j,</span>
+<span id="cb9-86"><a href="#cb9-86" tabindex="-1"></a>        <span class="at">rep =</span> z,</span>
+<span id="cb9-87"><a href="#cb9-87" tabindex="-1"></a>        <span class="at">Log =</span> <span class="fu">all</span>(result<span class="sc">$</span>ID <span class="sc">==</span> pheno2<span class="sc">$</span>ID),</span>
+<span id="cb9-88"><a href="#cb9-88" tabindex="-1"></a>        <span class="at">Ac =</span> <span class="fu">round</span>(<span class="fu">cor</span>(result<span class="sc">$</span>GEBV, pheno2[[j]], <span class="at">use =</span> <span class="st">&quot;na.or.complete&quot;</span>), <span class="dv">3</span>),</span>
+<span id="cb9-89"><a href="#cb9-89" tabindex="-1"></a>        <span class="at">MSPE =</span> <span class="fu">round</span>(<span class="fu">mean</span>((</span>
+<span id="cb9-90"><a href="#cb9-90" tabindex="-1"></a>          result<span class="sc">$</span>GEBV <span class="sc">-</span> pheno2[[j]]</span>
+<span id="cb9-91"><a href="#cb9-91" tabindex="-1"></a>        ) <span class="sc">^</span> <span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">3</span>),</span>
+<span id="cb9-92"><a href="#cb9-92" tabindex="-1"></a>        <span class="at">result =</span> <span class="fu">list</span>(result)</span>
+<span id="cb9-93"><a href="#cb9-93" tabindex="-1"></a>      )</span>
+<span id="cb9-94"><a href="#cb9-94" tabindex="-1"></a>    })</span>
+<span id="cb9-95"><a href="#cb9-95" tabindex="-1"></a>  })</span></code></pre></div>
+<pre><code>iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.125   14:51:0      1           0
+    2      -156.713   14:51:0      1           0
+    3      -156.614   14:51:0      1           0
+    4      -156.605   14:51:0      1           0
+    5      -156.605   14:51:0      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.512   14:51:1      0           0
+    2      -157.073   14:51:1      0           0
+    3      -156.947   14:51:1      0           0
+    4      -156.93   14:51:1      0           0
+    5      -156.93   14:51:2      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -154.349   14:51:2      0           0
+    2      -152.048   14:51:2      0           0
+    3      -151.406   14:51:2      0           0
+    4      -151.314   14:51:3      1           0
+    5      -151.31   14:51:3      1           0
+    6      -151.31   14:51:3      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.007   14:51:3      0           0
+    2      -154.922   14:51:4      1           0
+    3      -154.656   14:51:4      1           0
+    4      -154.63   14:51:4      1           0
+    5      -154.629   14:51:4      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.983   14:51:5      0           0
+    2      -154.922   14:51:5      0           0
+    3      -154.627   14:51:5      0           0
+    4      -154.586   14:51:5      0           0
+    5      -154.584   14:51:5      0           0
+    6      -154.584   14:51:6      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.318   14:51:6      0           0
+    2      -156.727   14:51:6      0           0
+    3      -156.524   14:51:6      0           0
+    4      -156.492   14:51:7      1           0
+    5      -156.49   14:51:7      1           0
+    6      -156.49   14:51:7      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -154.844   14:51:8      1           0
+    2      -153.062   14:51:8      1           0
+    3      -152.506   14:51:8      1           0
+    4      -152.398   14:51:8      1           0
+    5      -152.389   14:51:8      1           0
+    6      -152.389   14:51:9      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.971   14:51:9      0           0
+    2      -156.406   14:51:9      0           0
+    3      -156.251   14:51:9      0           0
+    4      -156.231   14:51:10      1           0
+    5      -156.23   14:51:10      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.54   14:51:10      0           0
+    2      -157.292   14:51:10      0           0
+    3      -157.255   14:51:11      1           0
+    4      -157.255   14:51:11      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.124   14:51:12      1           0
+    2      -153.484   14:51:12      1           0
+    3      -153.02   14:51:12      1           0
+    4      -152.951   14:51:12      1           0
+    5      -152.948   14:51:13      2           0
+    6      -152.948   14:51:13      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.8   14:51:13      0           0
+    2      -154.788   14:51:14      1           0
+    3      -154.488   14:51:14      1           0
+    4      -154.443   14:51:14      1           0
+    5      -154.441   14:51:14      1           0
+    6      -154.441   14:51:14      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.929   14:51:15      0           0
+    2      -154.649   14:51:15      0           0
+    3      -154.228   14:51:15      0           0
+    4      -154.146   14:51:15      0           0
+    5      -154.139   14:51:16      1           0
+    6      -154.139   14:51:16      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.167   14:51:17      1           0
+    2      -156.594   14:51:17      1           0
+    3      -156.457   14:51:17      1           0
+    4      -156.444   14:51:17      1           0
+    5      -156.444   14:51:17      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -154.156   14:51:18      0           0
+    2      -152.674   14:51:18      0           0
+    3      -152.481   14:51:18      0           0
+    4      -152.471   14:51:18      0           0
+    5      -152.471   14:51:19      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.639   14:51:19      0           0
+    2      -158.499   14:51:19      0           0
+    3      -158.463   14:51:19      0           0
+    4      -158.46   14:51:20      1           0
+    5      -158.46   14:51:20      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.488   14:51:20      0           0
+    2      -157.325   14:51:20      0           0
+    3      -157.299   14:51:21      1           0
+    4      -157.298   14:51:21      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.928   14:51:21      0           0
+    2      -154.789   14:51:22      1           0
+    3      -154.525   14:51:22      1           0
+    4      -154.502   14:51:22      1           0
+    5      -154.502   14:51:22      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.299   14:51:23      0           0
+    2      -149.554   14:51:23      0           0
+    3      -148.104   14:51:23      0           0
+    4      -147.77   14:51:23      0           0
+    5      -147.739   14:51:24      1           0
+    6      -147.736   14:51:24      1           0
+    7      -147.735   14:51:24      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.449   14:51:24      0           0
+    2      -155.758   14:51:25      1           0
+    3      -155.624   14:51:25      1           0
+    4      -155.615   14:51:25      1           0
+    5      -155.615   14:51:25      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.958   14:51:26      1           0
+    2      -157.638   14:51:26      1           0
+    3      -157.528   14:51:26      1           0
+    4      -157.508   14:51:26      1           0
+    5      -157.506   14:51:26      1           0
+    6      -157.506   14:51:27      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.869   14:51:27      0           0
+    2      -156.087   14:51:27      0           0
+    3      -155.82   14:51:27      0           0
+    4      -155.775   14:51:28      1           0
+    5      -155.772   14:51:28      1           0
+    6      -155.772   14:51:28      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.864   14:51:29      1           0
+    2      -151.322   14:51:29      1           0
+    3      -150.574   14:51:29      1           0
+    4      -150.448   14:51:29      1           0
+    5      -150.441   14:51:29      1           0
+    6      -150.44   14:51:30      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.638   14:51:30      0           0
+    2      -152.193   14:51:30      0           0
+    3      -152.047   14:51:31      1           0
+    4      -152.043   14:51:31      1           0
+    5      -152.043   14:51:31      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.669   14:51:32      1           0
+    2      -156.927   14:51:32      1           0
+    3      -156.613   14:51:32      1           0
+    4      -156.54   14:51:32      1           0
+    5      -156.533   14:51:32      1           0
+    6      -156.533   14:51:33      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.072   14:51:33      0           0
+    2      -156.559   14:51:33      0           0
+    3      -156.439   14:51:33      0           0
+    4      -156.428   14:51:34      1           0
+    5      -156.428   14:51:34      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.767   14:51:34      0           0
+    2      -149.668   14:51:35      1           0
+    3      -147.835   14:51:35      1           0
+    4      -147.333   14:51:35      1           0
+    5      -147.274   14:51:35      1           0
+    6      -147.267   14:51:35      1           0
+    7      -147.266   14:51:35      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.854   14:51:36      0           0
+    2      -149.114   14:51:36      0           0
+    3      -148.105   14:51:36      0           0
+    4      -147.903   14:51:36      0           0
+    5      -147.883   14:51:37      1           0
+    6      -147.881   14:51:37      1           0
+    7      -147.881   14:51:37      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -151.977   14:51:37      0           0
+    2      -144.603   14:51:38      1           0
+    3      -140.782   14:51:38      1           0
+    4      -139.59   14:51:38      1           0
+    5      -139.441   14:51:38      1           0
+    6      -139.425   14:51:38      1           0
+    7      -139.423   14:51:39      2           0
+    8      -139.423   14:51:39      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.501   14:51:39      0           0
+    2      -146.098   14:51:39      0           0
+    3      -143.517   14:51:39      0           0
+    4      -142.974   14:51:40      1           0
+    5      -142.938   14:51:40      1           0
+    6      -142.936   14:51:40      1           0
+    7      -142.936   14:51:40      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -151.732   14:51:40      0           0
+    2      -145.506   14:51:41      1           0
+    3      -142.648   14:51:41      1           0
+    4      -141.403   14:51:41      1           0
+    5      -141.051   14:51:41      1           0
+    6      -140.953   14:51:41      1           0
+    7      -140.927   14:51:41      1           0
+    8      -140.921   14:51:42      2           0
+    9      -140.919   14:51:42      2           0
+    10      -140.919   14:51:42      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -151.77   14:51:42      0           0
+    2      -145.935   14:51:42      0           0
+    3      -144.001   14:51:43      1           0
+    4      -143.602   14:51:43      1           0
+    5      -143.567   14:51:43      1           0
+    6      -143.564   14:51:43      1           0
+    7      -143.563   14:51:43      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.338   14:51:44      1           0
+    2      -145.969   14:51:44      1           0
+    3      -143.217   14:51:44      1           0
+    4      -142.607   14:51:44      1           0
+    5      -142.562   14:51:44      1           0
+    6      -142.559   14:51:45      2           0
+    7      -142.558   14:51:45      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -151.461   14:51:45      0           0
+    2      -144.975   14:51:45      0           0
+    3      -142.597   14:51:46      1           0
+    4      -142.049   14:51:46      1           0
+    5      -141.998   14:51:46      1           0
+    6      -141.994   14:51:46      1           0
+    7      -141.994   14:51:46      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.445   14:51:47      1           0
+    2      -148.787   14:51:47      1           0
+    3      -146.262   14:51:47      1           0
+    4      -145.077   14:51:47      1           0
+    5      -144.752   14:51:47      1           0
+    6      -144.671   14:51:47      1           0
+    7      -144.652   14:51:47      1           0
+    8      -144.648   14:51:47      1           0
+    9      -144.647   14:51:48      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.908   14:51:48      0           0
+    2      -149.815   14:51:48      0           0
+    3      -148.198   14:51:48      0           0
+    4      -147.744   14:51:48      0           0
+    5      -147.672   14:51:48      0           0
+    6      -147.66   14:51:49      1           0
+    7      -147.658   14:51:49      1           0
+    8      -147.658   14:51:49      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.193   14:51:49      0           0
+    2      -146.708   14:51:49      0           0
+    3      -144.893   14:51:49      0           0
+    4      -144.591   14:51:50      1           0
+    5      -144.575   14:51:50      1           0
+    6      -144.574   14:51:50      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.335   14:51:50      0           0
+    2      -148.747   14:51:50      0           0
+    3      -146.168   14:51:50      0           0
+    4      -144.977   14:51:50      0           0
+    5      -144.636   14:51:51      1           0
+    6      -144.543   14:51:51      1           0
+    7      -144.52   14:51:51      1           0
+    8      -144.514   14:51:51      1           0
+    9      -144.513   14:51:51      1           0
+    10      -144.512   14:51:51      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.768   14:51:51      0           0
+    2      -147.232   14:51:52      1           0
+    3      -144.835   14:51:52      1           0
+    4      -144.071   14:51:52      1           0
+    5      -143.948   14:51:52      1           0
+    6      -143.929   14:51:52      1           0
+    7      -143.926   14:51:52      1           0
+    8      -143.925   14:51:52      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.64   14:51:52      0           0
+    2      -146.461   14:51:53      1           0
+    3      -143.414   14:51:53      1           0
+    4      -142.256   14:51:53      1           0
+    5      -142.024   14:51:53      1           0
+    6      -141.981   14:51:53      1           0
+    7      -141.974   14:51:53      1           0
+    8      -141.973   14:51:53      1           0
+    9      -141.972   14:51:53      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.057   14:51:54      0           0
+    2      -146.803   14:51:54      0           0
+    3      -145.342   14:51:54      0           0
+    4      -145.099   14:51:54      0           0
+    5      -145.084   14:51:54      0           0
+    6      -145.083   14:51:54      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.641   14:51:55      1           0
+    2      -147.632   14:51:55      1           0
+    3      -145.246   14:51:55      1           0
+    4      -144.302   14:51:55      1           0
+    5      -144.079   14:51:55      1           0
+    6      -144.027   14:51:55      1           0
+    7      -144.015   14:51:55      1           0
+    8      -144.013   14:51:55      1           0
+    9      -144.012   14:51:56      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -151.976   14:51:56      0           0
+    2      -146.417   14:51:56      0           0
+    3      -144.69   14:51:56      0           0
+    4      -144.422   14:51:56      0           0
+    5      -144.411   14:51:56      0           0
+    6      -144.41   14:51:56      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.287   14:51:57      1           0
+    2      -145.537   14:51:57      1           0
+    3      -141.915   14:51:57      1           0
+    4      -140.705   14:51:57      1           0
+    5      -140.542   14:51:57      1           0
+    6      -140.523   14:51:57      1           0
+    7      -140.521   14:51:57      1           0
+    8      -140.521   14:51:57      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -151.34   14:51:58      1           0
+    2      -145.165   14:51:58      1           0
+    3      -143.634   14:51:58      1           0
+    4      -143.431   14:51:58      1           0
+    5      -143.424   14:51:58      1           0
+    6      -143.424   14:51:58      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.909   14:51:58      0           0
+    2      -149.319   14:51:59      1           0
+    3      -147.222   14:51:59      1           0
+    4      -146.524   14:51:59      1           0
+    5      -146.395   14:51:59      1           0
+    6      -146.371   14:51:59      1           0
+    7      -146.367   14:51:59      1           0
+    8      -146.366   14:51:59      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.369   14:52:0      1           0
+    2      -148.722   14:52:0      1           0
+    3      -146.136   14:52:0      1           0
+    4      -145.108   14:52:0      1           0
+    5      -144.899   14:52:0      1           0
+    6      -144.861   14:52:0      1           0
+    7      -144.854   14:52:0      1           0
+    8      -144.853   14:52:0      1           0
+    9      -144.853   14:52:0      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -151.816   14:52:1      0           0
+    2      -146.223   14:52:1      0           0
+    3      -144.045   14:52:1      0           0
+    4      -143.356   14:52:1      0           0
+    5      -143.231   14:52:1      0           0
+    6      -143.209   14:52:1      0           0
+    7      -143.205   14:52:1      0           0
+    8      -143.204   14:52:1      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -151.4   14:52:2      0           0
+    2      -146.471   14:52:2      0           0
+    3      -145.297   14:52:2      0           0
+    4      -145.091   14:52:2      0           0
+    5      -145.075   14:52:2      0           0
+    6      -145.074   14:52:2      0           0
+    7      -145.074   14:52:2      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.974   14:52:3      1           0
+    2      -147.867   14:52:3      1           0
+    3      -144.189   14:52:3      1           0
+    4      -142.891   14:52:3      1           0
+    5      -142.71   14:52:3      1           0
+    6      -142.689   14:52:3      1           0
+    7      -142.687   14:52:3      1           0
+    8      -142.687   14:52:3      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -151.466   14:52:4      1           0
+    2      -145.723   14:52:4      1           0
+    3      -144.453   14:52:4      1           0
+    4      -144.313   14:52:4      1           0
+    5      -144.309   14:52:4      1           0
+    6      -144.309   14:52:4      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.439   14:51:0      0           0
+    2      -156.437   14:51:0      0           0
+    3      -155.338   14:51:0      0           0
+    4      -154.893   14:51:1      1           0
+    5      -154.79   14:51:1      1           0
+    6      -154.767   14:51:1      1           0
+    7      -154.762   14:51:1      1           0
+    8      -154.761   14:51:1      1           0
+    9      -154.76   14:51:2      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -150.888   14:51:2      0           0
+    2      -143.671   14:51:2      0           0
+    3      -142.49   14:51:2      0           0
+    4      -142.398   14:51:3      1           0
+    5      -142.398   14:51:3      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.25   14:51:3      0           0
+    2      -151.296   14:51:4      1           0
+    3      -149.495   14:51:4      1           0
+    4      -148.882   14:51:4      1           0
+    5      -148.775   14:51:4      1           0
+    6      -148.757   14:51:4      1           0
+    7      -148.754   14:51:5      2           0
+    8      -148.753   14:51:5      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.805   14:51:5      0           0
+    2      -153.479   14:51:5      0           0
+    3      -152.063   14:51:6      1           0
+    4      -151.627   14:51:6      1           0
+    5      -151.558   14:51:6      1           0
+    6      -151.548   14:51:6      1           0
+    7      -151.546   14:51:6      1           0
+    8      -151.546   14:51:7      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -154.492   14:51:7      0           0
+    2      -148.761   14:51:7      0           0
+    3      -145.488   14:51:8      1           0
+    4      -143.912   14:51:8      1           0
+    5      -143.507   14:51:8      1           0
+    6      -143.419   14:51:8      1           0
+    7      -143.402   14:51:8      1           0
+    8      -143.399   14:51:9      2           0
+    9      -143.398   14:51:9      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.676   14:51:9      0           0
+    2      -146.892   14:51:10      1           0
+    3      -143.572   14:51:10      1           0
+    4      -142.535   14:51:10      1           0
+    5      -142.399   14:51:10      1           0
+    6      -142.383   14:51:11      2           0
+    7      -142.381   14:51:11      2           0
+    8      -142.381   14:51:11      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.683   14:51:12      1           0
+    2      -148.98   14:51:12      1           0
+    3      -147.606   14:51:12      1           0
+    4      -147.321   14:51:12      1           0
+    5      -147.296   14:51:13      2           0
+    6      -147.294   14:51:13      2           0
+    7      -147.294   14:51:13      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -154.769   14:51:14      1           0
+    2      -149.761   14:51:14      1           0
+    3      -147.653   14:51:14      1           0
+    4      -147.054   14:51:14      1           0
+    5      -146.981   14:51:14      1           0
+    6      -146.973   14:51:15      2           0
+    7      -146.973   14:51:15      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.632   14:51:16      1           0
+    2      -153.831   14:51:16      1           0
+    3      -152.6   14:51:16      1           0
+    4      -152.142   14:51:16      1           0
+    5      -152.039   14:51:17      2           0
+    6      -152.016   14:51:17      2           0
+    7      -152.011   14:51:17      2           0
+    8      -152.01   14:51:17      2           0
+    9      -152.01   14:51:18      3           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.259   14:51:18      0           0
+    2      -154.272   14:51:18      0           0
+    3      -152.825   14:51:18      0           0
+    4      -152.28   14:51:19      1           0
+    5      -152.162   14:51:19      1           0
+    6      -152.137   14:51:19      1           0
+    7      -152.132   14:51:19      1           0
+    8      -152.131   14:51:20      2           0
+    9      -152.131   14:51:20      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.464   14:51:20      0           0
+    2      -147.13   14:51:20      0           0
+    3      -144.525   14:51:21      1           0
+    4      -143.926   14:51:21      1           0
+    5      -143.883   14:51:21      1           0
+    6      -143.88   14:51:21      1           0
+    7      -143.88   14:51:22      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.784   14:51:22      0           0
+    2      -149.731   14:51:23      1           0
+    3      -148.541   14:51:23      1           0
+    4      -148.242   14:51:23      1           0
+    5      -148.201   14:51:23      1           0
+    6      -148.195   14:51:23      1           0
+    7      -148.194   14:51:24      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.672   14:51:24      0           0
+    2      -154.653   14:51:24      0           0
+    3      -152.882   14:51:24      0           0
+    4      -152.19   14:51:25      1           0
+    5      -152.057   14:51:25      1           0
+    6      -152.034   14:51:25      1           0
+    7      -152.03   14:51:25      1           0
+    8      -152.03   14:51:25      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.062   14:51:26      0           0
+    2      -150.687   14:51:26      0           0
+    3      -149.01   14:51:26      0           0
+    4      -148.487   14:51:26      0           0
+    5      -148.395   14:51:27      1           0
+    6      -148.378   14:51:27      1           0
+    7      -148.375   14:51:27      1           0
+    8      -148.375   14:51:27      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.256   14:51:28      1           0
+    2      -150.211   14:51:28      1           0
+    3      -147.976   14:51:28      1           0
+    4      -147.389   14:51:28      1           0
+    5      -147.332   14:51:29      2           0
+    6      -147.327   14:51:29      2           0
+    7      -147.326   14:51:29      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -151.611   14:51:29      0           0
+    2      -146.113   14:51:30      1           0
+    3      -145.14   14:51:30      1           0
+    4      -145.004   14:51:30      1           0
+    5      -144.997   14:51:30      1           0
+    6      -144.996   14:51:31      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.411   14:51:31      0           0
+    2      -154.477   14:51:32      1           0
+    3      -152.729   14:51:32      1           0
+    4      -152.023   14:51:32      1           0
+    5      -151.882   14:51:32      1           0
+    6      -151.856   14:51:32      1           0
+    7      -151.852   14:51:33      2           0
+    8      -151.851   14:51:33      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.257   14:51:33      0           0
+    2      -150.523   14:51:33      0           0
+    3      -147.998   14:51:34      1           0
+    4      -146.936   14:51:34      1           0
+    5      -146.697   14:51:34      1           0
+    6      -146.648   14:51:34      1           0
+    7      -146.639   14:51:34      1           0
+    8      -146.637   14:51:35      2           0
+    9      -146.637   14:51:35      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.351   14:51:35      0           0
+    2      -149.857   14:51:35      0           0
+    3      -147.059   14:51:36      1           0
+    4      -146.147   14:51:36      1           0
+    5      -146.03   14:51:36      1           0
+    6      -146.017   14:51:36      1           0
+    7      -146.016   14:51:37      2           0
+    8      -146.016   14:51:37      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.647   14:51:37      0           0
+    2      -151.987   14:51:37      0           0
+    3      -150.599   14:51:38      1           0
+    4      -150.246   14:51:38      1           0
+    5      -150.208   14:51:38      1           0
+    6      -150.204   14:51:38      1           0
+    7      -150.204   14:51:38      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -154.137   14:51:39      0           0
+    2      -149.093   14:51:39      0           0
+    3      -146.995   14:51:39      0           0
+    4      -146.39   14:51:39      0           0
+    5      -146.313   14:51:39      0           0
+    6      -146.304   14:51:40      1           0
+    7      -146.303   14:51:40      1           0
+    8      -146.302   14:51:40      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.032   14:51:40      0           0
+    2      -146.698   14:51:40      0           0
+    3      -143.894   14:51:41      1           0
+    4      -142.969   14:51:41      1           0
+    5      -142.831   14:51:41      1           0
+    6      -142.813   14:51:41      1           0
+    7      -142.811   14:51:41      1           0
+    8      -142.81   14:51:41      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -154.656   14:51:42      0           0
+    2      -149.862   14:51:42      0           0
+    3      -147.997   14:51:42      0           0
+    4      -147.54   14:51:42      0           0
+    5      -147.497   14:51:43      1           0
+    6      -147.494   14:51:43      1           0
+    7      -147.493   14:51:43      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.54   14:51:43      0           0
+    2      -154.181   14:51:43      0           0
+    3      -152.305   14:51:44      1           0
+    4      -151.621   14:51:44      1           0
+    5      -151.502   14:51:44      1           0
+    6      -151.483   14:51:44      1           0
+    7      -151.48   14:51:45      2           0
+    8      -151.48   14:51:45      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.631   14:51:45      0           0
+    2      -153.977   14:51:45      0           0
+    3      -153.146   14:51:46      1           0
+    4      -152.925   14:51:46      1           0
+    5      -152.889   14:51:46      1           0
+    6      -152.882   14:51:46      1           0
+    7      -152.881   14:51:46      1           0
+    8      -152.881   14:51:46      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.911   14:51:0      0           0
+    2      -118.677   14:51:0      0           0
+    3      -118.224   14:51:0      0           0
+    4      -118.15   14:51:0      0           0
+    5      -118.146   14:51:0      0           0
+    6      -118.146   14:51:1      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -120.036   14:51:1      0           0
+    2      -118.963   14:51:1      0           0
+    3      -118.519   14:51:1      0           0
+    4      -118.418   14:51:1      0           0
+    5      -118.408   14:51:1      0           0
+    6      -118.407   14:51:1      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -118.109   14:51:1      0           0
+    2      -115.543   14:51:2      1           0
+    3      -114.736   14:51:2      1           0
+    4      -114.598   14:51:2      1           0
+    5      -114.591   14:51:2      1           0
+    6      -114.59   14:51:2      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -120.408   14:51:2      0           0
+    2      -119.771   14:51:2      0           0
+    3      -119.554   14:51:2      0           0
+    4      -119.523   14:51:2      0           0
+    5      -119.522   14:51:3      1           0
+    6      -119.522   14:51:3      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.811   14:51:3      0           0
+    2      -118.093   14:51:3      0           0
+    3      -116.848   14:51:3      0           0
+    4      -116.221   14:51:3      0           0
+    5      -116.04   14:51:3      0           0
+    6      -115.991   14:51:3      0           0
+    7      -115.978   14:51:3      0           0
+    8      -115.975   14:51:3      0           0
+    9      -115.974   14:51:4      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.957   14:51:4      0           0
+    2      -119.35   14:51:4      0           0
+    3      -119.213   14:51:4      0           0
+    4      -119.202   14:51:4      0           0
+    5      -119.202   14:51:4      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.975   14:51:4      0           0
+    2      -118.939   14:51:4      0           0
+    3      -118.533   14:51:5      1           0
+    4      -118.45   14:51:5      1           0
+    5      -118.443   14:51:5      1           0
+    6      -118.443   14:51:5      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -120.132   14:51:5      0           0
+    2      -118.594   14:51:5      0           0
+    3      -117.622   14:51:5      0           0
+    4      -117.261   14:51:5      0           0
+    5      -117.198   14:51:5      0           0
+    6      -117.188   14:51:5      0           0
+    7      -117.186   14:51:5      0           0
+    8      -117.186   14:51:6      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -118.484   14:51:6      0           0
+    2      -116.129   14:51:6      0           0
+    3      -115.183   14:51:6      0           0
+    4      -114.975   14:51:6      0           0
+    5      -114.956   14:51:6      0           0
+    6      -114.954   14:51:6      0           0
+    7      -114.954   14:51:6      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.04   14:51:7      1           0
+    2      -116.914   14:51:7      1           0
+    3      -115.891   14:51:7      1           0
+    4      -115.528   14:51:7      1           0
+    5      -115.45   14:51:7      1           0
+    6      -115.432   14:51:7      1           0
+    7      -115.428   14:51:7      1           0
+    8      -115.427   14:51:7      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -121.973   14:51:7      0           0
+    2      -121.868   14:51:7      0           0
+    3      -121.816   14:51:8      1           0
+    4      -121.802   14:51:8      1           0
+    5      -121.801   14:51:8      1           0
+    6      -121.801   14:51:8      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.459   14:51:8      0           0
+    2      -117.452   14:51:8      0           0
+    3      -116.241   14:51:8      0           0
+    4      -115.762   14:51:8      0           0
+    5      -115.662   14:51:8      0           0
+    6      -115.642   14:51:8      0           0
+    7      -115.638   14:51:9      1           0
+    8      -115.637   14:51:9      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -120.269   14:51:9      0           0
+    2      -119.249   14:51:9      0           0
+    3      -118.712   14:51:9      0           0
+    4      -118.546   14:51:9      0           0
+    5      -118.521   14:51:9      0           0
+    6      -118.517   14:51:9      0           0
+    7      -118.517   14:51:9      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -118.435   14:51:10      0           0
+    2      -116.521   14:51:10      0           0
+    3      -116.031   14:51:10      0           0
+    4      -115.972   14:51:10      0           0
+    5      -115.97   14:51:10      0           0
+    6      -115.97   14:51:10      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -116.796   14:51:10      0           0
+    2      -111.761   14:51:10      0           0
+    3      -109.224   14:51:10      0           0
+    4      -108.346   14:51:11      1           0
+    5      -108.204   14:51:11      1           0
+    6      -108.183   14:51:11      1           0
+    7      -108.18   14:51:11      1           0
+    8      -108.179   14:51:11      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.141   14:51:11      0           0
+    2      -117.572   14:51:11      0           0
+    3      -117.113   14:51:11      0           0
+    4      -117.056   14:51:12      1           0
+    5      -117.055   14:51:12      1           0
+    6      -117.055   14:51:12      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.03   14:51:12      0           0
+    2      -117.343   14:51:12      0           0
+    3      -116.698   14:51:12      0           0
+    4      -116.534   14:51:12      0           0
+    5      -116.512   14:51:12      0           0
+    6      -116.508   14:51:12      0           0
+    7      -116.508   14:51:12      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -120.538   14:51:13      0           0
+    2      -119.672   14:51:13      0           0
+    3      -119.142   14:51:13      0           0
+    4      -118.937   14:51:13      0           0
+    5      -118.897   14:51:13      0           0
+    6      -118.889   14:51:13      0           0
+    7      -118.888   14:51:13      0           0
+    8      -118.887   14:51:13      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.813   14:51:14      1           0
+    2      -118.278   14:51:14      1           0
+    3      -117.561   14:51:14      1           0
+    4      -117.379   14:51:14      1           0
+    5      -117.359   14:51:14      1           0
+    6      -117.357   14:51:14      1           0
+    7      -117.356   14:51:14      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.054   14:51:14      0           0
+    2      -117.523   14:51:14      0           0
+    3      -117.076   14:51:15      1           0
+    4      -117.026   14:51:15      1           0
+    5      -117.025   14:51:15      1           0
+    6      -117.025   14:51:15      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -120.345   14:51:15      0           0
+    2      -119.385   14:51:15      0           0
+    3      -118.934   14:51:15      0           0
+    4      -118.819   14:51:15      0           0
+    5      -118.806   14:51:15      0           0
+    6      -118.804   14:51:16      1           0
+    7      -118.804   14:51:16      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.444   14:51:16      0           0
+    2      -117.941   14:51:16      0           0
+    3      -117.343   14:51:16      0           0
+    4      -117.211   14:51:16      0           0
+    5      -117.199   14:51:16      0           0
+    6      -117.197   14:51:16      0           0
+    7      -117.197   14:51:17      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.041   14:51:17      0           0
+    2      -116.746   14:51:17      0           0
+    3      -115.524   14:51:17      0           0
+    4      -115.142   14:51:17      0           0
+    5      -115.087   14:51:17      0           0
+    6      -115.08   14:51:17      0           0
+    7      -115.079   14:51:17      0           0
+    8      -115.079   14:51:17      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -118.499   14:51:18      0           0
+    2      -115.856   14:51:18      0           0
+    3      -114.748   14:51:18      0           0
+    4      -114.497   14:51:18      0           0
+    5      -114.476   14:51:18      0           0
+    6      -114.474   14:51:18      0           0
+    7      -114.474   14:51:18      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -120.581   14:51:18      0           0
+    2      -120.077   14:51:18      0           0
+    3      -119.896   14:51:19      1           0
+    4      -119.863   14:51:19      1           0
+    5      -119.861   14:51:19      1           0
+    6      -119.86   14:51:19      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -116.128   14:51:19      0           0
+    2      -111.197   14:51:19      0           0
+    3      -108.736   14:51:19      0           0
+    4      -107.715   14:51:19      0           0
+    5      -107.485   14:51:19      0           0
+    6      -107.439   14:51:20      1           0
+    7      -107.431   14:51:20      1           0
+    8      -107.429   14:51:20      1           0
+    9      -107.429   14:51:20      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -114.88   14:51:20      0           0
+    2      -108.228   14:51:20      0           0
+    3      -105.467   14:51:20      0           0
+    4      -104.687   14:51:20      0           0
+    5      -104.596   14:51:20      0           0
+    6      -104.587   14:51:20      0           0
+    7      -104.586   14:51:21      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -116.332   14:51:21      0           0
+    2      -112.81   14:51:21      0           0
+    3      -112.061   14:51:21      0           0
+    4      -111.926   14:51:21      0           0
+    5      -111.913   14:51:21      0           0
+    6      -111.911   14:51:21      0           0
+    7      -111.911   14:51:21      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -114.802   14:51:21      0           0
+    2      -109.396   14:51:22      1           0
+    3      -108.172   14:51:22      1           0
+    4      -107.999   14:51:22      1           0
+    5      -107.99   14:51:22      1           0
+    6      -107.989   14:51:22      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -115.935   14:51:22      0           0
+    2      -110.564   14:51:22      0           0
+    3      -108.562   14:51:22      0           0
+    4      -108.047   14:51:22      0           0
+    5      -107.981   14:51:23      1           0
+    6      -107.973   14:51:23      1           0
+    7      -107.972   14:51:23      1           0
+    8      -107.972   14:51:23      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -115.02   14:51:23      0           0
+    2      -110.371   14:51:23      0           0
+    3      -109.17   14:51:23      0           0
+    4      -108.888   14:51:23      0           0
+    5      -108.851   14:51:23      0           0
+    6      -108.846   14:51:23      0           0
+    7      -108.845   14:51:24      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -114.776   14:51:24      0           0
+    2      -107.94   14:51:24      0           0
+    3      -105.138   14:51:24      0           0
+    4      -104.303   14:51:24      0           0
+    5      -104.192   14:51:24      0           0
+    6      -104.179   14:51:24      0           0
+    7      -104.177   14:51:24      0           0
+    8      -104.177   14:51:24      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -116.198   14:51:25      1           0
+    2      -111.93   14:51:25      1           0
+    3      -110.722   14:51:25      1           0
+    4      -110.475   14:51:25      1           0
+    5      -110.45   14:51:25      1           0
+    6      -110.447   14:51:25      1           0
+    7      -110.446   14:51:25      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -115.662   14:51:25      0           0
+    2      -110.826   14:51:25      0           0
+    3      -109.075   14:51:25      0           0
+    4      -108.551   14:51:25      0           0
+    5      -108.463   14:51:26      1           0
+    6      -108.448   14:51:26      1           0
+    7      -108.446   14:51:26      1           0
+    8      -108.445   14:51:26      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -116.732   14:51:26      0           0
+    2      -111.516   14:51:26      0           0
+    3      -108.895   14:51:26      0           0
+    4      -107.982   14:51:26      0           0
+    5      -107.833   14:51:26      0           0
+    6      -107.811   14:51:26      0           0
+    7      -107.808   14:51:27      1           0
+    8      -107.808   14:51:27      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -116.062   14:51:27      0           0
+    2      -111.277   14:51:27      0           0
+    3      -109.278   14:51:27      0           0
+    4      -108.625   14:51:27      0           0
+    5      -108.508   14:51:27      0           0
+    6      -108.487   14:51:27      0           0
+    7      -108.484   14:51:27      0           0
+    8      -108.483   14:51:27      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -115.191   14:51:28      0           0
+    2      -108.857   14:51:28      0           0
+    3      -105.983   14:51:28      0           0
+    4      -104.96   14:51:28      0           0
+    5      -104.759   14:51:28      0           0
+    6      -104.722   14:51:28      0           0
+    7      -104.715   14:51:28      0           0
+    8      -104.714   14:51:28      0           0
+    9      -104.714   14:51:28      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -116.163   14:51:29      1           0
+    2      -111.882   14:51:29      1           0
+    3      -110.391   14:51:29      1           0
+    4      -110.024   14:51:29      1           0
+    5      -109.979   14:51:29      1           0
+    6      -109.973   14:51:29      1           0
+    7      -109.972   14:51:29      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -115.404   14:51:29      0           0
+    2      -110.133   14:51:29      0           0
+    3      -108.751   14:51:30      1           0
+    4      -108.535   14:51:30      1           0
+    5      -108.523   14:51:30      1           0
+    6      -108.523   14:51:30      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -115.327   14:51:30      0           0
+    2      -110.005   14:51:30      0           0
+    3      -108.283   14:51:30      0           0
+    4      -107.762   14:51:30      0           0
+    5      -107.674   14:51:30      0           0
+    6      -107.659   14:51:31      1           0
+    7      -107.657   14:51:31      1           0
+    8      -107.657   14:51:31      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -114.201   14:51:31      0           0
+    2      -108.108   14:51:31      0           0
+    3      -106.392   14:51:31      0           0
+    4      -105.971   14:51:31      0           0
+    5      -105.918   14:51:31      0           0
+    6      -105.911   14:51:32      1           0
+    7      -105.91   14:51:32      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -116.455   14:51:32      0           0
+    2      -112.493   14:51:32      0           0
+    3      -111.071   14:51:32      0           0
+    4      -110.678   14:51:32      0           0
+    5      -110.614   14:51:32      0           0
+    6      -110.603   14:51:32      0           0
+    7      -110.601   14:51:32      0           0
+    8      -110.601   14:51:32      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -115.177   14:51:33      0           0
+    2      -110.19   14:51:33      0           0
+    3      -109.19   14:51:33      0           0
+    4      -109.091   14:51:33      0           0
+    5      -109.089   14:51:33      0           0
+    6      -109.089   14:51:33      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -113.855   14:51:33      0           0
+    2      -105.355   14:51:33      0           0
+    3      -101.893   14:51:33      0           0
+    4      -100.779   14:51:34      1           0
+    5      -100.629   14:51:34      1           0
+    6      -100.612   14:51:34      1           0
+    7      -100.61   14:51:34      1           0
+    8      -100.61   14:51:34      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -118.003   14:51:34      0           0
+    2      -114.904   14:51:34      0           0
+    3      -113.364   14:51:34      0           0
+    4      -112.799   14:51:34      0           0
+    5      -112.68   14:51:34      0           0
+    6      -112.656   14:51:34      0           0
+    7      -112.65   14:51:35      1           0
+    8      -112.649   14:51:35      1           0
+    9      -112.649   14:51:35      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -115.398   14:51:35      0           0
+    2      -109.491   14:51:35      0           0
+    3      -106.652   14:51:35      0           0
+    4      -105.459   14:51:35      0           0
+    5      -105.18   14:51:35      0           0
+    6      -105.122   14:51:35      0           0
+    7      -105.111   14:51:35      0           0
+    8      -105.109   14:51:36      1           0
+    9      -105.109   14:51:36      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -115.942   14:51:36      0           0
+    2      -111.183   14:51:36      0           0
+    3      -109.45   14:51:36      0           0
+    4      -109.014   14:51:36      0           0
+    5      -108.961   14:51:36      0           0
+    6      -108.954   14:51:36      0           0
+    7      -108.953   14:51:36      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -114.388   14:51:37      0           0
+    2      -108.363   14:51:37      0           0
+    3      -106.997   14:51:37      0           0
+    4      -106.772   14:51:37      0           0
+    5      -106.758   14:51:37      0           0
+    6      -106.757   14:51:37      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -115.684   14:51:37      0           0
+    2      -110.913   14:51:37      0           0
+    3      -109.169   14:51:37      0           0
+    4      -108.642   14:51:38      1           0
+    5      -108.553   14:51:38      1           0
+    6      -108.537   14:51:38      1           0
+    7      -108.535   14:51:38      1           0
+    8      -108.534   14:51:38      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -117.5   14:51:38      0           0
+    2      -114.425   14:51:38      0           0
+    3      -113.43   14:51:38      0           0
+    4      -113.197   14:51:38      0           0
+    5      -113.168   14:51:38      0           0
+    6      -113.164   14:51:38      0           0
+    7      -113.163   14:51:39      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -159.608   14:51:1      1           0
+    2      -158.548   14:51:1      1           0
+    3      -158.014   14:51:1      1           0
+    4      -157.842   14:51:1      1           0
+    5      -157.814   14:51:1      1           0
+    6      -157.81   14:51:2      2           0
+    7      -157.809   14:51:2      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.155   14:51:2      0           0
+    2      -153.283   14:51:3      1           0
+    3      -151.453   14:51:3      1           0
+    4      -151.116   14:51:3      1           0
+    5      -151.104   14:51:3      1           0
+    6      -151.103   14:51:3      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.613   14:51:4      0           0
+    2      -155.699   14:51:4      0           0
+    3      -153.819   14:51:4      0           0
+    4      -153.214   14:51:5      1           0
+    5      -153.15   14:51:5      1           0
+    6      -153.144   14:51:5      1           0
+    7      -153.144   14:51:5      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.427   14:51:6      1           0
+    2      -155.556   14:51:6      1           0
+    3      -154.231   14:51:6      1           0
+    4      -153.925   14:51:6      1           0
+    5      -153.901   14:51:6      1           0
+    6      -153.899   14:51:7      2           0
+    7      -153.899   14:51:7      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.616   14:51:7      0           0
+    2      -155.471   14:51:8      1           0
+    3      -153.362   14:51:8      1           0
+    4      -152.561   14:51:8      1           0
+    5      -152.435   14:51:8      1           0
+    6      -152.419   14:51:8      1           0
+    7      -152.416   14:51:9      2           0
+    8      -152.416   14:51:9      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.277   14:51:9      0           0
+    2      -155.242   14:51:10      1           0
+    3      -153.214   14:51:10      1           0
+    4      -152.424   14:51:10      1           0
+    5      -152.292   14:51:10      1           0
+    6      -152.273   14:51:10      1           0
+    7      -152.27   14:51:11      2           0
+    8      -152.27   14:51:11      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -159.085   14:51:11      0           0
+    2      -157.732   14:51:12      1           0
+    3      -157.122   14:51:12      1           0
+    4      -156.953   14:51:12      1           0
+    5      -156.932   14:51:12      1           0
+    6      -156.929   14:51:13      2           0
+    7      -156.928   14:51:13      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.578   14:51:14      1           0
+    2      -151.66   14:51:14      1           0
+    3      -149.222   14:51:14      1           0
+    4      -148.725   14:51:14      1           0
+    5      -148.702   14:51:14      1           0
+    6      -148.701   14:51:15      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.648   14:51:15      0           0
+    2      -155.261   14:51:15      0           0
+    3      -153.142   14:51:16      1           0
+    4      -152.6   14:51:16      1           0
+    5      -152.571   14:51:16      1           0
+    6      -152.57   14:51:17      2           0
+    7      -152.57   14:51:17      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -161.352   14:51:17      0           0
+    2      -160.645   14:51:17      0           0
+    3      -160.21   14:51:18      1           0
+    4      -160.034   14:51:18      1           0
+    5      -159.996   14:51:18      1           0
+    6      -159.988   14:51:18      1           0
+    7      -159.986   14:51:19      2           0
+    8      -159.986   14:51:19      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.675   14:51:19      0           0
+    2      -152.216   14:51:19      0           0
+    3      -149.81   14:51:20      1           0
+    4      -149.267   14:51:20      1           0
+    5      -149.239   14:51:20      1           0
+    6      -149.238   14:51:20      1           0
+    7      -149.238   14:51:20      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.747   14:51:21      0           0
+    2      -155.031   14:51:21      0           0
+    3      -153.868   14:51:21      0           0
+    4      -153.651   14:51:22      1           0
+    5      -153.64   14:51:22      1           0
+    6      -153.64   14:51:22      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.847   14:51:23      1           0
+    2      -153.678   14:51:23      1           0
+    3      -151.04   14:51:23      1           0
+    4      -150.306   14:51:23      1           0
+    5      -150.253   14:51:23      1           0
+    6      -150.25   14:51:24      2           0
+    7      -150.25   14:51:24      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -160.191   14:51:24      0           0
+    2      -159.097   14:51:25      1           0
+    3      -158.487   14:51:25      1           0
+    4      -158.245   14:51:25      1           0
+    5      -158.19   14:51:25      1           0
+    6      -158.177   14:51:25      1           0
+    7      -158.174   14:51:26      2           0
+    8      -158.173   14:51:26      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -161.179   14:51:26      0           0
+    2      -160.215   14:51:26      0           0
+    3      -159.531   14:51:27      1           0
+    4      -159.207   14:51:27      1           0
+    5      -159.126   14:51:27      1           0
+    6      -159.107   14:51:27      1           0
+    7      -159.103   14:51:27      1           0
+    8      -159.103   14:51:28      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -159.317   14:51:28      0           0
+    2      -157.509   14:51:28      0           0
+    3      -156.329   14:51:28      0           0
+    4      -155.812   14:51:29      1           0
+    5      -155.696   14:51:29      1           0
+    6      -155.673   14:51:29      1           0
+    7      -155.668   14:51:29      1           0
+    8      -155.668   14:51:30      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.748   14:51:30      0           0
+    2      -154.403   14:51:30      0           0
+    3      -152.331   14:51:30      0           0
+    4      -151.702   14:51:31      1           0
+    5      -151.644   14:51:31      1           0
+    6      -151.64   14:51:31      1           0
+    7      -151.64   14:51:31      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.586   14:51:32      0           0
+    2      -156.598   14:51:32      0           0
+    3      -155.558   14:51:32      0           0
+    4      -155.203   14:51:33      1           0
+    5      -155.142   14:51:33      1           0
+    6      -155.132   14:51:33      1           0
+    7      -155.131   14:51:33      1           0
+    8      -155.13   14:51:33      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.634   14:51:34      0           0
+    2      -155.418   14:51:34      0           0
+    3      -153.579   14:51:34      0           0
+    4      -153.124   14:51:34      0           0
+    5      -153.096   14:51:35      1           0
+    6      -153.095   14:51:35      1           0
+    7      -153.094   14:51:35      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -159.662   14:51:36      1           0
+    2      -157.293   14:51:36      1           0
+    3      -155.871   14:51:36      1           0
+    4      -155.47   14:51:36      1           0
+    5      -155.435   14:51:36      1           0
+    6      -155.432   14:51:37      2           0
+    7      -155.432   14:51:37      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.843   14:51:37      0           0
+    2      -156.199   14:51:38      1           0
+    3      -154.528   14:51:38      1           0
+    4      -153.989   14:51:38      1           0
+    5      -153.928   14:51:38      1           0
+    6      -153.922   14:51:38      1           0
+    7      -153.921   14:51:38      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.147   14:51:39      0           0
+    2      -153.06   14:51:39      0           0
+    3      -150.567   14:51:39      0           0
+    4      -149.845   14:51:39      0           0
+    5      -149.785   14:51:40      1           0
+    6      -149.781   14:51:40      1           0
+    7      -149.781   14:51:40      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.671   14:51:40      0           0
+    2      -156.078   14:51:41      1           0
+    3      -154.465   14:51:41      1           0
+    4      -153.956   14:51:41      1           0
+    5      -153.903   14:51:41      1           0
+    6      -153.899   14:51:41      1           0
+    7      -153.898   14:51:41      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -159.283   14:51:42      0           0
+    2      -156.564   14:51:42      0           0
+    3      -154.868   14:51:42      0           0
+    4      -154.347   14:51:42      0           0
+    5      -154.294   14:51:42      0           0
+    6      -154.29   14:51:43      1           0
+    7      -154.289   14:51:43      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.348   14:51:43      0           0
+    2      -156.322   14:51:43      0           0
+    3      -155.647   14:51:43      0           0
+    4      -155.529   14:51:44      1           0
+    5      -155.522   14:51:44      1           0
+    6      -155.522   14:51:44      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.894   14:51:1      0           0
+    2      -154.812   14:51:1      0           0
+    3      -153.652   14:51:1      0           0
+    4      -153.349   14:51:2      1           0
+    5      -153.325   14:51:2      1           0
+    6      -153.323   14:51:2      1           0
+    7      -153.323   14:51:2      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.803   14:51:3      1           0
+    2      -158.303   14:51:3      1           0
+    3      -158.038   14:51:3      1           0
+    4      -157.957   14:51:3      1           0
+    5      -157.945   14:51:3      1           0
+    6      -157.943   14:51:4      2           0
+    7      -157.943   14:51:4      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -154.709   14:51:4      0           0
+    2      -150.363   14:51:5      1           0
+    3      -148.293   14:51:5      1           0
+    4      -147.841   14:51:5      1           0
+    5      -147.811   14:51:5      1           0
+    6      -147.809   14:51:5      1           0
+    7      -147.809   14:51:6      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.045   14:51:6      0           0
+    2      -154.111   14:51:6      0           0
+    3      -152.034   14:51:6      0           0
+    4      -151.236   14:51:7      1           0
+    5      -151.115   14:51:7      1           0
+    6      -151.1   14:51:7      1           0
+    7      -151.098   14:51:7      1           0
+    8      -151.098   14:51:7      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.307   14:51:8      0           0
+    2      -155.257   14:51:8      0           0
+    3      -154.018   14:51:8      0           0
+    4      -153.588   14:51:8      0           0
+    5      -153.521   14:51:9      1           0
+    6      -153.512   14:51:9      1           0
+    7      -153.51   14:51:9      1           0
+    8      -153.51   14:51:9      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.064   14:51:10      1           0
+    2      -155.527   14:51:10      1           0
+    3      -154.721   14:51:10      1           0
+    4      -154.484   14:51:10      1           0
+    5      -154.455   14:51:11      2           0
+    6      -154.452   14:51:11      2           0
+    7      -154.452   14:51:11      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.883   14:51:12      1           0
+    2      -153.186   14:51:12      1           0
+    3      -152.054   14:51:12      1           0
+    4      -151.873   14:51:12      1           0
+    5      -151.867   14:51:12      1           0
+    6      -151.866   14:51:13      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.135   14:51:13      0           0
+    2      -155.254   14:51:13      0           0
+    3      -154.372   14:51:13      0           0
+    4      -154.186   14:51:14      1           0
+    5      -154.175   14:51:14      1           0
+    6      -154.174   14:51:14      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.075   14:51:15      1           0
+    2      -152.226   14:51:15      1           0
+    3      -149.146   14:51:15      1           0
+    4      -147.53   14:51:15      1           0
+    5      -147.149   14:51:15      1           0
+    6      -147.081   14:51:16      2           0
+    7      -147.071   14:51:16      2           0
+    8      -147.069   14:51:16      2           0
+    9      -147.069   14:51:17      3           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.799   14:51:17      0           0
+    2      -156.033   14:51:17      0           0
+    3      -154.954   14:51:17      0           0
+    4      -154.605   14:51:18      1           0
+    5      -154.559   14:51:18      1           0
+    6      -154.554   14:51:18      1           0
+    7      -154.553   14:51:18      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.526   14:51:19      0           0
+    2      -152.013   14:51:19      0           0
+    3      -150.114   14:51:19      0           0
+    4      -149.676   14:51:19      0           0
+    5      -149.649   14:51:20      1           0
+    6      -149.647   14:51:20      1           0
+    7      -149.647   14:51:20      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.331   14:51:20      0           0
+    2      -157.487   14:51:21      1           0
+    3      -156.963   14:51:21      1           0
+    4      -156.769   14:51:21      1           0
+    5      -156.735   14:51:21      1           0
+    6      -156.729   14:51:21      1           0
+    7      -156.728   14:51:22      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.213   14:51:22      0           0
+    2      -154.978   14:51:22      0           0
+    3      -153.716   14:51:23      1           0
+    4      -153.358   14:51:23      1           0
+    5      -153.321   14:51:23      1           0
+    6      -153.317   14:51:23      1           0
+    7      -153.317   14:51:23      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.314   14:51:24      0           0
+    2      -155.4   14:51:24      0           0
+    3      -154.329   14:51:24      0           0
+    4      -153.986   14:51:24      0           0
+    5      -153.939   14:51:25      1           0
+    6      -153.933   14:51:25      1           0
+    7      -153.933   14:51:25      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.387   14:51:25      0           0
+    2      -153.343   14:51:26      1           0
+    3      -151.448   14:51:26      1           0
+    4      -150.78   14:51:26      1           0
+    5      -150.679   14:51:26      1           0
+    6      -150.666   14:51:26      1           0
+    7      -150.664   14:51:27      2           0
+    8      -150.664   14:51:27      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.261   14:51:27      0           0
+    2      -155.48   14:51:27      0           0
+    3      -154.424   14:51:28      1           0
+    4      -154.087   14:51:28      1           0
+    5      -154.043   14:51:28      1           0
+    6      -154.037   14:51:28      1           0
+    7      -154.037   14:51:28      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.992   14:51:29      0           0
+    2      -156.914   14:51:29      0           0
+    3      -156.295   14:51:29      0           0
+    4      -156.097   14:51:30      1           0
+    5      -156.07   14:51:30      1           0
+    6      -156.067   14:51:30      1           0
+    7      -156.067   14:51:30      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.835   14:51:31      0           0
+    2      -152.209   14:51:31      0           0
+    3      -149.955   14:51:31      0           0
+    4      -149.247   14:51:32      1           0
+    5      -149.169   14:51:32      1           0
+    6      -149.162   14:51:32      1           0
+    7      -149.161   14:51:32      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.809   14:51:33      1           0
+    2      -152.753   14:51:33      1           0
+    3      -151.469   14:51:33      1           0
+    4      -151.226   14:51:33      1           0
+    5      -151.213   14:51:33      1           0
+    6      -151.212   14:51:34      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.051   14:51:34      0           0
+    2      -154.733   14:51:34      0           0
+    3      -153.446   14:51:34      0           0
+    4      -153.057   14:51:35      1           0
+    5      -153.006   14:51:35      1           0
+    6      -153   14:51:35      1           0
+    7      -152.999   14:51:35      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.338   14:51:36      1           0
+    2      -153.855   14:51:36      1           0
+    3      -152.43   14:51:36      1           0
+    4      -152.018   14:51:36      1           0
+    5      -151.975   14:51:36      1           0
+    6      -151.971   14:51:37      2           0
+    7      -151.971   14:51:37      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.786   14:51:37      0           0
+    2      -156.715   14:51:37      0           0
+    3      -156.196   14:51:38      1           0
+    4      -156.077   14:51:38      1           0
+    5      -156.068   14:51:38      1           0
+    6      -156.067   14:51:38      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.53   14:51:38      0           0
+    2      -154.52   14:51:39      1           0
+    3      -153.51   14:51:39      1           0
+    4      -153.208   14:51:39      1           0
+    5      -153.168   14:51:39      1           0
+    6      -153.163   14:51:39      1           0
+    7      -153.162   14:51:39      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.205   14:51:40      0           0
+    2      -152.1   14:51:40      0           0
+    3      -149.062   14:51:40      0           0
+    4      -147.829   14:51:40      0           0
+    5      -147.632   14:51:40      0           0
+    6      -147.606   14:51:41      1           0
+    7      -147.603   14:51:41      1           0
+    8      -147.602   14:51:41      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.246   14:51:41      0           0
+    2      -153.372   14:51:42      1           0
+    3      -152.119   14:51:42      1           0
+    4      -151.896   14:51:42      1           0
+    5      -151.886   14:51:42      1           0
+    6      -151.885   14:51:42      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.873   14:51:1      0           0
+    2      -118.619   14:51:1      0           0
+    3      -118.163   14:51:1      0           0
+    4      -118.089   14:51:1      0           0
+    5      -118.085   14:51:1      0           0
+    6      -118.085   14:51:2      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -120.07   14:51:2      0           0
+    2      -119.023   14:51:2      0           0
+    3      -118.591   14:51:2      0           0
+    4      -118.494   14:51:2      0           0
+    5      -118.485   14:51:2      0           0
+    6      -118.484   14:51:2      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -118.063   14:51:2      0           0
+    2      -115.473   14:51:2      0           0
+    3      -114.684   14:51:3      1           0
+    4      -114.555   14:51:3      1           0
+    5      -114.548   14:51:3      1           0
+    6      -114.548   14:51:3      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -120.383   14:51:3      0           0
+    2      -119.734   14:51:3      0           0
+    3      -119.516   14:51:3      0           0
+    4      -119.487   14:51:3      0           0
+    5      -119.486   14:51:4      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.764   14:51:4      0           0
+    2      -118.02   14:51:4      0           0
+    3      -116.781   14:51:4      0           0
+    4      -116.173   14:51:4      0           0
+    5      -116.002   14:51:4      0           0
+    6      -115.956   14:51:4      0           0
+    7      -115.945   14:51:4      0           0
+    8      -115.942   14:51:4      0           0
+    9      -115.941   14:51:4      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.982   14:51:5      0           0
+    2      -119.387   14:51:5      0           0
+    3      -119.252   14:51:5      0           0
+    4      -119.242   14:51:5      0           0
+    5      -119.242   14:51:5      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.968   14:51:5      0           0
+    2      -118.934   14:51:5      0           0
+    3      -118.529   14:51:5      0           0
+    4      -118.447   14:51:5      0           0
+    5      -118.44   14:51:6      1           0
+    6      -118.44   14:51:6      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -120.095   14:51:6      0           0
+    2      -118.532   14:51:6      0           0
+    3      -117.563   14:51:6      0           0
+    4      -117.213   14:51:6      0           0
+    5      -117.155   14:51:6      0           0
+    6      -117.146   14:51:6      0           0
+    7      -117.145   14:51:6      0           0
+    8      -117.144   14:51:6      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -118.472   14:51:7      0           0
+    2      -116.124   14:51:7      0           0
+    3      -115.199   14:51:7      0           0
+    4      -115.002   14:51:7      0           0
+    5      -114.985   14:51:7      0           0
+    6      -114.983   14:51:7      0           0
+    7      -114.983   14:51:7      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.017   14:51:7      0           0
+    2      -116.881   14:51:7      0           0
+    3      -115.87   14:51:8      1           0
+    4      -115.52   14:51:8      1           0
+    5      -115.447   14:51:8      1           0
+    6      -115.431   14:51:8      1           0
+    7      -115.427   14:51:8      1           0
+    8      -115.426   14:51:8      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -121.964   14:51:8      0           0
+    2      -121.858   14:51:8      0           0
+    3      -121.806   14:51:8      0           0
+    4      -121.792   14:51:8      0           0
+    5      -121.791   14:51:9      1           0
+    6      -121.791   14:51:9      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.437   14:51:9      0           0
+    2      -117.415   14:51:9      0           0
+    3      -116.212   14:51:9      0           0
+    4      -115.748   14:51:9      0           0
+    5      -115.655   14:51:9      0           0
+    6      -115.637   14:51:9      0           0
+    7      -115.633   14:51:9      0           0
+    8      -115.633   14:51:9      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -120.236   14:51:10      0           0
+    2      -119.206   14:51:10      0           0
+    3      -118.674   14:51:10      0           0
+    4      -118.514   14:51:10      0           0
+    5      -118.491   14:51:10      0           0
+    6      -118.488   14:51:10      0           0
+    7      -118.487   14:51:10      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -118.443   14:51:11      1           0
+    2      -116.546   14:51:11      1           0
+    3      -116.068   14:51:11      1           0
+    4      -116.012   14:51:11      1           0
+    5      -116.01   14:51:11      1           0
+    6      -116.01   14:51:11      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -116.768   14:51:11      0           0
+    2      -111.72   14:51:11      0           0
+    3      -109.206   14:51:11      0           0
+    4      -108.347   14:51:12      1           0
+    5      -108.21   14:51:12      1           0
+    6      -108.191   14:51:12      1           0
+    7      -108.188   14:51:12      1           0
+    8      -108.187   14:51:12      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.08   14:51:12      0           0
+    2      -117.461   14:51:12      0           0
+    3      -116.994   14:51:12      0           0
+    4      -116.938   14:51:12      0           0
+    5      -116.936   14:51:12      0           0
+    6      -116.936   14:51:13      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -118.997   14:51:13      0           0
+    2      -117.302   14:51:13      0           0
+    3      -116.666   14:51:13      0           0
+    4      -116.508   14:51:13      0           0
+    5      -116.488   14:51:13      0           0
+    6      -116.485   14:51:13      0           0
+    7      -116.485   14:51:13      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -120.538   14:51:13      0           0
+    2      -119.678   14:51:14      1           0
+    3      -119.155   14:51:14      1           0
+    4      -118.955   14:51:14      1           0
+    5      -118.916   14:51:14      1           0
+    6      -118.909   14:51:14      1           0
+    7      -118.908   14:51:14      1           0
+    8      -118.908   14:51:14      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.797   14:51:14      0           0
+    2      -118.27   14:51:14      0           0
+    3      -117.573   14:51:14      0           0
+    4      -117.401   14:51:15      1           0
+    5      -117.383   14:51:15      1           0
+    6      -117.381   14:51:15      1           0
+    7      -117.38   14:51:15      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.053   14:51:15      0           0
+    2      -117.523   14:51:15      0           0
+    3      -117.078   14:51:15      0           0
+    4      -117.029   14:51:15      0           0
+    5      -117.028   14:51:16      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -120.341   14:51:16      0           0
+    2      -119.387   14:51:16      0           0
+    3      -118.944   14:51:16      0           0
+    4      -118.831   14:51:16      0           0
+    5      -118.819   14:51:16      0           0
+    6      -118.818   14:51:16      0           0
+    7      -118.818   14:51:17      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.406   14:51:17      0           0
+    2      -117.87   14:51:17      0           0
+    3      -117.266   14:51:17      0           0
+    4      -117.136   14:51:17      0           0
+    5      -117.124   14:51:17      0           0
+    6      -117.122   14:51:17      0           0
+    7      -117.122   14:51:17      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.012   14:51:18      1           0
+    2      -116.695   14:51:18      1           0
+    3      -115.473   14:51:18      1           0
+    4      -115.098   14:51:18      1           0
+    5      -115.045   14:51:18      1           0
+    6      -115.038   14:51:18      1           0
+    7      -115.037   14:51:18      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -118.468   14:51:18      0           0
+    2      -115.803   14:51:18      0           0
+    3      -114.702   14:51:18      0           0
+    4      -114.458   14:51:19      1           0
+    5      -114.438   14:51:19      1           0
+    6      -114.437   14:51:19      1           0
+    7      -114.437   14:51:19      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -120.531   14:51:19      0           0
+    2      -120.008   14:51:19      0           0
+    3      -119.824   14:51:19      0           0
+    4      -119.792   14:51:19      0           0
+    5      -119.79   14:51:19      0           0
+    6      -119.79   14:51:19      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.217   14:51:20      0           0
+    2      -150.452   14:51:20      0           0
+    3      -149.932   14:51:20      0           0
+    4      -149.901   14:51:20      0           0
+    5      -149.901   14:51:21      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.663   14:51:21      0           0
+    2      -148.823   14:51:21      0           0
+    3      -147.843   14:51:22      1           0
+    4      -147.751   14:51:22      1           0
+    5      -147.75   14:51:22      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -148.676   14:51:23      1           0
+    2      -140.961   14:51:23      1           0
+    3      -139.642   14:51:23      1           0
+    4      -139.564   14:51:23      1           0
+    5      -139.564   14:51:23      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -150.864   14:51:24      0           0
+    2      -146.074   14:51:24      0           0
+    3      -145.315   14:51:24      0           0
+    4      -145.271   14:51:24      0           0
+    5      -145.27   14:51:25      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -150.755   14:51:25      0           0
+    2      -145.269   14:51:25      0           0
+    3      -143.775   14:51:25      0           0
+    4      -143.558   14:51:26      1           0
+    5      -143.55   14:51:26      1           0
+    6      -143.55   14:51:26      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -149.234   14:51:27      1           0
+    2      -142.903   14:51:27      1           0
+    3      -141.684   14:51:27      1           0
+    4      -141.595   14:51:27      1           0
+    5      -141.595   14:51:27      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -150.027   14:51:28      0           0
+    2      -143.626   14:51:28      0           0
+    3      -142.094   14:51:28      0           0
+    4      -141.922   14:51:28      0           0
+    5      -141.918   14:51:29      1           0
+    6      -141.918   14:51:29      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.455   14:51:29      0           0
+    2      -151.022   14:51:30      1           0
+    3      -150.526   14:51:30      1           0
+    4      -150.478   14:51:30      1           0
+    5      -150.478   14:51:30      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.171   14:51:31      1           0
+    2      -147.725   14:51:31      1           0
+    3      -146.496   14:51:31      1           0
+    4      -146.323   14:51:31      1           0
+    5      -146.317   14:51:32      2           0
+    6      -146.316   14:51:32      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.046   14:51:32      0           0
+    2      -148.119   14:51:33      1           0
+    3      -147.372   14:51:33      1           0
+    4      -147.318   14:51:33      1           0
+    5      -147.318   14:51:33      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -150.27   14:51:34      1           0
+    2      -144.248   14:51:34      1           0
+    3      -142.921   14:51:34      1           0
+    4      -142.826   14:51:34      1           0
+    5      -142.826   14:51:34      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -149.932   14:51:35      0           0
+    2      -143.744   14:51:35      0           0
+    3      -142.331   14:51:35      0           0
+    4      -142.168   14:51:35      0           0
+    5      -142.164   14:51:36      1           0
+    6      -142.164   14:51:36      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.794   14:51:36      0           0
+    2      -149.286   14:51:36      0           0
+    3      -148.391   14:51:37      1           0
+    4      -148.282   14:51:37      1           0
+    5      -148.279   14:51:37      1           0
+    6      -148.279   14:51:37      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.153   14:51:38      1           0
+    2      -147.691   14:51:38      1           0
+    3      -146.538   14:51:38      1           0
+    4      -146.371   14:51:38      1           0
+    5      -146.364   14:51:38      1           0
+    6      -146.363   14:51:38      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -151.649   14:51:39      0           0
+    2      -148.277   14:51:39      0           0
+    3      -147.861   14:51:39      0           0
+    4      -147.849   14:51:39      0           0
+    5      -147.849   14:51:39      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.286   14:51:40      0           0
+    2      -150.338   14:51:40      0           0
+    3      -149.785   14:51:40      0           0
+    4      -149.754   14:51:40      0           0
+    5      -149.754   14:51:41      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -150.586   14:51:41      0           0
+    2      -145.35   14:51:41      0           0
+    3      -144.264   14:51:41      0           0
+    4      -144.172   14:51:41      0           0
+    5      -144.171   14:51:42      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -147.625   14:51:42      0           0
+    2      -138.067   14:51:42      0           0
+    3      -135.647   14:51:42      0           0
+    4      -135.347   14:51:42      0           0
+    5      -135.341   14:51:43      1           0
+    6      -135.341   14:51:43      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -150.583   14:51:43      0           0
+    2      -144.726   14:51:43      0           0
+    3      -143.384   14:51:43      0           0
+    4      -143.239   14:51:44      1           0
+    5      -143.236   14:51:44      1           0
+    6      -143.236   14:51:44      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.755   14:51:44      0           0
+    2      -149.612   14:51:45      1           0
+    3      -148.865   14:51:45      1           0
+    4      -148.784   14:51:45      1           0
+    5      -148.782   14:51:45      1           0
+    6      -148.782   14:51:45      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -151.311   14:51:46      0           0
+    2      -146.583   14:51:46      0           0
+    3      -145.736   14:51:46      0           0
+    4      -145.69   14:51:46      0           0
+    5      -145.69   14:51:46      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -151.515   14:51:47      0           0
+    2      -147.217   14:51:47      0           0
+    3      -146.226   14:51:47      0           0
+    4      -146.108   14:51:47      0           0
+    5      -146.105   14:51:47      0           0
+    6      -146.105   14:51:47      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -147.138   14:51:48      0           0
+    2      -138.244   14:51:48      0           0
+    3      -136.448   14:51:48      0           0
+    4      -136.31   14:51:48      0           0
+    5      -136.309   14:51:48      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.571   14:51:49      1           0
+    2      -150.912   14:51:49      1           0
+    3      -150.486   14:51:49      1           0
+    4      -150.469   14:51:49      1           0
+    5      -150.469   14:51:49      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.106   14:51:49      0           0
+    2      -149.357   14:51:49      0           0
+    3      -148.086   14:51:50      1           0
+    4      -147.818   14:51:50      1           0
+    5      -147.796   14:51:50      1           0
+    6      -147.794   14:51:50      1           0
+    7      -147.794   14:51:50      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.556   14:51:2      1           0
+    2      -153.901   14:51:2      1           0
+    3      -153.442   14:51:2      1           0
+    4      -153.399   14:51:2      1           0
+    5      -153.399   14:51:2      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.815   14:51:3      0           0
+    2      -150.402   14:51:3      0           0
+    3      -149.303   14:51:3      0           0
+    4      -149.14   14:51:3      0           0
+    5      -149.134   14:51:4      1           0
+    6      -149.134   14:51:4      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.217   14:51:4      0           0
+    2      -149.912   14:51:5      1           0
+    3      -149.142   14:51:5      1           0
+    4      -149.074   14:51:5      1           0
+    5      -149.073   14:51:5      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -154.641   14:51:6      1           0
+    2      -152.42   14:51:6      1           0
+    3      -151.874   14:51:6      1           0
+    4      -151.825   14:51:6      1           0
+    5      -151.824   14:51:6      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.961   14:51:7      0           0
+    2      -148.714   14:51:7      0           0
+    3      -147.373   14:51:7      0           0
+    4      -147.207   14:51:7      0           0
+    5      -147.204   14:51:8      1           0
+    6      -147.204   14:51:8      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.018   14:51:8      0           0
+    2      -149.178   14:51:8      0           0
+    3      -148.157   14:51:9      1           0
+    4      -148.084   14:51:9      1           0
+    5      -148.084   14:51:9      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.952   14:51:10      1           0
+    2      -151.615   14:51:10      1           0
+    3      -151.158   14:51:10      1           0
+    4      -151.126   14:51:10      1           0
+    5      -151.125   14:51:10      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -154.952   14:51:11      0           0
+    2      -151.934   14:51:11      0           0
+    3      -150.448   14:51:12      1           0
+    4      -150.045   14:51:12      1           0
+    5      -150.004   14:51:12      1           0
+    6      -150   14:51:12      1           0
+    7      -150   14:51:12      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -154.328   14:51:13      0           0
+    2      -151.931   14:51:13      0           0
+    3      -151.369   14:51:13      0           0
+    4      -151.316   14:51:14      1           0
+    5      -151.315   14:51:14      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -154.816   14:51:14      0           0
+    2      -152.544   14:51:14      0           0
+    3      -151.95   14:51:15      1           0
+    4      -151.893   14:51:15      1           0
+    5      -151.893   14:51:15      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.694   14:51:16      1           0
+    2      -150.267   14:51:16      1           0
+    3      -149.168   14:51:16      1           0
+    4      -149.044   14:51:16      1           0
+    5      -149.042   14:51:17      2           0
+    6      -149.042   14:51:17      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -154.736   14:51:17      0           0
+    2      -152.137   14:51:18      1           0
+    3      -151.076   14:51:18      1           0
+    4      -150.84   14:51:18      1           0
+    5      -150.821   14:51:18      1           0
+    6      -150.82   14:51:18      1           0
+    7      -150.82   14:51:19      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.147   14:51:19      0           0
+    2      -153.128   14:51:19      0           0
+    3      -152.576   14:51:19      0           0
+    4      -152.513   14:51:20      1           0
+    5      -152.512   14:51:20      1           0
+    6      -152.512   14:51:20      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.58   14:51:21      1           0
+    2      -148.666   14:51:21      1           0
+    3      -147.994   14:51:21      1           0
+    4      -147.962   14:51:21      1           0
+    5      -147.962   14:51:21      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -154.436   14:51:22      0           0
+    2      -152.505   14:51:22      0           0
+    3      -152.083   14:51:22      0           0
+    4      -152.049   14:51:23      1           0
+    5      -152.049   14:51:23      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.806   14:51:23      0           0
+    2      -151.087   14:51:23      0           0
+    3      -150.452   14:51:24      1           0
+    4      -150.403   14:51:24      1           0
+    5      -150.402   14:51:24      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.501   14:51:24      0           0
+    2      -148.423   14:51:25      1           0
+    3      -147.644   14:51:25      1           0
+    4      -147.616   14:51:25      1           0
+    5      -147.616   14:51:25      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -154.938   14:51:26      1           0
+    2      -152.684   14:51:26      1           0
+    3      -151.972   14:51:26      1           0
+    4      -151.876   14:51:26      1           0
+    5      -151.873   14:51:26      1           0
+    6      -151.873   14:51:26      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.683   14:51:27      0           0
+    2      -153.462   14:51:27      0           0
+    3      -152.545   14:51:27      0           0
+    4      -152.355   14:51:28      1           0
+    5      -152.342   14:51:28      1           0
+    6      -152.341   14:51:28      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.71   14:51:29      1           0
+    2      -149.109   14:51:29      1           0
+    3      -148.202   14:51:29      1           0
+    4      -148.097   14:51:29      1           0
+    5      -148.095   14:51:29      1           0
+    6      -148.095   14:51:30      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.876   14:51:30      0           0
+    2      -150.748   14:51:30      0           0
+    3      -149.815   14:51:30      0           0
+    4      -149.693   14:51:31      1           0
+    5      -149.689   14:51:31      1           0
+    6      -149.689   14:51:31      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -152.705   14:51:32      0           0
+    2      -148.292   14:51:32      0           0
+    3      -146.924   14:51:32      0           0
+    4      -146.737   14:51:32      0           0
+    5      -146.732   14:51:33      1           0
+    6      -146.732   14:51:33      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.261   14:51:33      0           0
+    2      -150.476   14:51:33      0           0
+    3      -149.941   14:51:34      1           0
+    4      -149.914   14:51:34      1           0
+    5      -149.914   14:51:34      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.952   14:51:34      0           0
+    2      -153.992   14:51:35      1           0
+    3      -153.285   14:51:35      1           0
+    4      -153.176   14:51:35      1           0
+    5      -153.172   14:51:35      1           0
+    6      -153.172   14:51:35      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -153.529   14:51:36      0           0
+    2      -150.101   14:51:36      0           0
+    3      -149.09   14:51:36      0           0
+    4      -148.959   14:51:36      0           0
+    5      -148.956   14:51:37      1           0
+    6      -148.956   14:51:37      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.156   14:51:2      0           0
+    2      -154.754   14:51:2      0           0
+    3      -152.667   14:51:2      0           0
+    4      -152.086   14:51:2      0           0
+    5      -152.045   14:51:3      1           0
+    6      -152.043   14:51:3      1           0
+    7      -152.043   14:51:3      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.122   14:51:4      1           0
+    2      -148.869   14:51:4      1           0
+    3      -146.19   14:51:4      1           0
+    4      -145.713   14:51:4      1           0
+    5      -145.696   14:51:4      1           0
+    6      -145.695   14:51:5      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.294   14:51:5      0           0
+    2      -154.457   14:51:5      0           0
+    3      -151.918   14:51:6      1           0
+    4      -151.216   14:51:6      1           0
+    5      -151.174   14:51:6      1           0
+    6      -151.173   14:51:6      1           0
+    7      -151.173   14:51:6      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.385   14:51:7      0           0
+    2      -154.8   14:51:7      0           0
+    3      -152.893   14:51:7      0           0
+    4      -152.479   14:51:8      1           0
+    5      -152.46   14:51:8      1           0
+    6      -152.459   14:51:8      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.39   14:51:8      0           0
+    2      -150.76   14:51:9      1           0
+    3      -147.389   14:51:9      1           0
+    4      -146.449   14:51:9      1           0
+    5      -146.382   14:51:9      1           0
+    6      -146.379   14:51:10      2           0
+    7      -146.379   14:51:10      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.827   14:51:10      0           0
+    2      -153.363   14:51:11      1           0
+    3      -151.85   14:51:11      1           0
+    4      -151.519   14:51:11      1           0
+    5      -151.497   14:51:11      1           0
+    6      -151.496   14:51:12      2           0
+    7      -151.496   14:51:12      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -159.153   14:51:12      0           0
+    2      -155.953   14:51:13      1           0
+    3      -153.726   14:51:13      1           0
+    4      -152.986   14:51:13      1           0
+    5      -152.916   14:51:13      1           0
+    6      -152.911   14:51:13      1           0
+    7      -152.91   14:51:14      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.988   14:51:14      0           0
+    2      -150.52   14:51:14      0           0
+    3      -145.976   14:51:15      1           0
+    4      -144.911   14:51:15      1           0
+    5      -144.882   14:51:15      1           0
+    6      -144.882   14:51:15      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.162   14:51:16      0           0
+    2      -149.084   14:51:16      0           0
+    3      -146.392   14:51:17      1           0
+    4      -145.917   14:51:17      1           0
+    5      -145.902   14:51:17      1           0
+    6      -145.901   14:51:17      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.945   14:51:18      0           0
+    2      -155.9   14:51:18      0           0
+    3      -154.167   14:51:18      0           0
+    4      -153.741   14:51:18      0           0
+    5      -153.717   14:51:19      1           0
+    6      -153.716   14:51:19      1           0
+    7      -153.716   14:51:19      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.581   14:51:20      1           0
+    2      -153.271   14:51:20      1           0
+    3      -151.028   14:51:20      1           0
+    4      -150.585   14:51:20      1           0
+    5      -150.57   14:51:20      1           0
+    6      -150.57   14:51:21      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -159.105   14:51:21      0           0
+    2      -156.3   14:51:21      0           0
+    3      -154.317   14:51:22      1           0
+    4      -153.537   14:51:22      1           0
+    5      -153.426   14:51:22      1           0
+    6      -153.415   14:51:23      2           0
+    7      -153.413   14:51:23      2           0
+    8      -153.413   14:51:23      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.96   14:51:23      0           0
+    2      -153.863   14:51:24      1           0
+    3      -150.97   14:51:24      1           0
+    4      -149.991   14:51:24      1           0
+    5      -149.901   14:51:24      1           0
+    6      -149.895   14:51:24      1           0
+    7      -149.895   14:51:25      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.263   14:51:25      0           0
+    2      -153.071   14:51:25      0           0
+    3      -150.854   14:51:25      0           0
+    4      -150.396   14:51:26      1           0
+    5      -150.379   14:51:26      1           0
+    6      -150.379   14:51:26      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.765   14:51:27      1           0
+    2      -149.819   14:51:27      1           0
+    3      -147.223   14:51:27      1           0
+    4      -146.788   14:51:27      1           0
+    5      -146.775   14:51:27      1           0
+    6      -146.775   14:51:28      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.314   14:51:28      0           0
+    2      -152.858   14:51:28      0           0
+    3      -151.606   14:51:29      1           0
+    4      -151.377   14:51:29      1           0
+    5      -151.366   14:51:29      1           0
+    6      -151.365   14:51:29      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -159.676   14:51:30      0           0
+    2      -157.344   14:51:30      0           0
+    3      -155.731   14:51:30      0           0
+    4      -155.221   14:51:30      0           0
+    5      -155.179   14:51:31      1           0
+    6      -155.176   14:51:31      1           0
+    7      -155.176   14:51:31      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.767   14:51:32      0           0
+    2      -154.437   14:51:32      0           0
+    3      -152.849   14:51:32      0           0
+    4      -152.504   14:51:32      0           0
+    5      -152.485   14:51:33      1           0
+    6      -152.484   14:51:33      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -155.521   14:51:33      0           0
+    2      -147.231   14:51:33      0           0
+    3      -141.852   14:51:34      1           0
+    4      -140.551   14:51:34      1           0
+    5      -140.495   14:51:34      1           0
+    6      -140.493   14:51:34      1           0
+    7      -140.493   14:51:34      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -156.906   14:51:35      0           0
+    2      -150.738   14:51:35      0           0
+    3      -146.736   14:51:35      0           0
+    4      -145.563   14:51:36      1           0
+    5      -145.48   14:51:36      1           0
+    6      -145.476   14:51:36      1           0
+    7      -145.476   14:51:36      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.817   14:51:37      1           0
+    2      -154.071   14:51:37      1           0
+    3      -151.818   14:51:37      1           0
+    4      -151.14   14:51:37      1           0
+    5      -151.076   14:51:37      1           0
+    6      -151.071   14:51:38      2           0
+    7      -151.07   14:51:38      2           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -157.823   14:51:38      0           0
+    2      -152.987   14:51:38      0           0
+    3      -149.955   14:51:39      1           0
+    4      -149.252   14:51:39      1           0
+    5      -149.225   14:51:39      1           0
+    6      -149.224   14:51:39      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -154.608   14:51:40      1           0
+    2      -147.21   14:51:40      1           0
+    3      -143.933   14:51:40      1           0
+    4      -143.44   14:51:40      1           0
+    5      -143.431   14:51:40      1           0
+    6      -143.431   14:51:40      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.525   14:51:41      0           0
+    2      -155.904   14:51:41      0           0
+    3      -154.415   14:51:41      0           0
+    4      -153.968   14:51:41      0           0
+    5      -153.923   14:51:42      1           0
+    6      -153.919   14:51:42      1           0
+    7      -153.919   14:51:42      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -158.214   14:51:42      0           0
+    2      -154.498   14:51:42      0           0
+    3      -152.525   14:51:43      1           0
+    4      -152.092   14:51:43      1           0
+    5      -152.072   14:51:43      1           0
+    6      -152.072   14:51:43      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -121.39   14:51:43      0           0
+    2      -120.311   14:51:44      1           0
+    3      -120.204   14:51:44      1           0
+    4      -120.202   14:51:44      1           0
+    5      -120.202   14:51:44      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -122.848   14:51:44      0           0
+    2      -121.858   14:51:44      0           0
+    3      -121.557   14:51:44      0           0
+    4      -121.506   14:51:44      0           0
+    5      -121.503   14:51:44      0           0
+    6      -121.503   14:51:45      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -121.871   14:51:45      0           0
+    2      -120.69   14:51:45      0           0
+    3      -120.471   14:51:45      0           0
+    4      -120.452   14:51:45      0           0
+    5      -120.452   14:51:45      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -121.069   14:51:45      0           0
+    2      -119.401   14:51:45      0           0
+    3      -119.126   14:51:46      1           0
+    4      -119.104   14:51:46      1           0
+    5      -119.104   14:51:46      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -122.47   14:51:46      0           0
+    2      -120.81   14:51:46      0           0
+    3      -120.177   14:51:46      0           0
+    4      -120.024   14:51:46      0           0
+    5      -120.009   14:51:46      0           0
+    6      -120.007   14:51:46      0           0
+    7      -120.007   14:51:46      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -121.795   14:51:47      1           0
+    2      -120.113   14:51:47      1           0
+    3      -119.62   14:51:47      1           0
+    4      -119.529   14:51:47      1           0
+    5      -119.522   14:51:47      1           0
+    6      -119.521   14:51:47      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -120.649   14:51:47      0           0
+    2      -119.035   14:51:47      0           0
+    3      -118.856   14:51:47      0           0
+    4      -118.851   14:51:47      0           0
+    5      -118.851   14:51:47      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.416   14:51:47      0           0
+    2      -116.765   14:51:48      1           0
+    3      -116.545   14:51:48      1           0
+    4      -116.541   14:51:48      1           0
+    5      -116.541   14:51:48      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -124.014   14:51:48      0           0
+    2      -123.497   14:51:48      0           0
+    3      -123.283   14:51:48      0           0
+    4      -123.228   14:51:48      0           0
+    5      -123.222   14:51:48      0           0
+    6      -123.221   14:51:48      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -121.665   14:51:48      0           0
+    2      -119.616   14:51:48      0           0
+    3      -118.995   14:51:49      1           0
+    4      -118.904   14:51:49      1           0
+    5      -118.9   14:51:49      1           0
+    6      -118.9   14:51:49      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -122.481   14:51:49      0           0
+    2      -121.552   14:51:49      0           0
+    3      -121.299   14:51:49      0           0
+    4      -121.26   14:51:49      0           0
+    5      -121.257   14:51:49      0           0
+    6      -121.257   14:51:49      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -120.714   14:51:49      0           0
+    2      -118.343   14:51:49      0           0
+    3      -117.58   14:51:49      0           0
+    4      -117.402   14:51:50      1           0
+    5      -117.382   14:51:50      1           0
+    6      -117.38   14:51:50      1           0
+    7      -117.38   14:51:50      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -121.562   14:51:50      0           0
+    2      -119.945   14:51:50      0           0
+    3      -119.676   14:51:50      0           0
+    4      -119.668   14:51:50      0           0
+    5      -119.668   14:51:50      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -122.497   14:51:50      0           0
+    2      -121.926   14:51:50      0           0
+    3      -121.871   14:51:50      0           0
+    4      -121.869   14:51:50      0           0
+    5      -121.869   14:51:51      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -121.819   14:51:51      0           0
+    2      -120.051   14:51:51      0           0
+    3      -119.737   14:51:51      0           0
+    4      -119.711   14:51:51      0           0
+    5      -119.711   14:51:51      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -121.863   14:51:51      0           0
+    2      -120.187   14:51:51      0           0
+    3      -119.593   14:51:51      0           0
+    4      -119.473   14:51:51      0           0
+    5      -119.465   14:51:51      0           0
+    6      -119.464   14:51:51      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.454   14:51:51      0           0
+    2      -117.182   14:51:52      1           0
+    3      -117.061   14:51:52      1           0
+    4      -117.06   14:51:52      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -123.446   14:51:52      0           0
+    2      -122.973   14:51:52      0           0
+    3      -122.82   14:51:52      0           0
+    4      -122.792   14:51:52      0           0
+    5      -122.79   14:51:52      0           0
+    6      -122.79   14:51:52      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -121.313   14:51:52      0           0
+    2      -119.5   14:51:52      0           0
+    3      -119.211   14:51:52      0           0
+    4      -119.195   14:51:52      0           0
+    5      -119.195   14:51:52      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -122.133   14:51:53      1           0
+    2      -120.69   14:51:53      1           0
+    3      -120.322   14:51:53      1           0
+    4      -120.263   14:51:53      1           0
+    5      -120.259   14:51:53      1           0
+    6      -120.259   14:51:53      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -123.081   14:51:53      0           0
+    2      -122.526   14:51:53      0           0
+    3      -122.381   14:51:53      0           0
+    4      -122.36   14:51:53      0           0
+    5      -122.359   14:51:53      0           0
+    6      -122.359   14:51:53      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -121.595   14:51:53      0           0
+    2      -120.183   14:51:54      1           0
+    3      -119.92   14:51:54      1           0
+    4      -119.899   14:51:54      1           0
+    5      -119.899   14:51:54      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -119.582   14:51:54      0           0
+    2      -116.924   14:51:54      0           0
+    3      -116.586   14:51:54      0           0
+    4      -116.572   14:51:54      0           0
+    5      -116.572   14:51:54      0           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -122.916   14:51:54      0           0
+    2      -122.143   14:51:54      0           0
+    3      -121.931   14:51:54      0           0
+    4      -121.896   14:51:54      0           0
+    5      -121.894   14:51:54      0           0
+    6      -121.894   14:51:55      1           0
+iteration    LogLik     wall    cpu(sec)   restrained
+    1      -122.028   14:51:55      0           0
+    2      -120.257   14:51:55      0           0
+    3      -119.964   14:51:55      0           0
+    4      -119.951   14:51:55      0           0
+    5      -119.951   14:51:55      0           0</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># Combinar todos os resultados da validação cruzada em uma única estrutura</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>results_cv_RKHS <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, results_list)</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co"># Extrair os GEBVs (Valores Genômicos Empíricos Melhorados) em uma estrutura separada</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>GEBVS_RKHS <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, results_cv_RKHS<span class="sc">$</span>result)</span></code></pre></div>
+</div>
+<div id="results" class="section level3">
+<h3>Results</h3>
+<p>The object “GEBVS_RKHS” contains the GEBVs for each trait and clone.
+The table above shows the first five clones and their GEBVs for each
+trait.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>GEBVS_RKHS <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="fu">group_by</span>(Trait, ID_Clone) <span class="sc">|&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">GEBV =</span> <span class="fu">mean</span>(GEBV)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Trait, <span class="at">values_from =</span> GEBV) <span class="sc">%&gt;%</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">escape =</span> F, <span class="at">align =</span> <span class="st">&#39;c&#39;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>  <span class="fu">kable_classic</span>(<span class="st">&quot;hover&quot;</span>, <span class="at">full_width =</span> F, <span class="at">position =</span> <span class="st">&quot;center&quot;</span>, <span class="at">fixed_thead =</span> T)</span></code></pre></div>
+<pre><code>`summarise()` has grouped output by &#39;Trait&#39;. You can override using the
+`.groups` argument.</code></pre>
+<table class=" lightable-classic lightable-hover" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+ID_Clone
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+DMC
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+FRY
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+HI
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+N_Roots
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Nstem.Plant
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Plant.Height
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Root.Di
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Root.Le
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+ShY
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+StC
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+StY
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Stem.D
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+BGM_2042
+</td>
+<td style="text-align:center;">
+0.8851626
+</td>
+<td style="text-align:center;">
+1.3775816
+</td>
+<td style="text-align:center;">
+1.3504393
+</td>
+<td style="text-align:center;">
+0.6349606
+</td>
+<td style="text-align:center;">
+0.2436677
+</td>
+<td style="text-align:center;">
+0.0377981
+</td>
+<td style="text-align:center;">
+0.5743877
+</td>
+<td style="text-align:center;">
+1.3658880
+</td>
+<td style="text-align:center;">
+2.5388808
+</td>
+<td style="text-align:center;">
+0.8840124
+</td>
+<td style="text-align:center;">
+0.3752536
+</td>
+<td style="text-align:center;">
+0.0794001
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+BGM0368.250437186
+</td>
+<td style="text-align:center;">
+1.0559030
+</td>
+<td style="text-align:center;">
+-0.3675476
+</td>
+<td style="text-align:center;">
+0.3446849
+</td>
+<td style="text-align:center;">
+0.2653845
+</td>
+<td style="text-align:center;">
+0.0682762
+</td>
+<td style="text-align:center;">
+0.0043035
+</td>
+<td style="text-align:center;">
+-0.3011155
+</td>
+<td style="text-align:center;">
+-0.2631986
+</td>
+<td style="text-align:center;">
+-2.2886017
+</td>
+<td style="text-align:center;">
+1.0532570
+</td>
+<td style="text-align:center;">
+-0.0273292
+</td>
+<td style="text-align:center;">
+-0.0151872
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+BGM0424.250437187
+</td>
+<td style="text-align:center;">
+0.3769805
+</td>
+<td style="text-align:center;">
+-0.0584124
+</td>
+<td style="text-align:center;">
+-0.6649231
+</td>
+<td style="text-align:center;">
+0.0488446
+</td>
+<td style="text-align:center;">
+0.0440244
+</td>
+<td style="text-align:center;">
+0.0168310
+</td>
+<td style="text-align:center;">
+-0.1650248
+</td>
+<td style="text-align:center;">
+-0.0106796
+</td>
+<td style="text-align:center;">
+-0.4532117
+</td>
+<td style="text-align:center;">
+0.3828497
+</td>
+<td style="text-align:center;">
+0.0125693
+</td>
+<td style="text-align:center;">
+0.0170974
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+BGM0611.250437190
+</td>
+<td style="text-align:center;">
+-0.3807381
+</td>
+<td style="text-align:center;">
+0.0447070
+</td>
+<td style="text-align:center;">
+-0.3671337
+</td>
+<td style="text-align:center;">
+0.2625928
+</td>
+<td style="text-align:center;">
+0.0984610
+</td>
+<td style="text-align:center;">
+-0.0341276
+</td>
+<td style="text-align:center;">
+0.2121542
+</td>
+<td style="text-align:center;">
+0.5576522
+</td>
+<td style="text-align:center;">
+-0.0286580
+</td>
+<td style="text-align:center;">
+-0.3846556
+</td>
+<td style="text-align:center;">
+-0.0397691
+</td>
+<td style="text-align:center;">
+-0.0440015
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+BGM0652.250437861
+</td>
+<td style="text-align:center;">
+0.3289363
+</td>
+<td style="text-align:center;">
+0.1283697
+</td>
+<td style="text-align:center;">
+-0.5251662
+</td>
+<td style="text-align:center;">
+0.1961288
+</td>
+<td style="text-align:center;">
+0.1018050
+</td>
+<td style="text-align:center;">
+0.0031698
+</td>
+<td style="text-align:center;">
+-0.0252586
+</td>
+<td style="text-align:center;">
+0.5300556
+</td>
+<td style="text-align:center;">
+0.8376198
+</td>
+<td style="text-align:center;">
+0.3238434
+</td>
+<td style="text-align:center;">
+0.0160116
+</td>
+<td style="text-align:center;">
+0.0235057
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+BGM0699.250437199
+</td>
+<td style="text-align:center;">
+0.1243751
+</td>
+<td style="text-align:center;">
+-0.1788720
+</td>
+<td style="text-align:center;">
+-1.0288358
+</td>
+<td style="text-align:center;">
+-0.0047164
+</td>
+<td style="text-align:center;">
+0.0343550
+</td>
+<td style="text-align:center;">
+0.0108437
+</td>
+<td style="text-align:center;">
+-0.0565137
+</td>
+<td style="text-align:center;">
+0.2842844
+</td>
+<td style="text-align:center;">
+0.2205706
+</td>
+<td style="text-align:center;">
+0.1122764
+</td>
+<td style="text-align:center;">
+-0.0277006
+</td>
+<td style="text-align:center;">
+0.0437123
+</td>
+</tr>
+</tbody>
+</table>
+<p>Acuracy and MSPE for each trait and repetition:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>results_cv_RKHS[<span class="sc">-</span><span class="dv">6</span>] <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  <span class="fu">group_by</span>(Trait) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  <span class="fu">summarise_all</span>(mean) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Ac), MSPE) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">escape =</span> F, <span class="at">align =</span> <span class="st">&#39;c&#39;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>  <span class="fu">kable_classic</span>(<span class="st">&quot;hover&quot;</span>, <span class="at">full_width =</span> F, <span class="at">position =</span> <span class="st">&quot;center&quot;</span>, <span class="at">fixed_thead =</span> T)</span></code></pre></div>
+<table class=" lightable-classic lightable-hover" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Trait
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+rep
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Log
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Ac
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+MSPE
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+Root.Le
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.3714
+</td>
+<td style="text-align:center;">
+1.9894
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Stem.D
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.3512
+</td>
+<td style="text-align:center;">
+0.0084
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+ShY
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.3288
+</td>
+<td style="text-align:center;">
+13.2408
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+FRY
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.3280
+</td>
+<td style="text-align:center;">
+1.1972
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Di
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.3170
+</td>
+<td style="text-align:center;">
+3.3912
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StY
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.3090
+</td>
+<td style="text-align:center;">
+0.0724
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Plant.Height
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.3032
+</td>
+<td style="text-align:center;">
+0.0080
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.2640
+</td>
+<td style="text-align:center;">
+11.7624
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Nstem.Plant
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.2600
+</td>
+<td style="text-align:center;">
+0.0330
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+N_Roots
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.2484
+</td>
+<td style="text-align:center;">
+0.9312
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StC
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.1908
+</td>
+<td style="text-align:center;">
+6.0810
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+DMC
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.1900
+</td>
+<td style="text-align:center;">
+6.1150
+</td>
+</tr>
+</tbody>
+</table>
+<p>The object “result_cv” is divided by repetition. In the “result_cv”
+objects for each repetition, “Rep” is the number of the repetition,
+“Log” is a diagnostic indicating if the order of the predicted breeding
+values matches the order of the adjusted means, “Ac” is the prediction
+accuracy (correlation between the GEBV and adjusted means), and “MSPE”
+is the mean square prediction error (the lower, the better).</p>
+<p>Let’s now move on to processing each model. Since this can be
+time-consuming, I’ve separated it into parallel processing and each
+model into each script:</p>
+<ul>
+<li><a
+href="https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_RR_BLUP.html">*RR-BLUP**</a></li>
+<li><a
+href="https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_G-BLUP.html"><strong>G-BLUP
+(additive and additive-dominant)</strong></a></li>
+<li><a
+href="https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_BayesA.html"><strong>Bayes
+A</strong></a></li>
+<li><a
+href="https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_BayesB.html"><strong>Bayes
+B</strong></a></li>
+<li><a
+href="https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_RKHS.html"><strong>RKHS</strong></a></li>
+<li><a
+href="https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_RKHS.html"><strong>Random
+Forest</strong></a></li>
+</ul>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>R version 4.3.3 (2024-02-29 ucrt)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 19045)
+
+Matrix products: default
+
+
+locale:
+[1] LC_COLLATE=Portuguese_Brazil.utf8  LC_CTYPE=Portuguese_Brazil.utf8   
+[3] LC_MONETARY=Portuguese_Brazil.utf8 LC_NUMERIC=C                      
+[5] LC_TIME=Portuguese_Brazil.utf8    
+
+time zone: America/Sao_Paulo
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] kableExtra_1.4.0    cvTools_0.3.3       robustbase_0.99-4-1
+ [4] lattice_0.22-6      lubridate_1.9.4     forcats_1.0.0      
+ [7] stringr_1.5.1       dplyr_1.1.4         purrr_1.0.2        
+[10] readr_2.1.5         tidyr_1.3.1         tibble_3.2.1       
+[13] ggplot2_3.5.1       tidyverse_2.0.0     furrr_0.3.1        
+[16] future_1.34.0      
+
+loaded via a namespace (and not attached):
+ [1] gtable_0.3.6      xfun_0.50         bslib_0.8.0       tzdb_0.4.0       
+ [5] vctrs_0.6.5       tools_4.3.3       generics_0.1.3    parallel_4.3.3   
+ [9] DEoptimR_1.1-3-1  pkgconfig_2.0.3   lifecycle_1.0.4   compiler_4.3.3   
+[13] git2r_0.35.0      munsell_0.5.1     codetools_0.2-20  httpuv_1.6.15    
+[17] htmltools_0.5.8.1 sass_0.4.9        yaml_2.3.10       later_1.4.1      
+[21] pillar_1.10.1     jquerylib_0.1.4   cachem_1.1.0      parallelly_1.41.0
+[25] tidyselect_1.2.1  digest_0.6.37     stringi_1.8.4     listenv_0.9.1    
+[29] rprojroot_2.0.4   fastmap_1.2.0     grid_4.3.3        colorspace_2.1-1 
+[33] cli_3.6.3         magrittr_2.0.3    withr_3.0.2       scales_1.3.0     
+[37] promises_1.3.2    timechange_0.3.0  rmarkdown_2.29    globals_0.16.3   
+[41] workflowr_1.7.1   hms_1.1.3         evaluate_1.0.3    knitr_1.49       
+[45] viridisLite_0.4.2 rlang_1.1.4       Rcpp_1.0.14       glue_1.8.0       
+[49] xml2_1.3.6        svglite_2.1.3     rstudioapi_0.17.1 jsonlite_1.8.9   
+[53] R6_2.5.1          systemfonts_1.1.0 fs_1.6.5         </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>Weverton Gomes da Costa, Pós-Doutorando, Embrapa
+Mandioca e Fruticultura, <a href="mailto:wevertonufv@gmail.com"
+class="email">wevertonufv@gmail.com</a><a href="#fnref1"
+class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
