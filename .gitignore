@@ -13,6 +13,7 @@ data/allchrAR08.txt
 *.rar
 *.docx
 *.pdf
+*.png
 
 # Arquivos específicos do repositório
 output/result_sommer_row_col_random.RDS
