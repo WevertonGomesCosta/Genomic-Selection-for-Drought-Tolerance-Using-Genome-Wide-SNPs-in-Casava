@@ -11,7 +11,7 @@ navbar:
     href: mixed_models.html
   - text: Genomic Selection
     menu:
-      - text: Overview
+      - text: Prepare Data
         href: GWS.html
       - text: RR-BLUP
         href: GWS_RR-BLUP.html
@@ -25,6 +25,8 @@ navbar:
         href: GWS_RKHS.html
       - text: Random Forest
         href: GWS_RF.html
+  - text: Clone Selection
+    href: clone_selection.html
   - text: About
     href: about.html
   - text: License
