@@ -163,7 +163,7 @@ First let's add the phenotypic means to the BLUPS and GEBVS
 # Carregar dados
 media_pheno <- read.csv("output/mean_pheno.csv")
 
-BLUP <- readRDS("data/pheno.rds") %>%
+BLUPS <- readRDS("data/pheno.rds") %>%
   pivot_longer(cols = -ID_Clone, names_to = "Trait", values_to = "BLUP")
 
 # Inserir o método em cada data frame dentro de results$result
@@ -174,7 +174,7 @@ GEBV_BLUP <- bind_rows(results$result) %>%
   group_by(ID_Clone, Trait, method) %>%
   summarise(GEBV = mean(GEBV), .groups = "drop") %>%
   pivot_wider(names_from = method, values_from = GEBV) %>%
-  full_join(BLUP, by = c("ID_Clone", "Trait"))
+  full_join(BLUPS, by = c("ID_Clone", "Trait"))
 
 # Adicionar as médias fenotípicas aos valores numéricos e combinar com GEBV
 GEBV_BLUP <- GEBV_BLUP %>%
@@ -200,28 +200,15 @@ Now let's group the BLUPs data with the GEBVs and GETGVs data and add a Weights 
 selection_parents <- GEBV_BLUP %>% 
   rename(GEBV = `G-BLUP`, GETGV = `G-BLUP-DOM`) |>
   mutate(Weights = ifelse(
-    Trait %in% c(
-      "N_Roots",
-      "FRY",
-      "ShY",
-      "DMC" ,
-      "StY",
-      "Plant.Height",
-      "HI" ,
-      "StC" ,
-      "Root.Le" ,
-      "Root.Di",
-      "Stem.D" ,
-      "Nstem.Plant"
-    ),
+    Trait %in% traits,
     "acrescimo",
     "descrescimo"
   ))
 
 calcular_pesos <- function(data, var){
-  data  %>%
-  select(ID_Clone, Trait, var) %>%
-  pivot_wider(names_from = Trait, values_from = var) %>%
+  selection_parents  %>%
+  select(ID_Clone, Trait, all_of(var)) %>%
+  pivot_wider(names_from = Trait, values_from = all_of(var)) %>%
   mutate(
     N_Roots = 15 * N_Roots,
     FRY = 20 * FRY,
@@ -258,205 +245,150 @@ write.csv(pesos_GETGV, "output/pesos_GETGVS_all clones.csv" , row.names = FALSE)
 
 ### Individual selection to each trait
 
-```{r selection}
+```{r selection-functions, message=FALSE, warning=FALSE}
 results_kappa <- data.frame()
 SI <- c(10, 15, 20, 25, 30)
 
+clones_sel_pesos <- function(pesos) {
+  pesos %>%
+    right_join(sel_parents) %>%
+    droplevels() %>%
+    arrange(desc(pesos)) %>%
+    slice(1:(nlevels(ID_Clone) * (i / 100))) |>
+    droplevels()
+}
+
+clone_sel_method <- function(data, method) {
+  data %>%
+    # Use a `mutate` para criar uma coluna temporária que armazena os valores de ordenação
+    mutate(OrderingValue = ifelse(Weights == "acrescimo", get(method), -get(method))) %>%
+    arrange(desc(OrderingValue)) %>%
+    slice(1:(nlevels(ID_Clone) * (i / 100))) %>%
+    droplevels() %>%
+    select(-OrderingValue)  # Remova a coluna temporária
+}
+
+comb_sel <- function(var1, var2) {
+  get(paste0("Clones_sel_", var1)) %>%
+    full_join(get(paste0("Clones_sel_", var2))) %>%
+    resca(BLUP, GEBV, GETGV, new_min = 0, new_max = 1) %>%
+    mutate(!!paste0(var1, "_", var2) := (get(paste0(var1, "_res")) + get(paste0(var2, "_res"))) / 2) %>%
+    arrange(desc(get(paste0(var1, "_", var2)))) %>%
+    slice(1:nrow(Clones_sel_BLUP)) %>%
+    droplevels()
+}
+
+calcular_media <- function(data, var) {
+  data %>%
+    filter(Trait == j) %>%
+    select(all_of(var)) %>%
+    summarise(mean(.[[1]], na.rm = T)) %>%
+    pull()
+}
+
+calcular_media_sel <- function(data, var) {
+  get(paste0("Clones_sel_", var)) %>%
+    filter(Trait == j &
+             ID_Clone %in% get(paste0("Clones_", var, "_sel"))$ID_Clone) %>%
+    select(all_of(var)) %>%
+    summarise(mean(.[[1]], na.rm = T)) %>%
+    pull()
+}
+
+calcular_media_comb_sel <- function(data, var1, var2) {
+  data %>%
+    filter(Trait == j &
+             ID_Clone %in% get(paste0("Comb_sel_", var1, "_", var2))$ID_Clone) %>%
+    select(all_of(var1)) %>%
+    summarise(mean(.[[1]], na.rm = T)) %>%
+    pull()
+}
+
+# Função para calcular kappa
+calcular_kappa <- function(var1, var2) {
+  cohen.kappa(cbind(Clones_sel[[var1]], Clones_sel[[var2]]))[["kappa"]]
+}
+```
+
+
+```{r loop-selection, message=FALSE, warning=FALSE}
+# Melhore a clareza e a eficiência do loop de seleção
 for (j in traits) {
   for (i in SI) {
-    sel_parents <- selection_parents |>
-      filter(Trait == j)  %>%
-      na.omit() |>
-      droplevels() %>%
-      data.frame()
+    sel_parents <- droplevels(na.omit(subset(selection_parents, Trait == j)))
     
-    Clones_GEBV_sel <- pesos_GEBV %>%
-      right_join(sel_parents) %>%
-      droplevels() %>% 
-      arrange(desc(pesos)) %>%
-      slice(1:(nlevels(ID_Clone) * (i / 100))) |>
-      droplevels()
+    # Aplicar a função clones_sel_pesos para selecionar clones
+    Clones_GEBV_sel <- clones_sel_pesos(pesos_GEBV)
+    Clones_GETGV_sel <- clones_sel_pesos(pesos_GETGV)
+    Clones_BLUP_sel <- clones_sel_pesos(pesos_BLUP)
     
-    Clones_GETGV_sel <- pesos_GETGV %>%
-      right_join(sel_parents) %>%
-      droplevels() %>% 
-      arrange(desc(pesos)) %>%
-      slice(1:(nlevels(ID_Clone) * (i / 100))) |>
-      droplevels()
+    # Aplicar a função clone_sel_method para métodos de seleção
+    Clones_sel_BLUP <- clone_sel_method(sel_parents, "BLUP")
+    Clones_sel_GEBV <- clone_sel_method(sel_parents, "GEBV")
+    Clones_sel_GETGV <- clone_sel_method(sel_parents, "GETGV")
     
-    Clones_BLUPS_sel <- pesos_BLUP %>%
-      right_join(sel_parents) %>%
-      droplevels() %>% 
-      arrange(desc(pesos)) %>%
-      slice(1:(nlevels(ID_Clone) * (i / 100))) |>
-      droplevels()
+    # Calcular médias
+    X0_BLUPS <- calcular_media(selection_parents, "BLUP")
+    X0_GEBV <- calcular_media(selection_parents, "GEBV")
+    X0_GETGV <- calcular_media(selection_parents, "GETGV")
     
-    Clones_sel_BLUPS <- sel_parents %>%
-      arrange(ifelse(Weights == "acrescimo", desc(BLUP), BLUP)) |>
-      slice(1:(nlevels(ID_Clone) * (i / 100))) |>
-      #filter(ID_Clone %in% Clones_BLUPS_sel$ID_Clone) %>%
-      droplevels()
+    XS_BLUPS <- calcular_media_sel(Clones_sel_BLUP, "BLUP")
+    XS_GEBV <- calcular_media_sel(Clones_sel_GEBV, "GEBV")
+    XS_GETGV <- calcular_media_sel(Clones_sel_GETGV, "GETGV")
     
-    X0_BLUPS <- selection_parents |>
-      filter(Trait == j) |>
-      select(BLUP) |>
-      summarise(X0 = mean(BLUP, na.rm = T))
+    # Combinar seleções
+    Comb_sel_GEBV_BLUP <- comb_sel("GEBV", "BLUP")
+    Comb_sel_GETGV_BLUP <- comb_sel("GETGV", "BLUP")
+    Comb_sel_GETGV_GEBV <- comb_sel("GETGV", "GEBV")
     
-    XS_BLUPS <- selection_parents |>
-      filter(Trait == j &
-               ID_Clone %in% Clones_BLUPS_sel$ID_Clone) |>
-      select(BLUP) |>
-      summarise(X0 = mean(BLUP, na.rm = T))
+    # Calcular médias combinadas
+    XS_GEBV_BLUP <- calcular_media_comb_sel(selection_parents, "GEBV", "BLUP")
+    XS_GETGV_BLUP <- calcular_media_comb_sel(selection_parents, "GETGV", "BLUP")
+    XS_GETGV_GEBV <- calcular_media_comb_sel(selection_parents, "GETGV", "GEBV")
     
-    Clones_sel_GEBVS <- sel_parents %>%
-      arrange(ifelse(Weights == "acrescimo", desc(GEBV), GEBV)) |>
-      slice(1:(nlevels(ID_Clone) * (i / 100))) |>
-      #filter(ID_Clone %in% Clones_GEBV_sel$ID_Clone) %>%
-      droplevels()
+    # Selecionar clones
+    Clones_sel <- transform(BLUPS, 
+                           BLUPS_sel = as.integer(ID_Clone %in% Clones_sel_BLUP$ID_Clone),
+                           GEBVS_sel = as.integer(ID_Clone %in% Clones_sel_GEBV$ID_Clone),
+                           GETGV_sel = as.integer(ID_Clone %in% Clones_sel_GETGV$ID_Clone),
+                           Comb_sel_GEBV_BLUP = as.integer(ID_Clone %in% Comb_sel_GEBV_BLUP$ID_Clone),
+                           Comb_sel_GETGV_BLUP = as.integer(ID_Clone %in% Comb_sel_GETGV_BLUP$ID_Clone),
+                           Comb_sel_GETGV_GEBV = as.integer(ID_Clone %in% Comb_sel_GETGV_GEBV$ID_Clone))
+
+    # Calcular valores de kappa
+    kappa_values <- data.frame(
+      kappa_GEBV_BLUP = calcular_kappa("BLUPS_sel", "GEBVS_sel"),
+      kappa_GETGV_BLUP = calcular_kappa("BLUPS_sel", "GETGV_sel"),
+      kappa_GETGV_GEBV = calcular_kappa("GEBVS_sel", "GETGV_sel"),
+      kappa_sel_GEBV_BLUP_BLUP = calcular_kappa("BLUPS_sel", "Comb_sel_GEBV_BLUP"),
+      kappa_sel_GETGV_BLUP_BLUP = calcular_kappa("BLUPS_sel", "Comb_sel_GETGV_BLUP"),
+      kappa_sel_GETGV_GEBV_BLUP = calcular_kappa("BLUPS_sel", "Comb_sel_GETGV_GEBV"),
+      kappa_sel_GEBV_BLUP_GEBV = calcular_kappa("GEBVS_sel", "Comb_sel_GEBV_BLUP"),
+      kappa_sel_GETGV_BLUP_GEBV = calcular_kappa("GEBVS_sel", "Comb_sel_GETGV_BLUP"),
+      kappa_sel_GETGV_GEBV_GEBV = calcular_kappa("GEBVS_sel", "Comb_sel_GETGV_GEBV"),
+      kappa_sel_GEBV_BLUP_GETGV = calcular_kappa("GETGV_sel", "Comb_sel_GEBV_BLUP"),
+      kappa_sel_GETGV_BLUP_GETGV = calcular_kappa("GETGV_sel", "Comb_sel_GETGV_BLUP"),
+      kappa_sel_GETGV_GEBV_GETGV = calcular_kappa("GETGV_sel", "Comb_sel_GETGV_GEBV")
+    )
     
-    all(Clones_sel_BLUPS$ID_Clone %in% Clones_sel_GEBVS$ID_Clone)
-    
-    X0_GEBV <- selection_parents |>
-      filter(Trait == j) |>
-      select(GEBV) |>
-      summarise(X0 = mean(GEBV, na.rm = T))
-    
-    XS_GEBV <- selection_parents |>
-      filter(Trait == j &
-               ID_Clone %in% Clones_GEBV_sel$ID_Clone) |>
-      select(GEBV) |>
-      summarise(X0 = mean(GEBV, na.rm = T))
-    
-    Clones_sel_GETGV <- sel_parents %>%
-      arrange(ifelse(Weights == "acrescimo", desc(GETGV), GETGV)) |>
-      slice(1:(nlevels(ID_Clone) * (i / 100))) |>
-      #filter(ID_Clone %in% Clones_GETGV_sel$ID_Clone) %>%
-      droplevels()
-    
-    X0_GETGV <- selection_parents |>
-      filter(Trait == j) |>
-      select(GETGV) |>
-      summarise(X0 = mean(GETGV, na.rm = T))
-    
-    XS_GETGV <- selection_parents |>
-      filter(Trait == j &
-               ID_Clone %in% Clones_GETGV_sel$ID_Clone) |>
-      select(GETGV) |>
-      summarise(X0 = mean(GETGV, na.rm = T))
-    
-    Comb_sel_GEBV_BLUP <-
-      Clones_sel_GEBVS |>
-      #slice(1:(nlevels(ID_Clone)/2)) |>
-      full_join(Clones_sel_BLUPS) |>
-      #slice(1:(nlevels(ID_Clone)/2))) %>%
-      resca(BLUP, GEBV, GETGV, new_min = 0, new_max = 1) %>%
-      mutate(BLUP_GEBV = (BLUP_res + GEBV_res) / 2) |>
-      arrange(desc(BLUP_GEBV)) %>%
-      slice(1:nrow(Clones_sel_BLUPS)) |>
-      droplevels()
-    
-    XS_comb_GEBV_BLUP <- selection_parents |>
-      filter(Trait == j &
-               ID_Clone %in% Comb_sel_GEBV_BLUP$ID_Clone) |>
-      select(GEBV) |>
-      summarise(X0 = mean(GEBV, na.rm = T))
-    
-    Comb_sel_GETGV_BLUP <-
-      Clones_sel_GETGV |>
-      #slice(1:(nlevels(ID_Clone)/2)) |>
-      full_join(Clones_sel_BLUPS) |>
-      #slice(1:(nlevels(ID_Clone)/2))) %>%
-      resca(BLUP, GEBV, GETGV, new_min = 0, new_max = 1) %>%
-      mutate(BLUP_GETGV = (BLUP_res + GETGV_res) / 2) |>
-      arrange(desc(BLUP_GETGV)) %>%
-      slice(1:nrow(Clones_sel_GEBVS)) |>
-      droplevels()
-    
-    XS_comb_GETGV_BLUP <- selection_parents |>
-      filter(Trait == j &
-               ID_Clone %in% Comb_sel_GETGV_BLUP$ID_Clone) |>
-      select(GETGV) |>
-      summarise(X0 = mean(GETGV, na.rm = T))
-    
-    Comb_sel_GETGV_GEBV <-
-      Clones_sel_GETGV |>
-      #slice(1:(nlevels(ID_Clone)/2)) |>
-      full_join(Clones_sel_GEBVS) |>
-      #slice(1:(nlevels(ID_Clone)/2))) %>%
-      resca(BLUP, GEBV, GETGV, new_min = 0, new_max = 1) %>%
-      mutate(GETGV_GEBV = (GETGV_res + GEBV_res) / 2) |>
-      arrange(desc(GETGV_GEBV)) %>%
-      slice(1:nrow(Clones_sel_BLUPS)) |>
-      droplevels()
-    
-    XS_comb_GETGV_GEBV <- selection_parents |>
-      filter(Trait == j &
-               ID_Clone %in% Comb_sel_GETGV_GEBV$ID_Clone) |>
-      select(GETGV) |>
-      summarise(X0 = mean(GETGV, na.rm = T))
-    
-    Clones_sel <- BLUP |>
-      select(ID_Clone) |>
-      mutate(
-        BLUPS_sel = ifelse(ID_Clone %in% Clones_sel_BLUPS$ID_Clone,1, 0),
-        GEBVS_sel = ifelse(ID_Clone %in% Clones_sel_GEBVS$ID_Clone, 1, 0),
-        GETGV_sel = ifelse(ID_Clone %in% Clones_sel_GETGV$ID_Clone, 1, 0),
-        Comb_sel_GEBV_BLUP = ifelse(ID_Clone %in% Comb_sel_GEBV_BLUP$ID_Clone, 1, 0),
-        Comb_sel_GETGV_BLUP = ifelse(ID_Clone %in% Comb_sel_GETGV_BLUP$ID_Clone, 1, 0),
-        Comb_sel_GETGV_GEBV = ifelse(ID_Clone %in% Comb_sel_GETGV_GEBV$ID_Clone, 1, 0),
-      )
-    
-    kappa_GEBV_BLUP =  cohen.kappa(cbind(Clones_sel$BLUPS_sel, Clones_sel$GEBVS_sel))[["kappa"]]
-    
-    kappa_GETGV_BLUP =  cohen.kappa(cbind(Clones_sel$BLUPS_sel, Clones_sel$GETGV_sel))[["kappa"]]
-    
-    kappa_GETGV_GEBV =  cohen.kappa(cbind(Clones_sel$GEBVS_sel, Clones_sel$GETGV_sel))[["kappa"]]
-    
-    kappa_sel_GEBV_BLUP_BLUP =  cohen.kappa(cbind(Clones_sel$BLUPS_sel, Clones_sel$Comb_sel_GEBV_BLUP))[["kappa"]]
-    
-    kappa_sel_GETGV_BLUP_BLUP =  cohen.kappa(cbind(Clones_sel$BLUPS_sel, Clones_sel$Comb_sel_GETGV_BLUP))[["kappa"]]
-    
-    kappa_sel_GETGV_GEBV_BLUP =  cohen.kappa(cbind(Clones_sel$BLUPS_sel, Clones_sel$Comb_sel_GETGV_GEBV))[["kappa"]]
-    
-    kappa_sel_GEBV_BLUP_GEBV =  cohen.kappa(cbind(Clones_sel$GEBVS_sel, Clones_sel$Comb_sel_GEBV_BLUP))[["kappa"]]
-    
-    kappa_sel_GETGV_BLUP_GEBV =  cohen.kappa(cbind(Clones_sel$GEBVS_sel, Clones_sel$Comb_sel_GETGV_BLUP))[["kappa"]]
-    
-    kappa_sel_GETGV_GEBV_GEBV =  cohen.kappa(cbind(Clones_sel$GEBVS_sel, Clones_sel$Comb_sel_GETGV_GEBV))[["kappa"]]
-    
-    kappa_sel_GEBV_BLUP_GETGV =  cohen.kappa(cbind(Clones_sel$GETGV_sel, Clones_sel$Comb_sel_GEBV_BLUP))[["kappa"]]
-    
-    kappa_sel_GETGV_BLUP_GETGV =  cohen.kappa(cbind(Clones_sel$GETGV_sel, Clones_sel$Comb_sel_GETGV_BLUP))[["kappa"]]
-    
-    kappa_sel_GETGV_GEBV_GETGV =  cohen.kappa(cbind(Clones_sel$GETGV_sel, Clones_sel$Comb_sel_GETGV_GEBV))[["kappa"]]
-    
+    # Coeficientes kappa
     coef_kappa <- data.frame(
       Trait = j,
       SI = i,
       X0 = media_pheno[[j]],
-      X0_GEBV = X0_GEBV[[1]],
-      X0_GETGV = X0_GETGV[[1]],
-      X0_BLUPS = X0_BLUPS[[1]],
-      XS_BLUPS = XS_BLUPS[[1]],
-      XS_GEBV = XS_GEBV[[1]],
-      XS_GETGV = XS_GETGV[[1]],
-      XS_GEBV_BLUP = XS_comb_GEBV_BLUP[[1]],
-      XS_GETGV_BLUP = XS_comb_GETGV_BLUP[[1]],
-      XS_GETGV_GEBV = XS_comb_GETGV_GEBV[[1]],
-      kappa_GEBV_BLUP = kappa_GEBV_BLUP,
-      kappa_GETGV_BLUP = kappa_GETGV_BLUP,
-      kappa_GETGV_GEBV = kappa_GETGV_GEBV,
-      kappa_sel_GEBV_BLUP_BLUP = kappa_sel_GEBV_BLUP_BLUP,
-      kappa_sel_GETGV_BLUP_BLUP = kappa_sel_GETGV_BLUP_BLUP,
-      kappa_sel_GETGV_GEBV_BLUP = kappa_sel_GETGV_GEBV_BLUP,
-      kappa_sel_GEBV_BLUP_GEBV = kappa_sel_GEBV_BLUP_GEBV,
-      kappa_sel_GETGV_BLUP_GEBV = kappa_sel_GETGV_BLUP_GEBV,
-      kappa_sel_GETGV_GEBV_GEBV = kappa_sel_GETGV_GEBV_GEBV,
-      kappa_sel_GEBV_BLUP_GETGV = kappa_sel_GEBV_BLUP_GETGV,
-      kappa_sel_GETGV_BLUP_GETGV = kappa_sel_GETGV_BLUP_GETGV,
-      kappa_sel_GETGV_GEBV_GETGV = kappa_sel_GETGV_GEBV_GETGV
+      X0_GEBV,
+      X0_GETGV,
+      X0_BLUPS,
+      XS_BLUPS,
+      XS_GEBV,
+      XS_GETGV,
+      XS_GEBV_BLUP,
+      XS_GETGV_BLUP,
+      XS_GETGV_GEBV
     )
+    coef_kappa <- cbind(coef_kappa, kappa_values)
     
+    # Anexar os resultados
     results_kappa <- rbind(results_kappa, coef_kappa)
   }
 }
@@ -476,19 +408,19 @@ results_kappa |>
                cols = 13:18) %>%
   ggplot(aes(x = Trait, y = SI, fill = Kappa)) +
   geom_tile() +
-  facet_wrap(Comparation ~ .,
-             labeller = as_labeller(
-               c(
-                 kappa_GEBV_BLUP = "GEBV x BLUP",
-                 kappa_GETGV_BLUP = "GETGV x BLUP",
-                 kappa_GETGV_GEBV = "GEBV x GETGV",
-                 kappa_sel_GEBV_BLUP_BLUP = "GEBV_BLUP x BLUP",
-                 kappa_sel_GETGV_BLUP_BLUP = "GETGV_BLUP x BLUP",
-                 kappa_sel_GETGV_GEBV_BLUP = "GETGV_GEBV x BLUP"
-               )
-             ), ncol = 2) +
+  facet_wrap(Comparation ~ ., labeller = as_labeller(
+    c(
+      kappa_GEBV_BLUP = "GEBV x BLUP",
+      kappa_GETGV_BLUP = "GETGV x BLUP",
+      kappa_GETGV_GEBV = "GEBV x GETGV",
+      kappa_sel_GEBV_BLUP_BLUP = "GEBV_BLUP x BLUP",
+      kappa_sel_GETGV_BLUP_BLUP = "GETGV_BLUP x BLUP",
+      kappa_sel_GETGV_GEBV_BLUP = "GETGV_GEBV x BLUP"
+    )
+  ), ncol = 2) +
   scale_fill_viridis(discrete = FALSE, limits = c(-0.07, 1)) +
   labs(x = "" , y = "Selection Index", fill = "Kappa") +
+  theme_bw() +
   theme(
     text = element_text(size = 20),
     legend.key.width = unit(1.5, 'cm'),
@@ -658,10 +590,6 @@ results_h2_GBLUP <- readRDS("output/results_cv_G_BLUP.RDS") %>%
   select(Trait, narrow_sense) %>% 
   group_by(Trait) %>%
   summarise(SNP_H2_narrow_sense = mean(narrow_sense))
-
-results_h2_GBLUP %>%
-  kbl(escape = F, align = 'c') |>
-  kable_classic("hover", full_width = F, position = "center", fixed_thead = T)
 ```
 
 
