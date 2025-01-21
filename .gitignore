@@ -8,6 +8,7 @@
 data/allchrAR08.txt
 
 # Tipos de arquivo a serem ignorados
+*.tiff
 *.rds
 *.rar
 *.docx
