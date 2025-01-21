@@ -1,0 +1,699 @@
+---
+title: "Clone Selection"
+author: 
+  - Costa, W. G.^[Weverton Gomes da Costa, Pós-Doutorando, Embrapa Mandioca e Fruticultura, wevertonufv@gmail.com]
+date: "`r Sys.Date()`"
+site: workflowr::wflow_site
+url: https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava
+output:
+  workflowr::wflow_html:
+    toc: TRUE
+editor_options:
+  chunk_output_type: console
+---
+
+## Configurations and packages
+
+```{r setup, include=F} 
+knitr::opts_chunk$set(echo = T, warning = F)
+```
+
+To perform the analyses, we will need the following packages:
+
+```{r libraries, message=FALSE}
+library(tidyverse)
+library(kableExtra)
+library(ggthemes)
+library(metan)
+library(psych)
+library(viridis)
+library(ggpubr)
+```
+
+## Data
+
+```{r data}
+results <- readRDS("output/results_cv_G_BLUP.RDS") %>%
+  mutate(method = "G-BLUP") %>%
+  bind_rows(
+    readRDS("output/results_cv_RR_BLUP.RDS") %>%
+      mutate(method = "RR-BLUP"),
+    readRDS("output/results_cv_RKHS.RDS") %>%
+      mutate(method = "RKHS"),
+    readRDS("output/results_cv_BayesA.RDS") %>%
+      mutate(method = "Bayes A"),
+    readRDS("output/results_cv_BayesB.RDS") %>%
+      mutate(method = "Bayes B"),
+    readRDS("output/results_cv_RF.RDS") %>%
+      mutate(method = "RF"),
+    readRDS("output/results_cv_GEBVS_DOM.RDS") %>%
+      mutate(method = "G-BLUP-DOM")
+  )
+
+traits <- unique(results$Trait)
+```
+
+## Results
+
+### Plot boxplot from Accuracy
+
+Figure 2 Boxplot of predictive ability 
+
+```{r accuracy}
+results %>%
+  ggplot(aes(x = method, y = Ac, fill = method)) +
+  geom_boxplot() +
+  facet_wrap(~ Trait, ncol = 6) +
+  expand_limits(y = 0) +
+  labs(y = "Accuracy", x = "", fill = "Method") +
+  scale_fill_gdocs() +
+  theme(
+    text = element_text(size = 25),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    legend.position = "top",
+    legend.title = element_blank(),
+    legend.box = "horizontal",
+    panel.spacing = unit(1, "lines"),
+    strip.background = element_blank(),
+    panel.background = element_blank(),
+    plot.background = element_blank(),
+    legend.background = element_blank(),
+    legend.box.background = element_blank(),
+    legend.key = element_blank()
+  ) +
+  guides(fill = guide_legend(
+    nrow = 1,
+    byrow = TRUE,
+    keywidth = 1.5,
+    keyheight = 1,
+    title.position = "top"
+  ))
+```
+
+
+```{r accuracy_save, include=FALSE}
+ggsave(
+  "output/accuracy_all_methods.tiff",
+  width = 16,
+  height = 10,
+  dpi = 300
+)
+```
+
+Table to Figure 2 Boxplot of predictive ability 
+
+```{r accuracy_table}
+# Calcular médias e desvio padrão de Ac por Trait e método
+results_Ac <- results %>%
+  group_by(Trait, method) %>%
+  summarise(
+    Ac_mean = round(mean(Ac) * 100, 2),
+    Ac_sd = round(sd(Ac) * 100, 2),
+    .groups = "drop"  # Remove agrupamento após summarise
+  ) %>%
+  select(Trait, method, Ac_mean) %>%
+  pivot_wider(names_from = method, values_from = Ac_mean)
+
+# Exibir resultados em tabela com kable
+results_Ac %>%
+  kbl(escape = FALSE, align = "c") %>%
+  kable_classic(
+    "hover",
+    full_width = FALSE,
+    position = "center",
+    fixed_thead = TRUE
+  )
+```
+
+```{r MSPE_table}
+# Calcular médias e desvio padrão de MSPE por Trait e método
+results_MSPE <- results %>%
+  group_by(Trait, method) %>%
+  summarise(
+    MSPE_mean = round(mean(MSPE) * 100, 2),
+    MSPE_sd = round(sd(MSPE) * 100, 2),
+    .groups = "drop"  # Remove agrupamento após summarise
+  ) %>%
+  select(Trait, method, MSPE_mean) %>%
+  pivot_wider(names_from = method, values_from = MSPE_mean)
+
+# Exibir resultados em tabela com kable
+results_MSPE %>%
+  kbl(escape = FALSE, align = "c") %>%
+  kable_classic(
+    "hover",
+    full_width = FALSE,
+    position = "center",
+    fixed_thead = TRUE
+  )
+```
+
+```{r save_results, include=FALSE}
+write.csv(results_Ac, "output/results_accuracy.csv", row.names = FALSE)
+
+write.csv(results_MSPE, "output/results_MSPE.csv", row.names = FALSE)
+```
+
+### Clone Selection
+
+First let's add the phenotypic means to the BLUPS and GEBVS
+
+```{r clone_selection}
+# Carregar dados
+media_pheno <- read.csv("output/mean_pheno.csv")
+
+BLUP <- readRDS("data/pheno.rds") %>%
+  pivot_longer(cols = -ID_Clone, names_to = "Trait", values_to = "BLUP")
+
+# Inserir o método em cada data frame dentro de results$result
+results$result <- map2(results$result, results$method, ~mutate(.x, method = .y))
+
+# Combinar todos os data frames em um único data frame
+GEBV_BLUP <- bind_rows(results$result) %>%
+  group_by(ID_Clone, Trait, method) %>%
+  summarise(GEBV = mean(GEBV), .groups = "drop") %>%
+  pivot_wider(names_from = method, values_from = GEBV) %>%
+  full_join(BLUP, by = c("ID_Clone", "Trait"))
+
+# Adicionar as médias fenotípicas aos valores numéricos e combinar com GEBV
+GEBV_BLUP <- GEBV_BLUP %>%
+  rowwise() %>%
+  mutate(across(where(is.numeric), ~ . + media_pheno[[Trait]])) %>%
+  ungroup()
+
+# Visualizar os primeiros dados
+GEBV_BLUP %>%
+  head() %>%
+  kbl(escape = FALSE, align = "c") %>%
+  kable_classic("hover", full_width = FALSE, position = "center", fixed_thead = TRUE)
+```
+
+
+```{r clone_selection_save, include=FALSE}
+write.csv(GEBV_BLUP, file ="output/GEBV_BLUP.csv" , row.names = FALSE)
+```
+
+Now let's group the BLUPs data with the GEBVs and GETGVs data and add a Weights column for each increase or decrease characteristic.
+
+```{r pesos} 
+selection_parents <- GEBV_BLUP %>% 
+  rename(GEBV = `G-BLUP`, GETGV = `G-BLUP-DOM`) |>
+  mutate(Weights = ifelse(
+    Trait %in% c(
+      "N_Roots",
+      "FRY",
+      "ShY",
+      "DMC" ,
+      "StY",
+      "Plant.Height",
+      "HI" ,
+      "StC" ,
+      "Root.Le" ,
+      "Root.Di",
+      "Stem.D" ,
+      "Nstem.Plant"
+    ),
+    "acrescimo",
+    "descrescimo"
+  ))
+
+calcular_pesos <- function(data, var){
+  data  %>%
+  select(ID_Clone, Trait, var) %>%
+  pivot_wider(names_from = Trait, values_from = var) %>%
+  mutate(
+    N_Roots = 15 * N_Roots,
+    FRY = 20 * FRY,
+    ShY = 10 * ShY,
+    DMC = 15 * DMC,
+    StY = 10 * StY,
+    Plant.Height = 5 * Plant.Height,
+    HI = 10 * HI,
+    StC = 10 * StC,
+    Root.Le = 5 * Root.Le,
+    Root.Di = 5 * Root.Di,
+    Stem.D = 5 * Stem.D,
+    Nstem.Plant = 5 * Nstem.Plant
+  ) %>%
+  mutate(pesos =
+           rowSums(.[2:13], na.rm = TRUE))
+}
+
+pesos_BLUP <- calcular_pesos(selection_parents, "BLUP")
+pesos_GEBV <- calcular_pesos(selection_parents, "GEBV")
+pesos_GETGV <- calcular_pesos(selection_parents, "GETGV")
+```
+
+
+```{r pesos_save, include=FALSE} 
+write.csv(selection_parents, "output/BLUPS_GEBV_GETG_all clones.csv" , row.names = FALSE)
+
+write.csv(pesos_BLUP, "output/pesos_BLUPS_all clones.csv" , row.names = FALSE)
+
+write.csv(pesos_GEBV, "output/pesos_GEBVS_all clones.csv" , row.names = FALSE)
+
+write.csv(pesos_GETGV, "output/pesos_GETGVS_all clones.csv" , row.names = FALSE)
+```
+
+### Individual selection to each trait
+
+```{r selection}
+results_kappa <- data.frame()
+SI <- c(10, 15, 20, 25, 30)
+
+for (j in traits) {
+  for (i in SI) {
+    sel_parents <- selection_parents |>
+      filter(Trait == j)  %>%
+      na.omit() |>
+      droplevels() %>%
+      data.frame()
+    
+    Clones_GEBV_sel <- pesos_GEBV %>%
+      right_join(sel_parents) %>%
+      droplevels() %>% 
+      arrange(desc(pesos)) %>%
+      slice(1:(nlevels(ID_Clone) * (i / 100))) |>
+      droplevels()
+    
+    Clones_GETGV_sel <- pesos_GETGV %>%
+      right_join(sel_parents) %>%
+      droplevels() %>% 
+      arrange(desc(pesos)) %>%
+      slice(1:(nlevels(ID_Clone) * (i / 100))) |>
+      droplevels()
+    
+    Clones_BLUPS_sel <- pesos_BLUP %>%
+      right_join(sel_parents) %>%
+      droplevels() %>% 
+      arrange(desc(pesos)) %>%
+      slice(1:(nlevels(ID_Clone) * (i / 100))) |>
+      droplevels()
+    
+    Clones_sel_BLUPS <- sel_parents %>%
+      arrange(ifelse(Weights == "acrescimo", desc(BLUP), BLUP)) |>
+      slice(1:(nlevels(ID_Clone) * (i / 100))) |>
+      #filter(ID_Clone %in% Clones_BLUPS_sel$ID_Clone) %>%
+      droplevels()
+    
+    X0_BLUPS <- selection_parents |>
+      filter(Trait == j) |>
+      select(BLUP) |>
+      summarise(X0 = mean(BLUP, na.rm = T))
+    
+    XS_BLUPS <- selection_parents |>
+      filter(Trait == j &
+               ID_Clone %in% Clones_BLUPS_sel$ID_Clone) |>
+      select(BLUP) |>
+      summarise(X0 = mean(BLUP, na.rm = T))
+    
+    Clones_sel_GEBVS <- sel_parents %>%
+      arrange(ifelse(Weights == "acrescimo", desc(GEBV), GEBV)) |>
+      slice(1:(nlevels(ID_Clone) * (i / 100))) |>
+      #filter(ID_Clone %in% Clones_GEBV_sel$ID_Clone) %>%
+      droplevels()
+    
+    all(Clones_sel_BLUPS$ID_Clone %in% Clones_sel_GEBVS$ID_Clone)
+    
+    X0_GEBV <- selection_parents |>
+      filter(Trait == j) |>
+      select(GEBV) |>
+      summarise(X0 = mean(GEBV, na.rm = T))
+    
+    XS_GEBV <- selection_parents |>
+      filter(Trait == j &
+               ID_Clone %in% Clones_GEBV_sel$ID_Clone) |>
+      select(GEBV) |>
+      summarise(X0 = mean(GEBV, na.rm = T))
+    
+    Clones_sel_GETGV <- sel_parents %>%
+      arrange(ifelse(Weights == "acrescimo", desc(GETGV), GETGV)) |>
+      slice(1:(nlevels(ID_Clone) * (i / 100))) |>
+      #filter(ID_Clone %in% Clones_GETGV_sel$ID_Clone) %>%
+      droplevels()
+    
+    X0_GETGV <- selection_parents |>
+      filter(Trait == j) |>
+      select(GETGV) |>
+      summarise(X0 = mean(GETGV, na.rm = T))
+    
+    XS_GETGV <- selection_parents |>
+      filter(Trait == j &
+               ID_Clone %in% Clones_GETGV_sel$ID_Clone) |>
+      select(GETGV) |>
+      summarise(X0 = mean(GETGV, na.rm = T))
+    
+    Comb_sel_GEBV_BLUP <-
+      Clones_sel_GEBVS |>
+      #slice(1:(nlevels(ID_Clone)/2)) |>
+      full_join(Clones_sel_BLUPS) |>
+      #slice(1:(nlevels(ID_Clone)/2))) %>%
+      resca(BLUP, GEBV, GETGV, new_min = 0, new_max = 1) %>%
+      mutate(BLUP_GEBV = (BLUP_res + GEBV_res) / 2) |>
+      arrange(desc(BLUP_GEBV)) %>%
+      slice(1:nrow(Clones_sel_BLUPS)) |>
+      droplevels()
+    
+    XS_comb_GEBV_BLUP <- selection_parents |>
+      filter(Trait == j &
+               ID_Clone %in% Comb_sel_GEBV_BLUP$ID_Clone) |>
+      select(GEBV) |>
+      summarise(X0 = mean(GEBV, na.rm = T))
+    
+    Comb_sel_GETGV_BLUP <-
+      Clones_sel_GETGV |>
+      #slice(1:(nlevels(ID_Clone)/2)) |>
+      full_join(Clones_sel_BLUPS) |>
+      #slice(1:(nlevels(ID_Clone)/2))) %>%
+      resca(BLUP, GEBV, GETGV, new_min = 0, new_max = 1) %>%
+      mutate(BLUP_GETGV = (BLUP_res + GETGV_res) / 2) |>
+      arrange(desc(BLUP_GETGV)) %>%
+      slice(1:nrow(Clones_sel_GEBVS)) |>
+      droplevels()
+    
+    XS_comb_GETGV_BLUP <- selection_parents |>
+      filter(Trait == j &
+               ID_Clone %in% Comb_sel_GETGV_BLUP$ID_Clone) |>
+      select(GETGV) |>
+      summarise(X0 = mean(GETGV, na.rm = T))
+    
+    Comb_sel_GETGV_GEBV <-
+      Clones_sel_GETGV |>
+      #slice(1:(nlevels(ID_Clone)/2)) |>
+      full_join(Clones_sel_GEBVS) |>
+      #slice(1:(nlevels(ID_Clone)/2))) %>%
+      resca(BLUP, GEBV, GETGV, new_min = 0, new_max = 1) %>%
+      mutate(GETGV_GEBV = (GETGV_res + GEBV_res) / 2) |>
+      arrange(desc(GETGV_GEBV)) %>%
+      slice(1:nrow(Clones_sel_BLUPS)) |>
+      droplevels()
+    
+    XS_comb_GETGV_GEBV <- selection_parents |>
+      filter(Trait == j &
+               ID_Clone %in% Comb_sel_GETGV_GEBV$ID_Clone) |>
+      select(GETGV) |>
+      summarise(X0 = mean(GETGV, na.rm = T))
+    
+    Clones_sel <- BLUP |>
+      select(ID_Clone) |>
+      mutate(
+        BLUPS_sel = ifelse(ID_Clone %in% Clones_sel_BLUPS$ID_Clone,1, 0),
+        GEBVS_sel = ifelse(ID_Clone %in% Clones_sel_GEBVS$ID_Clone, 1, 0),
+        GETGV_sel = ifelse(ID_Clone %in% Clones_sel_GETGV$ID_Clone, 1, 0),
+        Comb_sel_GEBV_BLUP = ifelse(ID_Clone %in% Comb_sel_GEBV_BLUP$ID_Clone, 1, 0),
+        Comb_sel_GETGV_BLUP = ifelse(ID_Clone %in% Comb_sel_GETGV_BLUP$ID_Clone, 1, 0),
+        Comb_sel_GETGV_GEBV = ifelse(ID_Clone %in% Comb_sel_GETGV_GEBV$ID_Clone, 1, 0),
+      )
+    
+    kappa_GEBV_BLUP =  cohen.kappa(cbind(Clones_sel$BLUPS_sel, Clones_sel$GEBVS_sel))[["kappa"]]
+    
+    kappa_GETGV_BLUP =  cohen.kappa(cbind(Clones_sel$BLUPS_sel, Clones_sel$GETGV_sel))[["kappa"]]
+    
+    kappa_GETGV_GEBV =  cohen.kappa(cbind(Clones_sel$GEBVS_sel, Clones_sel$GETGV_sel))[["kappa"]]
+    
+    kappa_sel_GEBV_BLUP_BLUP =  cohen.kappa(cbind(Clones_sel$BLUPS_sel, Clones_sel$Comb_sel_GEBV_BLUP))[["kappa"]]
+    
+    kappa_sel_GETGV_BLUP_BLUP =  cohen.kappa(cbind(Clones_sel$BLUPS_sel, Clones_sel$Comb_sel_GETGV_BLUP))[["kappa"]]
+    
+    kappa_sel_GETGV_GEBV_BLUP =  cohen.kappa(cbind(Clones_sel$BLUPS_sel, Clones_sel$Comb_sel_GETGV_GEBV))[["kappa"]]
+    
+    kappa_sel_GEBV_BLUP_GEBV =  cohen.kappa(cbind(Clones_sel$GEBVS_sel, Clones_sel$Comb_sel_GEBV_BLUP))[["kappa"]]
+    
+    kappa_sel_GETGV_BLUP_GEBV =  cohen.kappa(cbind(Clones_sel$GEBVS_sel, Clones_sel$Comb_sel_GETGV_BLUP))[["kappa"]]
+    
+    kappa_sel_GETGV_GEBV_GEBV =  cohen.kappa(cbind(Clones_sel$GEBVS_sel, Clones_sel$Comb_sel_GETGV_GEBV))[["kappa"]]
+    
+    kappa_sel_GEBV_BLUP_GETGV =  cohen.kappa(cbind(Clones_sel$GETGV_sel, Clones_sel$Comb_sel_GEBV_BLUP))[["kappa"]]
+    
+    kappa_sel_GETGV_BLUP_GETGV =  cohen.kappa(cbind(Clones_sel$GETGV_sel, Clones_sel$Comb_sel_GETGV_BLUP))[["kappa"]]
+    
+    kappa_sel_GETGV_GEBV_GETGV =  cohen.kappa(cbind(Clones_sel$GETGV_sel, Clones_sel$Comb_sel_GETGV_GEBV))[["kappa"]]
+    
+    coef_kappa <- data.frame(
+      Trait = j,
+      SI = i,
+      X0 = media_pheno[[j]],
+      X0_GEBV = X0_GEBV[[1]],
+      X0_GETGV = X0_GETGV[[1]],
+      X0_BLUPS = X0_BLUPS[[1]],
+      XS_BLUPS = XS_BLUPS[[1]],
+      XS_GEBV = XS_GEBV[[1]],
+      XS_GETGV = XS_GETGV[[1]],
+      XS_GEBV_BLUP = XS_comb_GEBV_BLUP[[1]],
+      XS_GETGV_BLUP = XS_comb_GETGV_BLUP[[1]],
+      XS_GETGV_GEBV = XS_comb_GETGV_GEBV[[1]],
+      kappa_GEBV_BLUP = kappa_GEBV_BLUP,
+      kappa_GETGV_BLUP = kappa_GETGV_BLUP,
+      kappa_GETGV_GEBV = kappa_GETGV_GEBV,
+      kappa_sel_GEBV_BLUP_BLUP = kappa_sel_GEBV_BLUP_BLUP,
+      kappa_sel_GETGV_BLUP_BLUP = kappa_sel_GETGV_BLUP_BLUP,
+      kappa_sel_GETGV_GEBV_BLUP = kappa_sel_GETGV_GEBV_BLUP,
+      kappa_sel_GEBV_BLUP_GEBV = kappa_sel_GEBV_BLUP_GEBV,
+      kappa_sel_GETGV_BLUP_GEBV = kappa_sel_GETGV_BLUP_GEBV,
+      kappa_sel_GETGV_GEBV_GEBV = kappa_sel_GETGV_GEBV_GEBV,
+      kappa_sel_GEBV_BLUP_GETGV = kappa_sel_GEBV_BLUP_GETGV,
+      kappa_sel_GETGV_BLUP_GETGV = kappa_sel_GETGV_BLUP_GETGV,
+      kappa_sel_GETGV_GEBV_GETGV = kappa_sel_GETGV_GEBV_GETGV
+    )
+    
+    results_kappa <- rbind(results_kappa, coef_kappa)
+  }
+}
+```
+
+
+```{r selection_save, include=FALSE}
+write.csv(results_kappa, "output/results_kappa.csv", row.names = FALSE)
+```
+
+Figure 3 Cohen’s Kappa of coincidence 
+
+```{r kappa}
+results_kappa |>
+  pivot_longer(names_to = "Comparation",
+               values_to = "Kappa",
+               cols = 13:18) %>%
+  ggplot(aes(x = Trait, y = SI, fill = Kappa)) +
+  geom_tile() +
+  facet_wrap(Comparation ~ .,
+             labeller = as_labeller(
+               c(
+                 kappa_GEBV_BLUP = "GEBV x BLUP",
+                 kappa_GETGV_BLUP = "GETGV x BLUP",
+                 kappa_GETGV_GEBV = "GEBV x GETGV",
+                 kappa_sel_GEBV_BLUP_BLUP = "GEBV_BLUP x BLUP",
+                 kappa_sel_GETGV_BLUP_BLUP = "GETGV_BLUP x BLUP",
+                 kappa_sel_GETGV_GEBV_BLUP = "GETGV_GEBV x BLUP"
+               )
+             ), ncol = 2) +
+  scale_fill_viridis(discrete = FALSE, limits = c(-0.07, 1)) +
+  labs(x = "" , y = "Selection Index", fill = "Kappa") +
+  theme(
+    text = element_text(size = 20),
+    legend.key.width = unit(1.5, 'cm'),
+    legend.box = "horizontal",
+    legend.position = "top",
+    legend.background =  element_blank(),
+    strip.background = element_blank(),
+    panel.background = element_blank(),
+    plot.background = element_blank(),
+    axis.text.x = element_text(
+      angle = 45,
+      hjust = 1,
+      vjust = 1
+    )
+  )
+```
+
+
+```{r kappa_save, include=FALSE}
+ggsave(
+  "output/kappa.tiff",
+  width = 12,
+  height = 12
+)
+```
+
+
+Figure 4: Selection gains
+
+```{r gains}
+teste <-  results_kappa %>%
+  select(Trait, SI, X0, XS_GEBV, XS_GETGV)
+
+p <- list()
+
+for (i in levels(factor(teste$Trait))) {
+  breaks <- teste %>%
+    filter(Trait == i) %>%
+    droplevels() %>%
+    group_by(Trait) %>%
+    summarise(
+      min_X0 = min(X0),
+      max_XS = max(c(XS_GEBV, XS_GETGV)),
+      mean_X0_XS = mean(c(min_X0, max_XS))
+    ) %>%
+    round_cols()
+  
+  p[[i]] <- teste %>%
+    filter(Trait == i) %>%
+    droplevels() %>%
+    ggplot(aes(y = SI,
+               x = start)) +
+    geom_segment(
+      aes(
+        x = X0,
+        xend = XS_GEBV,
+        y = SI,
+        yend = SI
+      ),
+      linewidth = 1,
+      color = "gray80"
+    ) +
+    geom_point(
+      data = teste %>%
+        filter(Trait == i) %>%
+        droplevels() %>%
+        pivot_longer(
+          names_to = "measure",
+          values_to = "value",
+          cols = c("X0", "XS_GEBV", "XS_GETGV")
+        ),
+      aes(y = SI,
+          x = value,
+          color = measure),
+      size = 4,
+      alpha = 0.75
+    )  +
+    scale_x_continuous(
+      limits = ~ c(min(.x), max(.x)),
+      breaks = c(breaks$min_X0, breaks$mean_X0_XS, breaks$max_XS),
+      expand = expansion(mult = ifelse(i == "Plant.Height" , 0.25, 0.15))
+    ) +
+    scale_color_gdocs() +
+    labs(x = i)  +
+    theme(
+      text = element_text(size = 15),
+      legend.text = element_text(size = 15),
+      legend.box = "horizontal",
+      legend.direction = "horizontal",
+      legend.position = "top",
+      panel.spacing = unit(2, "lines"),
+      legend.title = element_blank(),
+      panel.background = element_blank(),
+      panel.border = element_blank(),
+      plot.background = element_blank(),
+      legend.background = element_blank(),
+      legend.box.background = element_blank(),
+      legend.key = element_blank()
+    )
+}
+
+annotate_figure(
+  ggarrange(
+    plotlist = p,
+    nrow = 3,
+    ncol = 4,
+    common.legend = TRUE),
+  left = text_grob("Selection Index", rot = 90, size = 20)
+)
+```
+
+
+```{r gains_save, include=FALSE}
+ggsave(
+  "output/indice_selection_GEBV_GETGV.tiff",
+  width = 12,
+  height = 8,
+  dpi = 300
+)
+```
+
+Supplementary Table 3 - Cohen’s Kappa of coincidence 
+
+```{r kappa_table}
+results_kappa |>
+  select(1,2, starts_with("kappa")) %>% 
+  kbl(escape = F, align = 'c') |>
+  kable_classic("hover", full_width = F, position = "center", fixed_thead = T)
+```
+
+
+```{r kappa_table_save, include=FALSE}
+write.csv(results_kappa |>
+  select( 1,2, starts_with("kappa")) , "output/results_values_kappa.csv", row.names = FALSE)
+```
+
+Supplementary Table 4 - Diferential selection
+
+
+```{r diferencial_selection}
+diferencial_selection <- results_kappa %>%
+  mutate(DS_GEBV = ((XS_GEBV - X0) / X0)*100,
+         DS_GETGV = ((XS_GETGV - X0) / X0)*100) %>%
+  select(1:3, XS_GEBV, XS_GETGV, DS_GEBV, DS_GETGV)  
+
+diferencial_selection %>%
+  kbl(escape = F, align = 'c') |>
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
+```
+
+
+```{r diferencial_selection-save, include=FALSE}
+write.csv(diferencial_selection, "output/dierencial_selecao.csv", row.names = FALSE)
+```
+
+### SNP-based heritability estimate 
+
+SNP-based heritability estimate
+
+```{r results_h2}
+results_h2_GBLUP <- readRDS("output/results_cv_G_BLUP.RDS") %>%
+  select(Trait, narrow_sense) %>% 
+  group_by(Trait) %>%
+  summarise(SNP_H2_narrow_sense = mean(narrow_sense))
+
+results_h2_GBLUP %>%
+  kbl(escape = F, align = 'c') |>
+  kable_classic("hover", full_width = F, position = "center", fixed_thead = T)
+```
+
+
+```{r results_h2_save, include=FALSE}
+write.csv(results_h2_GBLUP, "output/results_h2_GBLUP.csv", row.names = FALSE)
+```
+
+Table 2 Broad-sense heritability and SNP-based heritability
+
+```{r}
+H2 <- read.csv("output/H2_row_col_random.csv")
+pheno_mean_sd <- read.csv("output/pheno_mean_sd.csv")
+
+Broad_SNP_h2 <- H2 %>%
+  rename(Trait = trait) %>% 
+  full_join(results_h2_GBLUP) %>% 
+  full_join(pheno_mean_sd %>%
+              rename("Trait" = "variable")) %>%
+  round_cols(digits = 2) %>%
+  mutate(mean = str_c(mean, " (", min, " - ", max, ")")) %>%
+  select(Trait, H2_Broad, H2_narrow, SNP_H2_narrow_sense, mean, cv)
+
+Broad_SNP_h2 %>%
+  kbl(escape = F, align = 'c') |>
+  kable_classic(
+    "hover",
+    full_width = F,
+    position = "center",
+    fixed_thead = T
+  )
+```
+
+```{r Broad_SNP_h2_save, include=FALSE}
+write.csv(Broad_SNP_h2, "output/results_Broad_SNP_h2.csv", row.names = FALSE)
+```
