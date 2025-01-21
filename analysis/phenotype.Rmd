@@ -250,13 +250,21 @@ Inspect overall data correlations and save clean data:
 corr_plot(pheno, col.by = Ano)
 ```
 
+```{r mean-sd}
+# Descriptive statistics (mean, minimum, maximum, CV)
+pheno_mean_sd <- desc_stat(pheno, stats = c("mean, min, max, cv"), na.rm = TRUE)
+
+pheno_mean_sd %>%
+  kbl(escape = F, align = 'c') %>%
+  kable_classic("hover", full_width = F, position = "center", fixed_thead = T)
+```
+
+
 
 ```{r include = FALSE}
 # Saving the cleaned data
 write.csv(pheno, "data/pheno_clean.csv", row.names = FALSE, quote = FALSE)
 
-# Descriptive statistics (mean, minimum, maximum, CV)
-pheno_mean_sd <- desc_stat(pheno, stats = c("mean", "min", "max", "cv"))
 write.csv(pheno_mean_sd, "output/pheno_mean_sd.csv", row.names = FALSE, quote = FALSE)
 ```
 

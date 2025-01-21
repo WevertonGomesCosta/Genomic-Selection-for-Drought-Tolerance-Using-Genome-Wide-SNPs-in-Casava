@@ -11,11 +11,11 @@
 
 <meta name="author" content="Costa, W. G." />
 
-<meta name="date" content="2025-01-13" />
+<meta name="date" content="2025-01-20" />
 
 <title>Phenotype Analysis of Brazilian Drought Trials</title>
 
-<script src="site_libs/header-attrs-2.24/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -434,7 +434,7 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="GWS.html">Overview</a>
+      <a href="GWS.html">Prepare Data</a>
     </li>
     <li>
       <a href="GWS_RR-BLUP.html">RR-BLUP</a>
@@ -455,6 +455,9 @@ div.tocify {
       <a href="GWS_RF.html">Random Forest</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="clone_selection.html">Clone Selection</a>
 </li>
 <li>
   <a href="about.html">About</a>
@@ -478,7 +481,7 @@ div.tocify {
 Trials</h1>
 <h4 class="author">Costa, W. G.<a href="#fn1" class="footnote-ref"
 id="fnref1"><sup>1</sup></a></h4>
-<h4 class="date">2025-01-13</h4>
+<h4 class="date">2025-01-20</h4>
 
 </div>
 
@@ -507,7 +510,7 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-01-13
+<strong>Last updated:</strong> 2025-01-20
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -642,15 +645,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatree78cd01abb55597be14d41c85618c7db2c1d0b81dtargetblank78cd01aa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatree00c2e2530a05cabd99660b6388c85a624c23b3f4targetblank00c2e25a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/78cd01abb55597be14d41c85618c7db2c1d0b81d" target="_blank">78cd01a</a>
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/00c2e2530a05cabd99660b6388c85a624c23b3f4" target="_blank">00c2e25</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatree78cd01abb55597be14d41c85618c7db2c1d0b81dtargetblank78cd01aa"
+id="strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatree00c2e2530a05cabd99660b6388c85a624c23b3f4targetblank00c2e25a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -660,7 +663,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/78cd01abb55597be14d41c85618c7db2c1d0b81d" target="_blank">78cd01a</a>.
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/00c2e2530a05cabd99660b6388c85a624c23b3f4" target="_blank">00c2e25</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -677,27 +680,149 @@ were generated:
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/GWS.Rmd/
+    Ignored:    analysis/figure/clone_selection.Rmd/
+    Ignored:    data/Artigo/
     Ignored:    data/allchrAR08.txt
+    Ignored:    data/data.rar
+    Ignored:    data/geno.rds
+    Ignored:    data/pheno.rds
+    Ignored:    output/BLUPS_density_med_row_col.png
+    Ignored:    output/accuracy_all_methods.tiff
 
 Untracked files:
-    Untracked:  data/Articles/
-    Untracked:  data/Artigo/
-    Untracked:  data/Phenotyping2.xlsx
-    Untracked:  data/dados__temp_umi.csv
-    Untracked:  data/data.rar
+    Untracked:  BLUPS_GEBV_GETG_all clones.csv
+    Untracked:  analysis/GWS_BayesA.Rmd
+    Untracked:  analysis/GWS_BayesB.Rmd
+    Untracked:  analysis/GWS_RF.Rmd
+    Untracked:  analysis/clone_selection.Rmd
+    Untracked:  data/.gitignore
+    Untracked:  output/BayesA_ETA_1_ScaleBayesA-Weverton.dat
+    Untracked:  output/BayesA_mu-Weverton.dat
+    Untracked:  output/BayesA_varE-Weverton.dat
+    Untracked:  output/GEBV_BLUP.csv
+    Untracked:  output/pesos_BLUPS_all clones.csv
+    Untracked:  output/pesos_GEBVS_all clones.csv
+    Untracked:  output/pesos_GETGVS_all clones.csv
+    Untracked:  output/results_MSPE.csv
+    Untracked:  output/results_accuracy.csv
 
 Unstaged changes:
-    Modified:   Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava.Rproj
-    Modified:   analysis/GWS.Rmd
-    Modified:   analysis/mixed_models.Rmd
+    Modified:   .gitattributes
+    Unmerged:   analysis/GWS_G-BLUP.Rmd
+    Unmerged:   analysis/GWS_RKHS.Rmd
+    Unmerged:   analysis/GWS_RR-BLUP.Rmd
+    Modified:   analysis/figure/phenotype.Rmd/check-missing-1.png
     Modified:   analysis/phenotype.Rmd
-    Modified:   data/SNPs.rds
-    Modified:   data/pheno_clean.csv
-    Deleted:    output/BLUPS.csv
-    Deleted:    output/BLUPS_par.Rdata
-    Deleted:    output/README.md
-    Deleted:    output/media_pheno.csv
-    Deleted:    output/varcomp.csv
+    Modified:   output/BLUPS_par_mmer.Rdata
+    Modified:   output/BLUPS_row_col_random.csv
+    Unmerged:   output/BayesA_ETA_1_ScaleBayesA.dat
+    Unmerged:   output/BayesA_mu.dat
+    Unmerged:   output/BayesA_varE.dat
+    Unmerged:   output/BayesB_ETA_1_parBayesB.dat
+    Unmerged:   output/BayesB_mu.dat
+    Unmerged:   output/BayesB_varE.dat
+    Modified:   output/semester_means.xlsx
+
+Staged changes:
+    New:        data/Articles/Accuracy of Predicting the Genetic Risk of Disease Using.pdf
+    New:        data/Articles/Classification and Regression by randomforest.pdf
+    New:        data/Articles/Comparative Analysis of CDPK Family in Maize, Arabidopsis, Rice, and Sorghum Revealed Potential Targets for Drought Tolerance.pdf
+    New:        data/Articles/Conventional breeding, marker assisted selection, genomic selection.pdf
+    New:        data/Articles/Crop Stress and its Management.pdf
+    New:        data/Articles/DAS-PGMEI-42419198000192-AC2024.pdf
+    New:        data/Articles/Diallel analysis of cassava brown streak disease, yield and yield related characteristics in Mozambique.pdf
+    New:        data/Articles/Diallel analysis of early storage root yield and disease resistance traits in cassava (Manihot esculenta Crantz).pdf
+    New:        data/Articles/Diallel inheritance of relevant traits in cassava (Manihot esculenta Crantz) adapted to acid-soil savannas.pdf
+    New:        data/Articles/Drought stress tolerance in wheat and barley Advances in physiology, breeding and genetics research.pdf
+    New:        data/Articles/Early evaluation of genotype x harvest interactions in cassava crops under.pdf
+    New:        data/Articles/Early prediction models for cassava root yield in different water regimes.pdf
+    New:        data/Articles/Enhancing genomic prediction with Stacking Ensemble Learning in Arabica Coffee.pdf
+    New:        data/Articles/Enhancing the rate of genetic gain in public-sector plant breeding programs_ lessons from the breeder’s equation.pdf
+    New:        data/Articles/Environmental factors influence the production of flowers and fruits of cassava.pdf
+    New:        data/Articles/Evaluation of Genomic Selection TrainingPopulation Designs and Genotyping Strategiesin Plant Breeding Programs Using Simulation.pdf
+    New:        data/Articles/Evaluation of Seedling Survivability and Growth Response as.pdf
+    New:        data/Articles/Evaluation of cassava germplasm for drought tolerance under field conditions.pdf
+    New:        data/Articles/Factors affecting genomic selection revealed by.pdf
+    New:        data/Articles/From Genetics to Functional Genomics Improvement in Drought Signaling and Tolerance in Wheat.pdf
+    New:        data/Articles/Genetic Data Analysis for Plant and Animal Breeding.pdf
+    New:        data/Articles/Genetic and Environmental Effects on Dry Matter Content.pdf
+    New:        data/Articles/Genetic gains with genomic versus phenotypic selection for drought and waterlogging tolerance in tropical maize (Zea mays L.).pdf
+    New:        data/Articles/Genetic parameters and path analysis for root Oliveira et al_CBAB_2021.pdf
+    New:        data/Articles/Genetic parameters and path analysis for root yield of cassava under drought and early harvest.pdf
+    New:        data/Articles/Genetic parameters for drought‑tolerance in cassava.pdf
+    New:        data/Articles/Genetic parameters, stability and selection of cassava genotypes between rainy and water stress conditions.pdf
+    New:        data/Articles/Genome assisted prediction of quantitative.pdf
+    New:        data/Articles/Genome-Assisted Prediction of Quantitative Traits Using the R Package sommer.pdf
+    New:        data/Articles/Genome-wide association analysis reveals new insights.pdf
+    New:        data/Articles/Genome-wide association mapping and genomic prediction for CBSD resistance in Manihot esculenta.pdf
+    New:        data/Articles/Genome-wide association study of drought tolerance Silva et al_Euphytica_2021.pdf
+    New:        data/Articles/Genome-wide regression and prediction with the BGLR statistical package.pdf
+    New:        data/Articles/Genome-wide selection in cassava.pdf
+    New:        data/Articles/Genomic Best Linear Unbiased Prediction (gBLUP).pdf
+    New:        data/Articles/Genomic Measures of Relationship and Inbreeding.pdf
+    New:        data/Articles/Genomic Prediction and Selection for Fruit Traits in Winter Squash.pdf
+    New:        data/Articles/Genomic Selection A Tool for Accelerating the Efficiency of Molecular Breeding for Development of Climate-Resilient Crops.pdf
+    New:        data/Articles/Genomic Selection for Crop Improvement.pdf
+    New:        data/Articles/Genomic Selection for Drought Tolerance Using Genome-Wide SNPs in Maize.pdf
+    New:        data/Articles/Genomic Selection in Plant.pdf
+    New:        data/Articles/Genomic Selection in the Era of Next Generation Sequencing for Complex Traits in Plant Breeding.pdf
+    New:        data/Articles/Genomic mating in outbred species predicting cross.pdf
+    New:        data/Articles/Genomic prediction in multi-environment trials in maize using statistical and machine learning methods.pdf
+    New:        data/Articles/Genomic prediction of agronomic traits in wheat using different models and cross-validation designs.pdf
+    New:        data/Articles/Genomic prediction of drought tolerance during seedling stage in maize using low-cost molecular markers.pdf
+    New:        data/Articles/Genomic prediction through machine learning and neural networks for traits with epistasis.pdf
+    New:        data/Articles/Genomic selection for productive traits in biparental cassava breeding populations.pdf
+    New:        data/Articles/Genomic selection outperforms marker assisted selection for grain yield and physiological traits in a maize doubled haploid.pdf
+    New:        data/Articles/Genomic selection strategies for clonally propagated - Werner et al_bioRxiv_2020.pdf
+    New:        data/Articles/Genomic-Assisted Prediction of Genetic Value With.pdf
+    New:        data/Articles/Genomics Assisted Breeding of Crops for Abiotic Stress Tolerance, Vol. II.pdf
+    New:        data/Articles/Identification, Characterization, and Functional Validation of Drought-responsive MicroRNAs in Subtropical Maize Inbreds.pdf
+    New:        data/Articles/Impacts of Harvesting Age and Pricing Schemes on Economic sustainability-14-07768.pdf
+    New:        data/Articles/Impacts of Harvesting Age and Pricing Schemes on Economic.pdf
+    New:        data/Articles/Improvement of Drought Resistance in Crops From Conventional Breeding to Genomic Selection.pdf
+    New:        data/Articles/Improving accuracies of genomic predictions for drought tolerance in maize by joint modeling of additive and dominance effects.pdf
+    New:        data/Articles/Increasing cassava root yield Additive-dominant genetic models for selection of parents and clones.pdf
+    New:        data/Articles/Integrated Approach in Genomic Selection to Accelerate.pdf
+    New:        data/Articles/Investigating Drought Tolerance in Chickpea Using Genome-Wide Association Mapping and Genomic Selection Based on Whole-Genome.pdf
+    New:        data/Articles/Invited review Genomic selection in dairy cattle Progress and challenges.pdf
+    New:        data/Articles/Large-scale genome-wide association study, using historical.pdf
+    New:        data/Articles/LivroMandioca2016.pdf
+    New:        data/Articles/Marker-Based Estimates Reveal Significant.pdf
+    New:        data/Articles/MeMYB26, a drought-responsive transcription factor in cassava (Manihot esculenta Crantz).pdf
+    New:        data/Articles/Molecular Markers and Selection for Complex Traits in Plants Learning from the Last 20 Years.pdf
+    New:        data/Articles/Multi-trait selection in multi-environments for performance and stability in cassava genotypes.pdf
+    New:        data/Articles/New cassava cultivars for starch and flour.pdf
+    New:        data/Articles/NexGen Cassava Impact Report.pdf
+    New:        data/Articles/Non-additive Effects in Genomic Selection.pdf
+    New:        data/Articles/Number and Fitness of Selected Individuals in Marker-Assisted and Phenotypic.pdf
+    New:        data/Articles/On the Additive and Dominant Variance and.pdf
+    New:        data/Articles/PRODUÇÃO DE MANDIOCA DE MESA SOB DÉFICIT HÍDRICO DO SOLO.pdf
+    New:        data/Articles/Parâmetros genéticos da mandioca quanto à tolerância ao deficit hídrico.pdf
+    New:        data/Articles/Phenotypic approaches to drought in cassava review.pdf
+    New:        data/Articles/Phenotypic diversity and selection in biofortified cassava.pdf
+    New:        data/Articles/Plant Breeding Past, Present and Future.pdf
+    New:        data/Articles/Plant breeding and climate changes.pdf
+    New:        data/Articles/Predicting the accuracy of genomic predictions.pdf
+    New:        data/Articles/Prediction of Genetic Values of Quantitative Traits in Plant Breeding.pdf
+    New:        data/Articles/Prediction of total genetic value using genome-wide dense marker maps.pdf
+    New:        data/Articles/Predictions of the accuracy of genomic prediction connecting R2, selection index theory, and Fisher information.pdf
+    New:        data/Articles/Prospects for Genomic Selection in Cassava Breeding.pdf
+    New:        data/Articles/Rapid Cycling Genomic Selection in a Multiparental.pdf
+    New:        data/Articles/Reproductive barriers in cassava Factors and.pdf
+    New:        data/Articles/The Effects of Restriction-Enzyme Choice.pdf
+    New:        data/Articles/The Plant Genome - 2017 - Annicchiarico - GBS‐Based Genomic Selection for Pea Grain Yield under Severe Terminal Drough.pdf
+    New:        data/Articles/The chaperone MeHSP90 recruits MeWRKY20 and MeCatalase1to regulate drought stress resistance in cassava.pdf
+    New:        data/Articles/Training set optimization under population structure.pdf
+    New:        data/Articles/Using mating designs to uncover QTL and the genetic architecture of complex traits.pdf
+    New:        data/Articles/Very Early Biomarkers Screening for Water Deficit Tolerance in Commercial Eucalyptus Clones.Agronomy-Basel.pdf
+    New:        output/.gitignore
+    Modified:   output/BLUPS_par_mmer.Rdata
+    Modified:   output/BLUPS_row_col_random.csv
+    New:        output/Density_residual_row_col.tiff
+    New:        output/Residuals_vs_fitted_row_col.tiff
+    New:        output/result_sommer_row_col_random.RDS
+    New:        output/varcomp_row_col.tiff
 
 </code></pre>
 <p>
@@ -742,6 +867,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/502889a30288f3f5d98f9482ba19496798b407ae/docs/phenotype.html" target="_blank">502889a</a>
+</td>
+<td>
+WevertonGomesCosta
+</td>
+<td>
+2025-01-15
+</td>
+<td>
+update phenotype.html
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/blob/0e721ed11b4289851aafb40049239222a68d938f/analysis/phenotype.Rmd" target="_blank">0e721ed</a>
+</td>
+<td>
+WevertonGomesCosta
+</td>
+<td>
+2025-01-15
+</td>
+<td>
+update function fitted_residual_data in mixed_models.Rmd
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -3504,28 +3663,261 @@ Weverton Gomes
 </table>
 </div>
 </div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="co"># Descriptive statistics (mean, minimum, maximum, CV)</span></span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>pheno_mean_sd <span class="ot">&lt;-</span> <span class="fu">desc_stat</span>(pheno, <span class="at">stats =</span> <span class="fu">c</span>(<span class="st">&quot;mean, min, max, cv&quot;</span>), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a>pheno_mean_sd <span class="sc">%&gt;%</span></span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">escape =</span> F, <span class="at">align =</span> <span class="st">&#39;c&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a>  <span class="fu">kable_classic</span>(<span class="st">&quot;hover&quot;</span>, <span class="at">full_width =</span> F, <span class="at">position =</span> <span class="st">&quot;center&quot;</span>, <span class="at">fixed_thead =</span> T)</span></code></pre></div>
+<table class=" lightable-classic lightable-hover" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+variable
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+mean
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+min
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+max
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+cv
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+DMC
+</td>
+<td style="text-align:center;">
+29.0583
+</td>
+<td style="text-align:center;">
+11.9760
+</td>
+<td style="text-align:center;">
+48.3360
+</td>
+<td style="text-align:center;">
+20.9974
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+FRY
+</td>
+<td style="text-align:center;">
+4.9462
+</td>
+<td style="text-align:center;">
+0.1160
+</td>
+<td style="text-align:center;">
+22.2000
+</td>
+<td style="text-align:center;">
+81.7937
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+24.5559
+</td>
+<td style="text-align:center;">
+1.5744
+</td>
+<td style="text-align:center;">
+71.9673
+</td>
+<td style="text-align:center;">
+48.4154
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+N_Roots
+</td>
+<td style="text-align:center;">
+4.2929
+</td>
+<td style="text-align:center;">
+0.1250
+</td>
+<td style="text-align:center;">
+15.6670
+</td>
+<td style="text-align:center;">
+58.5550
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Nstem.Plant
+</td>
+<td style="text-align:center;">
+2.1309
+</td>
+<td style="text-align:center;">
+1.0000
+</td>
+<td style="text-align:center;">
+6.6667
+</td>
+<td style="text-align:center;">
+44.5279
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Plant.Height
+</td>
+<td style="text-align:center;">
+1.1919
+</td>
+<td style="text-align:center;">
+0.3600
+</td>
+<td style="text-align:center;">
+3.0333
+</td>
+<td style="text-align:center;">
+27.4309
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Di
+</td>
+<td style="text-align:center;">
+28.8785
+</td>
+<td style="text-align:center;">
+6.1200
+</td>
+<td style="text-align:center;">
+63.3033
+</td>
+<td style="text-align:center;">
+27.3488
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Le
+</td>
+<td style="text-align:center;">
+23.2147
+</td>
+<td style="text-align:center;">
+7.0000
+</td>
+<td style="text-align:center;">
+47.3333
+</td>
+<td style="text-align:center;">
+24.9935
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+ShY
+</td>
+<td style="text-align:center;">
+14.2276
+</td>
+<td style="text-align:center;">
+0.6940
+</td>
+<td style="text-align:center;">
+61.1670
+</td>
+<td style="text-align:center;">
+71.4549
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StC
+</td>
+<td style="text-align:center;">
+24.4195
+</td>
+<td style="text-align:center;">
+7.3260
+</td>
+<td style="text-align:center;">
+43.6860
+</td>
+<td style="text-align:center;">
+25.0456
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StY
+</td>
+<td style="text-align:center;">
+1.5164
+</td>
+<td style="text-align:center;">
+0.0154
+</td>
+<td style="text-align:center;">
+8.8669
+</td>
+<td style="text-align:center;">
+84.0137
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Stem.D
+</td>
+<td style="text-align:center;">
+2.1125
+</td>
+<td style="text-align:center;">
+1.0133
+</td>
+<td style="text-align:center;">
+4.3733
+</td>
+<td style="text-align:center;">
+17.8989
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="climate-data" class="section level2">
 <h2>Climate data</h2>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="co"># Load the climate data</span></span>
-<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>climate_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/dados__temp_umi.csv&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;;&quot;</span>, <span class="at">na =</span> <span class="st">&quot;null&quot;</span>, <span class="at">dec =</span> <span class="st">&quot;,&quot;</span>)</span>
-<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a></span>
-<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a><span class="co"># Convert the date column to date format</span></span>
-<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a>climate_data<span class="sc">$</span>Data.Medicao <span class="ot">&lt;-</span> <span class="fu">dmy</span>(climate_data<span class="sc">$</span>Data.Medicao)</span>
-<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a></span>
-<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a><span class="co"># Extract the year and semester from the date</span></span>
-<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a>climate_data <span class="ot">&lt;-</span> climate_data <span class="sc">%&gt;%</span></span>
-<span id="cb21-9"><a href="#cb21-9" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Ano =</span> <span class="fu">year</span>(Data.Medicao), <span class="at">Semestre =</span> <span class="fu">ifelse</span>(<span class="fu">month</span>(Data.Medicao) <span class="sc">&lt;=</span> <span class="dv">6</span>, <span class="st">&quot;1-6&quot;</span>, <span class="st">&quot;7-12&quot;</span>))</span>
-<span id="cb21-10"><a href="#cb21-10" tabindex="-1"></a></span>
-<span id="cb21-11"><a href="#cb21-11" tabindex="-1"></a><span class="co"># Calculate the means per semester and year for each variable</span></span>
-<span id="cb21-12"><a href="#cb21-12" tabindex="-1"></a>semester_means <span class="ot">&lt;-</span> climate_data <span class="sc">%&gt;%</span></span>
-<span id="cb21-13"><a href="#cb21-13" tabindex="-1"></a>  <span class="fu">group_by</span>(Ano, Semestre) <span class="sc">%&gt;%</span></span>
-<span id="cb21-14"><a href="#cb21-14" tabindex="-1"></a>  <span class="fu">summarise_if</span>(is.numeric, <span class="sc">~</span><span class="fu">mean</span>(., <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb21-15"><a href="#cb21-15" tabindex="-1"></a></span>
-<span id="cb21-16"><a href="#cb21-16" tabindex="-1"></a><span class="co"># Display the results</span></span>
-<span id="cb21-17"><a href="#cb21-17" tabindex="-1"></a>semester_means <span class="sc">%&gt;%</span></span>
-<span id="cb21-18"><a href="#cb21-18" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">escape =</span> F, <span class="at">align =</span> <span class="st">&#39;c&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb21-19"><a href="#cb21-19" tabindex="-1"></a>  <span class="fu">kable_classic</span>(<span class="st">&quot;hover&quot;</span>, <span class="at">full_width =</span> F, <span class="at">position =</span> <span class="st">&quot;center&quot;</span>, <span class="at">fixed_thead =</span> T)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="co"># Load the climate data</span></span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>climate_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/dados__temp_umi.csv&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;;&quot;</span>, <span class="at">na =</span> <span class="st">&quot;null&quot;</span>, <span class="at">dec =</span> <span class="st">&quot;,&quot;</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a><span class="co"># Convert the date column to date format</span></span>
+<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a>climate_data<span class="sc">$</span>Data.Medicao <span class="ot">&lt;-</span> <span class="fu">dmy</span>(climate_data<span class="sc">$</span>Data.Medicao)</span>
+<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a><span class="co"># Extract the year and semester from the date</span></span>
+<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a>climate_data <span class="ot">&lt;-</span> climate_data <span class="sc">%&gt;%</span></span>
+<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Ano =</span> <span class="fu">year</span>(Data.Medicao), <span class="at">Semestre =</span> <span class="fu">ifelse</span>(<span class="fu">month</span>(Data.Medicao) <span class="sc">&lt;=</span> <span class="dv">6</span>, <span class="st">&quot;1-6&quot;</span>, <span class="st">&quot;7-12&quot;</span>))</span>
+<span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a></span>
+<span id="cb22-11"><a href="#cb22-11" tabindex="-1"></a><span class="co"># Calculate the means per semester and year for each variable</span></span>
+<span id="cb22-12"><a href="#cb22-12" tabindex="-1"></a>semester_means <span class="ot">&lt;-</span> climate_data <span class="sc">%&gt;%</span></span>
+<span id="cb22-13"><a href="#cb22-13" tabindex="-1"></a>  <span class="fu">group_by</span>(Ano, Semestre) <span class="sc">%&gt;%</span></span>
+<span id="cb22-14"><a href="#cb22-14" tabindex="-1"></a>  <span class="fu">summarise_if</span>(is.numeric, <span class="sc">~</span><span class="fu">mean</span>(., <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb22-15"><a href="#cb22-15" tabindex="-1"></a></span>
+<span id="cb22-16"><a href="#cb22-16" tabindex="-1"></a><span class="co"># Display the results</span></span>
+<span id="cb22-17"><a href="#cb22-17" tabindex="-1"></a>semester_means <span class="sc">%&gt;%</span></span>
+<span id="cb22-18"><a href="#cb22-18" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">escape =</span> F, <span class="at">align =</span> <span class="st">&#39;c&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-19"><a href="#cb22-19" tabindex="-1"></a>  <span class="fu">kable_classic</span>(<span class="st">&quot;hover&quot;</span>, <span class="at">full_width =</span> F, <span class="at">position =</span> <span class="st">&quot;center&quot;</span>, <span class="at">fixed_thead =</span> T)</span></code></pre></div>
 <table class=" lightable-classic lightable-hover" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3927,8 +4319,8 @@ Session information
 </button>
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
-<pre><code>R version 4.3.1 (2023-06-16 ucrt)
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>R version 4.3.3 (2024-02-29 ucrt)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 10 x64 (build 19045)
 
@@ -3948,48 +4340,47 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] GGally_2.1.2          ggthemes_4.2.4        DataExplorer_0.8.2   
- [4] metan_1.18.0          readxl_1.4.3          data.table_1.14.8    
- [7] ComplexHeatmap_2.16.0 lubridate_1.9.2       forcats_1.0.0        
-[10] stringr_1.5.0         dplyr_1.1.2           purrr_1.0.2          
-[13] readr_2.1.4           tidyr_1.3.0           tibble_3.2.1         
-[16] ggplot2_3.4.3         tidyverse_2.0.0       kableExtra_1.3.4     
+ [1] GGally_2.2.1          ggthemes_5.1.0        DataExplorer_0.8.3   
+ [4] metan_1.19.0          readxl_1.4.3          data.table_1.16.4    
+ [7] ComplexHeatmap_2.16.0 lubridate_1.9.4       forcats_1.0.0        
+[10] stringr_1.5.1         dplyr_1.1.4           purrr_1.0.2          
+[13] readr_2.1.5           tidyr_1.3.1           tibble_3.2.1         
+[16] ggplot2_3.5.1         tidyverse_2.0.0       kableExtra_1.4.0     
 
 loaded via a namespace (and not attached):
-  [1] gridExtra_2.3       writexl_1.4.2       rlang_1.1.1        
-  [4] magrittr_2.0.3      clue_0.3-64         GetoptLong_1.0.5   
-  [7] git2r_0.32.0        matrixStats_1.0.0   compiler_4.3.1     
- [10] png_0.1-8           systemfonts_1.0.4   vctrs_0.6.3        
- [13] rvest_1.0.3         pkgconfig_2.0.3     shape_1.4.6        
- [16] crayon_1.5.2        fastmap_1.1.1       labeling_0.4.2     
- [19] utf8_1.2.3          promises_1.2.1      rmarkdown_2.24     
- [22] tzdb_0.4.0          nloptr_2.0.3        xfun_0.40          
- [25] cachem_1.0.8        jsonlite_1.8.7      highr_0.10         
- [28] later_1.3.1         reshape_0.8.9       tweenr_2.0.2       
- [31] parallel_4.3.1      cluster_2.1.4       R6_2.5.1           
- [34] bslib_0.5.1         stringi_1.7.12      RColorBrewer_1.1-3 
- [37] boot_1.3-28.1       numDeriv_2016.8-1.1 jquerylib_0.1.4    
- [40] cellranger_1.1.0    Rcpp_1.0.11         iterators_1.0.14   
- [43] knitr_1.43          IRanges_2.34.1      igraph_1.5.1       
- [46] Matrix_1.6-1        httpuv_1.6.11       splines_4.3.1      
- [49] timechange_0.2.0    tidyselect_1.2.0    rstudioapi_0.15.0  
- [52] yaml_2.3.7          doParallel_1.0.17   codetools_0.2-19   
- [55] lmerTest_3.1-3      lattice_0.21-8      plyr_1.8.8         
- [58] withr_2.5.2         evaluate_0.22       polyclip_1.10-4    
- [61] xml2_1.3.5          circlize_0.4.15     pillar_1.9.0       
- [64] whisker_0.4.1       foreach_1.5.2       stats4_4.3.1       
- [67] generics_0.1.3      rprojroot_2.0.3     mathjaxr_1.6-0     
- [70] S4Vectors_0.38.1    hms_1.1.3           munsell_0.5.0      
- [73] scales_1.2.1        minqa_1.2.6         glue_1.6.2         
- [76] tools_4.3.1         lme4_1.1-34         webshot_0.5.5      
- [79] fs_1.6.3            colorspace_2.1-0    networkD3_0.4      
- [82] nlme_3.1-163        patchwork_1.1.3     ggforce_0.4.1      
- [85] cli_3.6.1           workflowr_1.7.1     fansi_1.0.4        
- [88] viridisLite_0.4.2   svglite_2.1.1       gtable_0.3.4       
- [91] sass_0.4.7          digest_0.6.33       BiocGenerics_0.46.0
- [94] ggrepel_0.9.3       htmlwidgets_1.6.2   rjson_0.2.21       
- [97] farver_2.1.1        htmltools_0.5.6     lifecycle_1.0.3    
-[100] httr_1.4.7          GlobalOptions_0.1.2 MASS_7.3-60        </code></pre>
+ [1] Rdpack_2.6.2        gridExtra_2.3       writexl_1.5.1      
+ [4] rlang_1.1.4         magrittr_2.0.3      clue_0.3-66        
+ [7] GetoptLong_1.0.5    git2r_0.35.0        matrixStats_1.5.0  
+[10] compiler_4.3.3      png_0.1-8           systemfonts_1.1.0  
+[13] vctrs_0.6.5         pkgconfig_2.0.3     shape_1.4.6.1      
+[16] crayon_1.5.3        fastmap_1.2.0       labeling_0.4.3     
+[19] promises_1.3.2      rmarkdown_2.29      tzdb_0.4.0         
+[22] nloptr_2.1.1        xfun_0.50           cachem_1.1.0       
+[25] jsonlite_1.8.9      later_1.4.1         tweenr_2.0.3       
+[28] parallel_4.3.3      cluster_2.1.8       R6_2.5.1           
+[31] bslib_0.8.0         stringi_1.8.4       RColorBrewer_1.1-3 
+[34] boot_1.3-31         numDeriv_2016.8-1.1 jquerylib_0.1.4    
+[37] cellranger_1.1.0    Rcpp_1.0.14         iterators_1.0.14   
+[40] knitr_1.49          IRanges_2.34.1      igraph_2.1.3       
+[43] httpuv_1.6.15       Matrix_1.6-1        splines_4.3.3      
+[46] timechange_0.3.0    tidyselect_1.2.1    rstudioapi_0.17.1  
+[49] yaml_2.3.10         doParallel_1.0.17   codetools_0.2-20   
+[52] lmerTest_3.1-3      lattice_0.22-6      plyr_1.8.9         
+[55] withr_3.0.2         evaluate_1.0.3      ggstats_0.8.0      
+[58] polyclip_1.10-7     xml2_1.3.6          circlize_0.4.16    
+[61] pillar_1.10.1       whisker_0.4.1       foreach_1.5.2      
+[64] stats4_4.3.3        reformulas_0.4.0    generics_0.1.3     
+[67] rprojroot_2.0.4     mathjaxr_1.6-0      S4Vectors_0.38.1   
+[70] hms_1.1.3           munsell_0.5.1       scales_1.3.0       
+[73] minqa_1.2.8         glue_1.8.0          tools_4.3.3        
+[76] lme4_1.1-36         fs_1.6.5            rbibutils_2.3      
+[79] colorspace_2.1-1    networkD3_0.4       nlme_3.1-166       
+[82] patchwork_1.3.0     ggforce_0.4.2       cli_3.6.3          
+[85] workflowr_1.7.1     viridisLite_0.4.2   svglite_2.1.3      
+[88] gtable_0.3.6        sass_0.4.9          digest_0.6.37      
+[91] BiocGenerics_0.46.0 ggrepel_0.9.6       htmlwidgets_1.6.4  
+[94] rjson_0.2.23        farver_2.1.2        htmltools_0.5.8.1  
+[97] lifecycle_1.0.4     GlobalOptions_0.1.2 MASS_7.3-60.0.1    </code></pre>
 </div>
 </div>
 </div>
