@@ -8,12 +8,10 @@
 data/allchrAR08.txt
 
 # Tipos de arquivo a serem ignorados
-*.tiff
 *.rds
 *.rar
 *.docx
 *.pdf
-*.png
 
 # Arquivos específicos do repositório
 output/result_sommer_row_col_random.RDS
@@ -22,7 +20,7 @@ output/result_sommer_row_col_random.RDS
 data/Artigo/
 data/Articles/
 data/data.rar/
-"output/result_sommer_row_col_random.RDS" 
-"output/result_sommer_row_col_random.RDS" 
-"output/result_sommer_row_col_random.RDS" 
-"output/result_sommer_row_col_random.RDS" 
+"output/result_sommer_row_col_random.RDS"
+"output/result_sommer_row_col_random.RDS"
+"output/result_sommer_row_col_random.RDS"
+"output/result_sommer_row_col_random.RDS"
