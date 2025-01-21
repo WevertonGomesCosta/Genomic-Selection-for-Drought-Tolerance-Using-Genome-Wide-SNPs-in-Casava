@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Costa, W. G." />
+
+<meta name="date" content="2025-01-17" />
+
+<title>Bayes B</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; } /* Alert */
+code span.an { color: #008000; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #0000ff; } /* ControlFlow */
+code span.ch { color: #008080; } /* Char */
+code span.cn { } /* Constant */
+code span.co { color: #008000; } /* Comment */
+code span.cv { color: #008000; } /* CommentVar */
+code span.do { color: #008000; } /* Documentation */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.im { } /* Import */
+code span.in { color: #008000; } /* Information */
+code span.kw { color: #0000ff; } /* Keyword */
+code span.op { } /* Operator */
+code span.ot { color: #ff4000; } /* Other */
+code span.pp { color: #ff4000; } /* Preprocessor */
+code span.sc { color: #008080; } /* SpecialChar */
+code span.ss { color: #008080; } /* SpecialString */
+code span.st { color: #008080; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #008080; } /* VerbatimString */
+code span.wa { color: #008000; font-weight: bold; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Genomic Selection for Drought Tolerance</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="phenotype.html">Phenotype</a>
+</li>
+<li>
+  <a href="mixed_models.html">GxE Analysis</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Genomic Selection
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="GWS.html">Prepare Data</a>
+    </li>
+    <li>
+      <a href="GWS_RR-BLUP.html">RR-BLUP</a>
+    </li>
+    <li>
+      <a href="GWS_G-BLUP.html">G-BLUP (additive and additive-dominant)</a>
+    </li>
+    <li>
+      <a href="GWS_BayesA.html">Bayes A</a>
+    </li>
+    <li>
+      <a href="GWS_BayesB.html">Bayes B</a>
+    </li>
+    <li>
+      <a href="GWS_RKHS.html">RKHS</a>
+    </li>
+    <li>
+      <a href="GWS_RF.html">Random Forest</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="clone_selection.html">Clone Selection</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Bayes B</h1>
+<h4 class="author">Costa, W. G.<a href="#fn1" class="footnote-ref"
+id="fnref1"><sup>1</sup></a></h4>
+<h4 class="date">2025-01-17</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2025-01-17
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong>
+<code>Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/</code>
+<span class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown is untracked by Git. To know which version of the R
+Markdown file created these results, you’ll want to first commit it to
+the Git repo. If you’re still working on the analysis, you can ignore
+this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20221020code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20221020)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20221020code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20221020)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatree00c2e2530a05cabd99660b6388c85a624c23b3f4targetblank00c2e25a">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/00c2e2530a05cabd99660b6388c85a624c23b3f4" target="_blank">00c2e25</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomWevertonGomesCostaGenomicSelectionforDroughtToleranceUsingGenomeWideSNPsinCasavatree00c2e2530a05cabd99660b6388c85a624c23b3f4targetblank00c2e25a"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/WevertonGomesCosta/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/tree/00c2e2530a05cabd99660b6388c85a624c23b3f4" target="_blank">00c2e25</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/GWS.Rmd/
+    Ignored:    data/Articles/
+    Ignored:    data/Artigo/
+    Ignored:    data/allchrAR08.txt
+    Ignored:    data/data.rar
+    Ignored:    data/geno.rds
+    Ignored:    data/pheno.rds
+    Ignored:    output/BLUPS_density_med_row_col.png
+    Ignored:    output/Density_residual_row_col.tiff
+    Ignored:    output/Residuals_vs_fitted_row_col.tiff
+    Ignored:    output/result_sommer_row_col_random.RDS
+    Ignored:    output/varcomp_row_col.tiff
+
+Untracked files:
+    Untracked:  analysis/GWS_BayesA.Rmd
+    Untracked:  analysis/GWS_BayesB.Rmd
+    Untracked:  analysis/GWS_RF.Rmd
+    Untracked:  analysis/clone_selection.Rmd
+
+Unstaged changes:
+    Modified:   output/BayesA_ETA_1_ScaleBayesA.dat
+    Modified:   output/BayesA_mu.dat
+    Modified:   output/BayesA_varE.dat
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+There are no past versions. Publish this analysis with
+<code>wflow_publish()</code> to start tracking its development.
+</p>
+<hr>
+</div>
+</div>
+</div>
+<div id="configurations-and-packages" class="section level2">
+<h2>Configurations and packages</h2>
+<p>To perform the analyses, we will need the following packages:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(furrr)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(cvTools)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">library</span>(BGLR)</span></code></pre></div>
+</div>
+<div id="data" class="section level2">
+<h2>Data</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>geno<span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;data/geno.rds&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>pheno<span class="ot">&lt;-</span><span class="fu">readRDS</span>(<span class="st">&quot;data/pheno.rds&quot;</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>traits <span class="ot">&lt;-</span> <span class="fu">colnames</span>(pheno)[<span class="sc">-</span><span class="dv">1</span>]</span></code></pre></div>
+</div>
+<div id="bayes-b" class="section level2">
+<h2>Bayes B</h2>
+<p>We can perform the LASSO in the Bayesian framework. For this purpose,
+we will use the <a href="https://github.com/gdlc/BGLR-R">BGLR</a>
+package <span class="citation">[@BGLR]</span>. In this package, we will
+need an element called “ETA”. In the ETA, we will set the linear
+predictors of the model and the priors.</p>
+<div id="cross-validation" class="section level3">
+<h3>Cross-validation</h3>
+<p>To prove that the prediction is accurate, we should perform a
+cross-validation (CV) scheme. For this purpose, we divide the data into
+a training set and a validation set.</p>
+<p>First we separate the data into <em>k</em> folds. Then, we attribute
+<em>NA</em> for one fold and try to predict the data from this fold
+based on the others. When selecting the number of folds, one must
+prioritize the balance between the number of observations in each
+fold.</p>
+<p>In addition, this process should be repeated for further validation.
+The step-by-step below will guide the CV in the data we are
+analysing.</p>
+<div id="determine-the-number-of-folds-and-repetitions"
+class="section level4">
+<h4>1. Determine the number of folds and repetitions</h4>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>nfolds <span class="ot">=</span> <span class="dv">5</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>nrept <span class="ot">=</span> <span class="dv">5</span></span></code></pre></div>
+<p>Since we defined 5 folds, our data will be divided into 5 parts with
+83 observations each.</p>
+</div>
+<div id="match-the-order-of-the-data-and-the-rows-of-the-snp-matrix"
+class="section level4">
+<h4>2. Match the order of the data and the rows of the SNP matrix</h4>
+<p>The order is decreasing or increasing (numeric or alphabetical)
+regarding the name of the genotypes.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>pheno <span class="ot">&lt;-</span> pheno[<span class="fu">order</span>(pheno<span class="sc">$</span>ID_Clone, <span class="at">decreasing =</span> F),]</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>geno <span class="ot">&lt;-</span> geno[<span class="fu">order</span>(<span class="fu">row.names</span>(geno)),]</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="fu">all</span>(<span class="fu">rownames</span>(geno) <span class="sc">==</span> pheno<span class="sc">$</span>ID_Clone)</span></code></pre></div>
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div id="add-a-column-indicating-a-number-for-each-observation"
+class="section level4">
+<h4>3. Add a column indicating a number for each observation</h4>
+<p>This will be useful to assign each observation for a fold, which will
+be the next step.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>pheno<span class="sc">$</span>ID <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(pheno))</span></code></pre></div>
+</div>
+<div id="folds-assignment" class="section level4">
+<h4>4. Folds assignment</h4>
+<p>In this step, we will assign each observation to a fold. Bear in mind
+that for each repetition, the folds will comprise different
+observations. The purpose of the repetition is to make sure of the
+randomness of the assignment step.</p>
+<p>In this step, we will use the <a
+href="https://cran.r-project.org/web/packages/cvTools/cvTools.pdf">cvTools</a>
+package <span class="citation">[@cvTools]</span></p>
+<p>For better performance, we included this step in the loop of the next
+step.</p>
+</div>
+</div>
+<div id="run-model" class="section level3">
+<h3>Run model</h3>
+<p>The next step is the very CV. Here, we will define the linear
+predictor and the lists that will be useful in the loop. The first list,
+here called results_cv_BayesB and, contains the results for each fold
+assignation that we built in the previous step. The second GEBVS_BayesB
+contains the GEBVs.</p>
+<p>Then, we will construct the loop. Each iteration will assign
+<em>NA</em> for a different fold, and we will use the other folds to
+predict the missing values. Note that the folds vary for each repetition
+and trait.</p>
+<p>Set up parallel processing. Define and run multiple models to get the
+GEBVs <em>ATTENTION: This process is time-consuming.</em></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Planejar o processamento em várias sessões para paralelização</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="fu">plan</span>(multisession)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co"># Iniciar uma lista para armazenar os resultados</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>results_list <span class="ot">&lt;-</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  <span class="fu">future_map</span>(traits, <span class="at">.options =</span> <span class="fu">furrr_options</span>(<span class="at">seed =</span> <span class="dv">100</span>), <span class="cf">function</span>(j)  {</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>    <span class="co"># Pré-processamento dos dados</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>    pheno2 <span class="ot">&lt;-</span> pheno <span class="sc">%&gt;%</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>      <span class="fu">select</span>(ID_Clone, <span class="fu">all_of</span>(j)) <span class="sc">%&gt;%</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>      <span class="fu">na.omit</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>      <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>      <span class="fu">filter</span>(ID_Clone <span class="sc">%in%</span> <span class="fu">rownames</span>(geno)) <span class="sc">%&gt;%</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">ID =</span> <span class="fu">factor</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(.))) <span class="sc">%&gt;%</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>      <span class="fu">droplevels</span>()</span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>    </span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>    <span class="co"># Filtrar as linhas de Z com base em pheno2$ID_Clone</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>    ETA <span class="ot">=</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">X =</span> geno[<span class="fu">rownames</span>(geno) <span class="sc">%in%</span> pheno2<span class="sc">$</span>ID_Clone, ], <span class="at">model =</span> <span class="st">&quot;BayesB&quot;</span>))</span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a>    </span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a>    <span class="co">#Semente para reprodução</span></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a>    <span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a>    </span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a>    <span class="co"># Listas das folds</span></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a>    fold.list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span>nrept, <span class="cf">function</span>(a) {</span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a>      folds <span class="ot">&lt;-</span> <span class="fu">cvFolds</span>(<span class="fu">nlevels</span>(pheno2<span class="sc">$</span>ID),</span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a>                       <span class="at">type =</span> <span class="st">&quot;random&quot;</span>,</span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a>                       <span class="at">K =</span> nfolds)</span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a>      </span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a>      <span class="fu">split</span>(folds<span class="sc">$</span>subsets, <span class="at">f =</span> folds<span class="sc">$</span>which)</span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a>    })</span>
+<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a>    </span>
+<span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a>    <span class="co"># Usar future_map_dfr para criar dobras cruzadas em paralelo</span></span>
+<span id="cb7-32"><a href="#cb7-32" tabindex="-1"></a>    <span class="fu">future_map_dfr</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(fold.list), <span class="cf">function</span>(z) {</span>
+<span id="cb7-33"><a href="#cb7-33" tabindex="-1"></a>      <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nfolds) {</span>
+<span id="cb7-34"><a href="#cb7-34" tabindex="-1"></a>        <span class="co"># Conjunto de treinamento</span></span>
+<span id="cb7-35"><a href="#cb7-35" tabindex="-1"></a>        train_data <span class="ot">&lt;-</span> pheno2</span>
+<span id="cb7-36"><a href="#cb7-36" tabindex="-1"></a>        </span>
+<span id="cb7-37"><a href="#cb7-37" tabindex="-1"></a>        <span class="co"># Conjunto de validação</span></span>
+<span id="cb7-38"><a href="#cb7-38" tabindex="-1"></a>        train_data[train_data<span class="sc">$</span>ID <span class="sc">%in%</span> fold.list[[z]][[i]], j] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb7-39"><a href="#cb7-39" tabindex="-1"></a>        </span>
+<span id="cb7-40"><a href="#cb7-40" tabindex="-1"></a>        <span class="co"># Fitting model</span></span>
+<span id="cb7-41"><a href="#cb7-41" tabindex="-1"></a>        CV_M <span class="ot">&lt;-</span></span>
+<span id="cb7-42"><a href="#cb7-42" tabindex="-1"></a>          <span class="fu">BGLR</span>(</span>
+<span id="cb7-43"><a href="#cb7-43" tabindex="-1"></a>            <span class="at">y =</span> train_data[[j]],</span>
+<span id="cb7-44"><a href="#cb7-44" tabindex="-1"></a>            <span class="at">ETA =</span> ETA,</span>
+<span id="cb7-45"><a href="#cb7-45" tabindex="-1"></a>            <span class="at">nIter =</span> <span class="dv">20000</span>,</span>
+<span id="cb7-46"><a href="#cb7-46" tabindex="-1"></a>            <span class="at">burnIn =</span> <span class="dv">5000</span>,</span>
+<span id="cb7-47"><a href="#cb7-47" tabindex="-1"></a>            <span class="at">thin =</span> <span class="dv">5</span>,</span>
+<span id="cb7-48"><a href="#cb7-48" tabindex="-1"></a>            <span class="at">verbose =</span> F,</span>
+<span id="cb7-49"><a href="#cb7-49" tabindex="-1"></a>            <span class="at">saveAt =</span> <span class="st">&quot;output/BayesB_&quot;</span></span>
+<span id="cb7-50"><a href="#cb7-50" tabindex="-1"></a>          )</span>
+<span id="cb7-51"><a href="#cb7-51" tabindex="-1"></a>        </span>
+<span id="cb7-52"><a href="#cb7-52" tabindex="-1"></a>        <span class="co"># GEBV</span></span>
+<span id="cb7-53"><a href="#cb7-53" tabindex="-1"></a>        Pred <span class="ot">&lt;-</span></span>
+<span id="cb7-54"><a href="#cb7-54" tabindex="-1"></a>          <span class="fu">data.frame</span>(</span>
+<span id="cb7-55"><a href="#cb7-55" tabindex="-1"></a>            <span class="at">Yhat =</span> CV_M<span class="sc">$</span>yHat,</span>
+<span id="cb7-56"><a href="#cb7-56" tabindex="-1"></a>            <span class="at">ID =</span> train_data<span class="sc">$</span>ID,</span>
+<span id="cb7-57"><a href="#cb7-57" tabindex="-1"></a>            <span class="at">ID_Clone =</span> train_data<span class="sc">$</span>ID_Clone</span>
+<span id="cb7-58"><a href="#cb7-58" tabindex="-1"></a>          ) <span class="sc">%&gt;%</span></span>
+<span id="cb7-59"><a href="#cb7-59" tabindex="-1"></a>          <span class="fu">filter</span>(ID <span class="sc">%in%</span> fold.list[[z]][[i]])</span>
+<span id="cb7-60"><a href="#cb7-60" tabindex="-1"></a>        </span>
+<span id="cb7-61"><a href="#cb7-61" tabindex="-1"></a>        result1 <span class="ot">&lt;-</span></span>
+<span id="cb7-62"><a href="#cb7-62" tabindex="-1"></a>          <span class="fu">tibble</span>(</span>
+<span id="cb7-63"><a href="#cb7-63" tabindex="-1"></a>            <span class="at">GEBV =</span> Pred<span class="sc">$</span>Yhat,</span>
+<span id="cb7-64"><a href="#cb7-64" tabindex="-1"></a>            <span class="at">ID =</span> Pred<span class="sc">$</span>ID,</span>
+<span id="cb7-65"><a href="#cb7-65" tabindex="-1"></a>            <span class="at">ID_Clone =</span> Pred<span class="sc">$</span>ID_Clone,</span>
+<span id="cb7-66"><a href="#cb7-66" tabindex="-1"></a>            <span class="at">Trait =</span> j,</span>
+<span id="cb7-67"><a href="#cb7-67" tabindex="-1"></a>            <span class="at">rep =</span> z,</span>
+<span id="cb7-68"><a href="#cb7-68" tabindex="-1"></a>            <span class="at">fold =</span> i</span>
+<span id="cb7-69"><a href="#cb7-69" tabindex="-1"></a>          )</span>
+<span id="cb7-70"><a href="#cb7-70" tabindex="-1"></a>        </span>
+<span id="cb7-71"><a href="#cb7-71" tabindex="-1"></a>        <span class="co"># Resultados da previsão</span></span>
+<span id="cb7-72"><a href="#cb7-72" tabindex="-1"></a>        <span class="cf">if</span> (i <span class="sc">==</span> <span class="dv">1</span>) {</span>
+<span id="cb7-73"><a href="#cb7-73" tabindex="-1"></a>          result <span class="ot">&lt;-</span> result1</span>
+<span id="cb7-74"><a href="#cb7-74" tabindex="-1"></a>        } <span class="cf">else</span> {</span>
+<span id="cb7-75"><a href="#cb7-75" tabindex="-1"></a>          result <span class="ot">&lt;-</span> <span class="fu">rbind</span>(result, result1)</span>
+<span id="cb7-76"><a href="#cb7-76" tabindex="-1"></a>        }</span>
+<span id="cb7-77"><a href="#cb7-77" tabindex="-1"></a>      }</span>
+<span id="cb7-78"><a href="#cb7-78" tabindex="-1"></a>      </span>
+<span id="cb7-79"><a href="#cb7-79" tabindex="-1"></a>      <span class="co">#Ordenando os resultados de acordo com o ID</span></span>
+<span id="cb7-80"><a href="#cb7-80" tabindex="-1"></a>      result <span class="ot">&lt;-</span> result[<span class="fu">order</span>(result<span class="sc">$</span>ID, <span class="at">decreasing =</span> F),]</span>
+<span id="cb7-81"><a href="#cb7-81" tabindex="-1"></a>      </span>
+<span id="cb7-82"><a href="#cb7-82" tabindex="-1"></a>      <span class="co"># Resultados da validação cruzada</span></span>
+<span id="cb7-83"><a href="#cb7-83" tabindex="-1"></a>      result_cv <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb7-84"><a href="#cb7-84" tabindex="-1"></a>        <span class="at">Trait =</span> j,</span>
+<span id="cb7-85"><a href="#cb7-85" tabindex="-1"></a>        <span class="at">rep =</span> z,</span>
+<span id="cb7-86"><a href="#cb7-86" tabindex="-1"></a>        <span class="at">Log =</span> <span class="fu">all</span>(result<span class="sc">$</span>ID <span class="sc">==</span> pheno2<span class="sc">$</span>ID),</span>
+<span id="cb7-87"><a href="#cb7-87" tabindex="-1"></a>        <span class="at">Ac =</span> <span class="fu">round</span>(<span class="fu">cor</span>(result<span class="sc">$</span>GEBV, pheno2[[j]], <span class="at">use =</span> <span class="st">&quot;na.or.complete&quot;</span>), <span class="dv">3</span>),</span>
+<span id="cb7-88"><a href="#cb7-88" tabindex="-1"></a>        <span class="at">MSPE =</span> <span class="fu">round</span>(<span class="fu">mean</span>((</span>
+<span id="cb7-89"><a href="#cb7-89" tabindex="-1"></a>          result<span class="sc">$</span>GEBV <span class="sc">-</span> pheno2[[j]]</span>
+<span id="cb7-90"><a href="#cb7-90" tabindex="-1"></a>        ) <span class="sc">^</span> <span class="dv">2</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="dv">3</span>),</span>
+<span id="cb7-91"><a href="#cb7-91" tabindex="-1"></a>        <span class="at">result =</span> <span class="fu">list</span>(result)</span>
+<span id="cb7-92"><a href="#cb7-92" tabindex="-1"></a>      )</span>
+<span id="cb7-93"><a href="#cb7-93" tabindex="-1"></a>    })</span>
+<span id="cb7-94"><a href="#cb7-94" tabindex="-1"></a>  })</span>
+<span id="cb7-95"><a href="#cb7-95" tabindex="-1"></a></span>
+<span id="cb7-96"><a href="#cb7-96" tabindex="-1"></a><span class="co"># Combinar todos os resultados da validação cruzada em uma única estrutura</span></span>
+<span id="cb7-97"><a href="#cb7-97" tabindex="-1"></a>results_cv_BayesB <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, results_list)</span>
+<span id="cb7-98"><a href="#cb7-98" tabindex="-1"></a></span>
+<span id="cb7-99"><a href="#cb7-99" tabindex="-1"></a><span class="co"># Extrair os GEBVs (Valores Genômicos Empíricos Melhorados) em uma estrutura separada</span></span>
+<span id="cb7-100"><a href="#cb7-100" tabindex="-1"></a>GEBVS_BayesB <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, results_cv_BayesB<span class="sc">$</span>result)</span></code></pre></div>
+</div>
+<div id="results" class="section level3">
+<h3>Results</h3>
+<p>The object “GEBVS_BayesB” contains the GEBVs for each trait and
+clone. The table above shows the first five clones and their GEBVs for
+each trait.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>GEBVS_BayesB <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">group_by</span>(Trait, ID_Clone) <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">GEBV =</span> <span class="fu">mean</span>(GEBV)) <span class="sc">%&gt;%</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Trait, <span class="at">values_from =</span> GEBV) <span class="sc">%&gt;%</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">escape =</span> F, <span class="at">align =</span> <span class="st">&#39;c&#39;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  <span class="fu">kable_classic</span>(<span class="st">&quot;hover&quot;</span>, <span class="at">full_width =</span> F, <span class="at">position =</span> <span class="st">&quot;center&quot;</span>, <span class="at">fixed_thead =</span> T)</span></code></pre></div>
+<pre><code>`summarise()` has grouped output by &#39;Trait&#39;. You can override using the
+`.groups` argument.</code></pre>
+<table class=" lightable-classic lightable-hover" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+ID_Clone
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+DMC
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+FRY
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+HI
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+N_Roots
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Nstem.Plant
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Plant.Height
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Root.Di
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Root.Le
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+ShY
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+StC
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+StY
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Stem.D
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+BGM_2042
+</td>
+<td style="text-align:center;">
+0.4221528
+</td>
+<td style="text-align:center;">
+1.1226259
+</td>
+<td style="text-align:center;">
+1.6673786
+</td>
+<td style="text-align:center;">
+0.3365653
+</td>
+<td style="text-align:center;">
+0.1910706
+</td>
+<td style="text-align:center;">
+0.0198205
+</td>
+<td style="text-align:center;">
+0.3852329
+</td>
+<td style="text-align:center;">
+0.9828070
+</td>
+<td style="text-align:center;">
+1.6615206
+</td>
+<td style="text-align:center;">
+0.4322724
+</td>
+<td style="text-align:center;">
+0.2786178
+</td>
+<td style="text-align:center;">
+0.0596624
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+BGM0368.250437186
+</td>
+<td style="text-align:center;">
+0.7210614
+</td>
+<td style="text-align:center;">
+-0.5003791
+</td>
+<td style="text-align:center;">
+0.5863924
+</td>
+<td style="text-align:center;">
+0.0493258
+</td>
+<td style="text-align:center;">
+-0.0206214
+</td>
+<td style="text-align:center;">
+-0.0151336
+</td>
+<td style="text-align:center;">
+-0.5668654
+</td>
+<td style="text-align:center;">
+-0.6252787
+</td>
+<td style="text-align:center;">
+-2.7935867
+</td>
+<td style="text-align:center;">
+0.6956083
+</td>
+<td style="text-align:center;">
+-0.0522265
+</td>
+<td style="text-align:center;">
+-0.0404363
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+BGM0424.250437187
+</td>
+<td style="text-align:center;">
+0.1404585
+</td>
+<td style="text-align:center;">
+-0.2338929
+</td>
+<td style="text-align:center;">
+-0.0630925
+</td>
+<td style="text-align:center;">
+-0.2161889
+</td>
+<td style="text-align:center;">
+-0.0595420
+</td>
+<td style="text-align:center;">
+0.0005057
+</td>
+<td style="text-align:center;">
+-0.5305112
+</td>
+<td style="text-align:center;">
+-0.5022821
+</td>
+<td style="text-align:center;">
+-1.7013112
+</td>
+<td style="text-align:center;">
+0.1613155
+</td>
+<td style="text-align:center;">
+-0.0213632
+</td>
+<td style="text-align:center;">
+-0.0189943
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+BGM0611.250437190
+</td>
+<td style="text-align:center;">
+-0.9767817
+</td>
+<td style="text-align:center;">
+-0.2149977
+</td>
+<td style="text-align:center;">
+-0.5346830
+</td>
+<td style="text-align:center;">
+-0.0229744
+</td>
+<td style="text-align:center;">
+0.0674738
+</td>
+<td style="text-align:center;">
+-0.0567443
+</td>
+<td style="text-align:center;">
+-0.2465179
+</td>
+<td style="text-align:center;">
+0.0802446
+</td>
+<td style="text-align:center;">
+-0.6964862
+</td>
+<td style="text-align:center;">
+-0.9717067
+</td>
+<td style="text-align:center;">
+-0.0749044
+</td>
+<td style="text-align:center;">
+-0.0729285
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+BGM0652.250437861
+</td>
+<td style="text-align:center;">
+-0.1125248
+</td>
+<td style="text-align:center;">
+-0.1292787
+</td>
+<td style="text-align:center;">
+-0.4897120
+</td>
+<td style="text-align:center;">
+-0.1226576
+</td>
+<td style="text-align:center;">
+0.0428889
+</td>
+<td style="text-align:center;">
+-0.0320396
+</td>
+<td style="text-align:center;">
+-0.5445785
+</td>
+<td style="text-align:center;">
+-0.1824430
+</td>
+<td style="text-align:center;">
+-0.2076394
+</td>
+<td style="text-align:center;">
+-0.1105305
+</td>
+<td style="text-align:center;">
+-0.0417151
+</td>
+<td style="text-align:center;">
+-0.0250116
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+BGM0699.250437199
+</td>
+<td style="text-align:center;">
+-0.1998181
+</td>
+<td style="text-align:center;">
+-0.3962469
+</td>
+<td style="text-align:center;">
+-0.9569924
+</td>
+<td style="text-align:center;">
+-0.3755002
+</td>
+<td style="text-align:center;">
+-0.0598799
+</td>
+<td style="text-align:center;">
+-0.0101787
+</td>
+<td style="text-align:center;">
+-0.3868621
+</td>
+<td style="text-align:center;">
+-0.1280144
+</td>
+<td style="text-align:center;">
+-0.6278451
+</td>
+<td style="text-align:center;">
+-0.2131864
+</td>
+<td style="text-align:center;">
+-0.1028979
+</td>
+<td style="text-align:center;">
+0.0334348
+</td>
+</tr>
+</tbody>
+</table>
+<p>Acuracy and MSPE for each trait and repetition:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>results_cv_BayesB[<span class="sc">-</span><span class="dv">6</span>] <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="fu">group_by</span>(Trait) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="fu">summarise_all</span>(mean) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Ac), MSPE) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">escape =</span> F, <span class="at">align =</span> <span class="st">&#39;c&#39;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>  <span class="fu">kable_classic</span>(<span class="st">&quot;hover&quot;</span>, <span class="at">full_width =</span> F, <span class="at">position =</span> <span class="st">&quot;center&quot;</span>, <span class="at">fixed_thead =</span> T)</span></code></pre></div>
+<table class=" lightable-classic lightable-hover" style="font-family: &quot;Arial Narrow&quot;, &quot;Source Sans Pro&quot;, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Trait
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+rep
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Log
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+Ac
+</th>
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
+MSPE
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+Root.Le
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.3654
+</td>
+<td style="text-align:center;">
+1.8142
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Stem.D
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.3464
+</td>
+<td style="text-align:center;">
+0.0076
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+ShY
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.3202
+</td>
+<td style="text-align:center;">
+12.5772
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+FRY
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.3194
+</td>
+<td style="text-align:center;">
+1.1634
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Root.Di
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.3128
+</td>
+<td style="text-align:center;">
+3.3362
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StY
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.3004
+</td>
+<td style="text-align:center;">
+0.0710
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Plant.Height
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.2972
+</td>
+<td style="text-align:center;">
+0.0074
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Nstem.Plant
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.2628
+</td>
+<td style="text-align:center;">
+0.0280
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+N_Roots
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.2494
+</td>
+<td style="text-align:center;">
+0.8614
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+HI
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.2390
+</td>
+<td style="text-align:center;">
+11.9912
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+StC
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.2116
+</td>
+<td style="text-align:center;">
+5.8994
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+DMC
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.2094
+</td>
+<td style="text-align:center;">
+5.9386
+</td>
+</tr>
+</tbody>
+</table>
+<p>The object “result_cv” is divided by repetition. In the “result_cv”
+objects for each repetition, “Rep” is the number of the repetition,
+“Log” is a diagnostic indicating if the order of the predicted breeding
+values matches the order of the adjusted means, “Ac” is the prediction
+accuracy (correlation between the GEBV and adjusted means), and “MSPE”
+is the mean square prediction error (the lower, the better).</p>
+<p>Let’s now move on to processing each model. Since this can be
+time-consuming, I’ve separated it into parallel processing and each
+model into each script:</p>
+<ul>
+<li><a
+href="https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_RR_BLUP.html">*RR-BLUP**</a></li>
+<li><a
+href="https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_G-BLUP.html"><strong>G-BLUP
+(additive and additive-dominant)</strong></a></li>
+<li><a
+href="https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_BayesA.html"><strong>Bayes
+A</strong></a></li>
+<li><a
+href="https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_BayesB.html"><strong>Bayes
+B</strong></a></li>
+<li><a
+href="https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_RKHS.html"><strong>RKHS</strong></a></li>
+<li><a
+href="https://wevertongomescosta.github.io/Genomic-Selection-for-Drought-Tolerance-Using-Genome-Wide-SNPs-in-Casava/GWS_RF.html"><strong>Random
+Forest</strong></a></li>
+</ul>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>R version 4.3.3 (2024-02-29 ucrt)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 10 x64 (build 19045)
+
+Matrix products: default
+
+
+locale:
+[1] LC_COLLATE=Portuguese_Brazil.utf8  LC_CTYPE=Portuguese_Brazil.utf8   
+[3] LC_MONETARY=Portuguese_Brazil.utf8 LC_NUMERIC=C                      
+[5] LC_TIME=Portuguese_Brazil.utf8    
+
+time zone: America/Sao_Paulo
+tzcode source: internal
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] BGLR_1.1.3          kableExtra_1.4.0    cvTools_0.3.3      
+ [4] robustbase_0.99-4-1 lattice_0.22-6      lubridate_1.9.4    
+ [7] forcats_1.0.0       stringr_1.5.1       dplyr_1.1.4        
+[10] purrr_1.0.2         readr_2.1.5         tidyr_1.3.1        
+[13] tibble_3.2.1        ggplot2_3.5.1       tidyverse_2.0.0    
+[16] furrr_0.3.1         future_1.34.0      
+
+loaded via a namespace (and not attached):
+ [1] gtable_0.3.6      xfun_0.50         bslib_0.8.0       tzdb_0.4.0       
+ [5] vctrs_0.6.5       tools_4.3.3       generics_0.1.3    parallel_4.3.3   
+ [9] DEoptimR_1.1-3-1  pkgconfig_2.0.3   truncnorm_1.0-9   lifecycle_1.0.4  
+[13] compiler_4.3.3    git2r_0.35.0      munsell_0.5.1     codetools_0.2-20 
+[17] httpuv_1.6.15     htmltools_0.5.8.1 sass_0.4.9        yaml_2.3.10      
+[21] later_1.4.1       pillar_1.10.1     jquerylib_0.1.4   MASS_7.3-60.0.1  
+[25] cachem_1.1.0      parallelly_1.41.0 tidyselect_1.2.1  digest_0.6.37    
+[29] stringi_1.8.4     listenv_0.9.1     rprojroot_2.0.4   fastmap_1.2.0    
+[33] grid_4.3.3        colorspace_2.1-1  cli_3.6.3         magrittr_2.0.3   
+[37] withr_3.0.2       scales_1.3.0      promises_1.3.2    timechange_0.3.0 
+[41] rmarkdown_2.29    globals_0.16.3    workflowr_1.7.1   hms_1.1.3        
+[45] evaluate_1.0.3    knitr_1.49        viridisLite_0.4.2 rlang_1.1.4      
+[49] Rcpp_1.0.14       glue_1.8.0        xml2_1.3.6        svglite_2.1.3    
+[53] rstudioapi_0.17.1 jsonlite_1.8.9    R6_2.5.1          systemfonts_1.1.0
+[57] fs_1.6.5         </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="footnotes footnotes-end-of-document">
+<hr />
+<ol>
+<li id="fn1"><p>Weverton Gomes da Costa, Pós-Doutorando, Embrapa
+Mandioca e Fruticultura, <a href="mailto:wevertonufv@gmail.com"
+class="email">wevertonufv@gmail.com</a><a href="#fnref1"
+class="footnote-back">↩︎</a></p></li>
+</ol>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
