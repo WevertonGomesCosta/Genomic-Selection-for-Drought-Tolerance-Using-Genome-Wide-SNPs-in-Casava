@@ -11,4 +11,4 @@ editor_options:
   chunk_output_type: console
 ---
 
-This website is a project for analysis of the Genomic Selection for Drought Tolerance Using Genome Wide GBS and/or DART in Cassava by EMBRAPA Mandioca.
+This project aims to analyze the phenotypic data of Brazilian drought trials to evaluate the performance of various genotypes under drought conditions. The goal is to identify the genotypes that exhibit superior performance and resilience. The analysis follows a structured workflow, including data import and manipulation, exploratory data analysis, and genotype-environment analysis using mixed-effect models. This project details the estimation of Best Linear Unbiased Predictions (BLUPs) using mixed models, along with extensive Exploratory Data Analysis (EDA) and necessary manipulations to accurately estimate the BLUPs.
